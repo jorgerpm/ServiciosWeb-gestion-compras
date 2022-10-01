@@ -52,4 +52,23 @@ public class MenuServicio {
             throw new Exception(exc);
         }
     }
+    
+    public List<MenuDTO> listarMenusPorRol(String idRolDto) throws Exception {
+        try {
+            List<MenuDTO> listaMenuDto = new ArrayList<MenuDTO>();
+            
+            List<Menu> listaMenu = dao.listarMenus();
+            
+            listaMenu.forEach(menu->{
+                MenuDTO menuDto = new MenuDTO();
+                menuDto = MenuMapper.INSTANCE.entityToDto(menu);
+                listaMenuDto.add(menuDto);
+            });
+
+            return listaMenuDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

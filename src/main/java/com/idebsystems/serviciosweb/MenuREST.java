@@ -14,6 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -50,6 +51,21 @@ public class MenuREST {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
             //guardar en la bdd el rol
             return service.guardarMenu(menuDto);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @GET
+    @Path("/listarMenusPorRol")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<MenuDTO> listarMenus(@QueryParam(value = "idRol") long idRol1) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los roles
+            return service.listarMenus();
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
