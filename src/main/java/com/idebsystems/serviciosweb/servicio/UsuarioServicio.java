@@ -9,11 +9,14 @@ import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.UsuarioMapper;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *
@@ -83,4 +86,31 @@ public class UsuarioServicio {
         }
     }
     
+    
+    public UsuarioDTO generarClavePorCorreo(String correo) throws Exception {
+        try{
+            Usuario usuario = dao.buscarUsuarioPorCorreo(correo);
+            if(Objects.isNull(usuario))
+                return null;//el usuario con ese correo no existe
+            
+            //se procede a generar la nueva clave
+            final String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            SecureRandom random = new SecureRandom();
+            String nuevaClave = IntStream.range(0, 8)
+                .map(i -> random.nextInt(chars.length()))
+                .mapToObj(randomIndex -> String.valueOf(chars.charAt(randomIndex)))
+                .collect(Collectors.joining());
+            
+            usuario.setClave(nuevaClave);
+            
+            usuario = dao.guardarUsuario(usuario);
+            
+            UsuarioDTO usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
+            
+            return usuarioDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

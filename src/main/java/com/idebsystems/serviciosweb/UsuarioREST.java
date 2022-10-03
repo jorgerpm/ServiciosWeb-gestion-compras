@@ -80,8 +80,12 @@ public class UsuarioREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public RespuestaDTO recuperarClave(@QueryParam(value = "correo") String correo){
-        CorreoServicio srvcorreo = new CorreoServicio();
-        srvcorreo.enviarUrlNuevaClave(correo);
-        return new RespuestaDTO("ok"+correo);
+        try{
+            CorreoServicio srvcorreo = new CorreoServicio();
+            String resp = srvcorreo.enviarUrlNuevaClave(correo);
+            return new RespuestaDTO(resp);
+        }catch(Exception exc){
+            return new RespuestaDTO("ERROR".concat(exc.getMessage()));
+        }
     }
 }

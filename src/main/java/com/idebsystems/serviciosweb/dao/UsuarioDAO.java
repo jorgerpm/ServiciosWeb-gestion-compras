@@ -95,4 +95,29 @@ public class UsuarioDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public Usuario buscarUsuarioPorCorreo(String correo) throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM Usuario u WHERE u.correo = :correo");
+            query.setParameter("correo", correo);
+
+            List<Usuario> listaUsuario = query.getResultList();
+            
+            if(listaUsuario.isEmpty())
+                return null;
+
+            return listaUsuario.get(0);
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }
