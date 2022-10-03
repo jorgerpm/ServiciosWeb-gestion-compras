@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb;
 
 import com.idebsystems.serviciosweb.dto.ArchivoXmlDTO;
+import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.servicio.ArchivoXmlServicio;
 import java.util.List;
 import java.util.logging.Level;
@@ -32,17 +33,17 @@ public class ArchivoXmlREST {
     @Path("/cargarArchivoXml")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public String cargarArchivoXml(ArchivoXmlDTO fileDto) throws Exception {
+    public RespuestaDTO cargarArchivoXml(ArchivoXmlDTO fileDto) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fileDto);
             //primero guardar el pdf RIDE
             service.guardarArchivoXml(fileDto.getPdfBase64());
-            
+
             String pathSaveXml = service.guardarArchivoXml(fileDto.getXmlBase64());
 
-            return service.guardarXmlToDB(pathSaveXml, fileDto.getNombreArchivoXml(), fileDto.getNombreArchivoPdf(), 
+            String resp = service.guardarXmlToDB(pathSaveXml, fileDto.getNombreArchivoXml(), fileDto.getNombreArchivoPdf(),
                     fileDto.getUrlArchivo(), fileDto.getIdUsuarioCarga(), fileDto.getTipoDocumento());
-
+            return new RespuestaDTO(resp);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -53,17 +54,19 @@ public class ArchivoXmlREST {
     @Path("/guardarXmlDB")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public String guardarXmlDB(ArchivoXmlDTO fileDto) throws Exception {
+    public RespuestaDTO guardarXmlDB(ArchivoXmlDTO fileDto) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fileDto);
-            return service.guardarXmlToDB(fileDto.getUbicacionArchivo(), fileDto.getNombreArchivoXml(), fileDto.getNombreArchivoPdf(), 
+            String resp = service.guardarXmlToDB(fileDto.getUbicacionArchivo(), fileDto.getNombreArchivoXml(), fileDto.getNombreArchivoPdf(),
                     fileDto.getUrlArchivo(), fileDto.getIdUsuarioCarga(), fileDto.getTipoDocumento());
+
+            return new RespuestaDTO(resp);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
     }
-    
+
     @GET
     @Path("/listarArchivosXml")
     @Consumes({MediaType.APPLICATION_JSON})

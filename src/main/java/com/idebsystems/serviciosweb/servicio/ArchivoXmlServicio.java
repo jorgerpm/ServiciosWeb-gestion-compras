@@ -125,7 +125,7 @@ public class ArchivoXmlServicio {
                 //el archivo no tiene los datos completos, solo es el xml
             }
 
-            return "Archivo guardado en la base de datos";
+            return "OK"; //Archivo guardado en la base de datos";
 
         } catch (TransformerConfigurationException exc) {
             throw new Exception(exc);

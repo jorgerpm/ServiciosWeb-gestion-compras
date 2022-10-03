@@ -5,7 +5,9 @@
  */
 package com.idebsystems.serviciosweb;
 
+import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
+import com.idebsystems.serviciosweb.servicio.CorreoServicio;
 import com.idebsystems.serviciosweb.servicio.UsuarioServicio;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,6 +17,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -70,5 +73,15 @@ public class UsuarioREST {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
+    }
+    
+    @GET
+    @Path("recuperarClave")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public RespuestaDTO recuperarClave(@QueryParam(value = "correo") String correo){
+        CorreoServicio srvcorreo = new CorreoServicio();
+        srvcorreo.enviarUrlNuevaClave(correo);
+        return new RespuestaDTO("ok"+correo);
     }
 }
