@@ -72,16 +72,17 @@ public class MenuDAO extends Persistencia {
         }
     }
     
-    public Menu listarMenusPorRol(String idRol) throws Exception {
+    public List<Menu> listarMenusPorRol(long idRol) throws Exception {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Rol as r, MenuRol as mr, Menu as m WHERE r.id=mr.idRol AND mr.idMenu=m.id AND r.id = :id");
+            Query query = em.createQuery("SELECT m FROM Rol r, MenuRol mr, Menu m WHERE r.id=mr.idRol AND mr.idMenu=m.id AND r.id = :id");
             query.setParameter("id", idRol);
 
-            Menu menu = (Menu) query.getSingleResult();
+            List<Menu> menuLista = query.getResultList();
 
-            return menu;
+            LOGGER.log(Level.INFO, "tamaño lista: {0}", menuLista.size());
+            return menuLista;
 
        } catch (NoResultException exc) {
             return null;

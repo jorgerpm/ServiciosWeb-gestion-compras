@@ -65,7 +65,7 @@ public class MenuREST {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
             //buscar en la bdd los roles
-            return service.listarMenus();
+            return service.listarMenusPorRol(idRol1);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

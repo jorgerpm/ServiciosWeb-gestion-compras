@@ -53,11 +53,11 @@ public class MenuServicio {
         }
     }
     
-    public List<MenuDTO> listarMenusPorRol(String idRolDto) throws Exception {
+    public List<MenuDTO> listarMenusPorRol(long idRolDto) throws Exception {
         try {
             List<MenuDTO> listaMenuDto = new ArrayList<MenuDTO>();
             
-            List<Menu> listaMenu = dao.listarMenus();
+            List<Menu> listaMenu = dao.listarMenusPorRol(idRolDto);
             
             listaMenu.forEach(menu->{
                 MenuDTO menuDto = new MenuDTO();
