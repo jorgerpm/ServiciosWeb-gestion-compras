@@ -11,6 +11,7 @@ import com.idebsystems.serviciosweb.dto.ArchivoXmlDTO;
 import com.idebsystems.serviciosweb.dto.ProveedorDTO;
 import com.idebsystems.serviciosweb.entities.ArchivoXml;
 import com.idebsystems.serviciosweb.mappers.ArchivoXmlMapper;
+import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -119,7 +120,7 @@ public class ArchivoXmlServicio {
                 
                 ArchivoXml archivoXml = convertToEntity(data, idUsuario);
                 
-                dao.guardarDatosArchivo(archivoXml);
+                return dao.guardarDatosArchivo(archivoXml);
                 
             } else {
                 //el archivo no tiene los datos completos, solo es el xml
@@ -152,8 +153,6 @@ public class ArchivoXmlServicio {
             throw new Exception(exc);
         }
     }
-    
-    
                 
     private ArchivoXml convertToEntity(ArchivoXmlDTO dto, Long idUsuario){
         ArchivoXml archivoXml = new ArchivoXml();
@@ -174,7 +173,25 @@ public class ArchivoXmlServicio {
         return archivoXml;
     }
     
+    public List<ArchivoXmlDTO> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga) throws Exception {
+        try {
+            
+            List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList<ArchivoXmlDTO>();
+            
+            List<ArchivoXml> listaArchivoXml = dao.listarPorFecha(FechaUtil.fechaInicial(fechaInicio), FechaUtil.fechaFinal(fechaFinal), idUsuarioCarga);
+            
+            listaArchivoXml.forEach(archivoXml->{
+                ArchivoXmlDTO archivoXmlDto = new ArchivoXmlDTO();
+                archivoXmlDto = ArchivoXmlMapper.INSTANCE.entityToDto(archivoXml);
+                listaArchivoXmlDto.add(archivoXmlDto);
+            });
 
+            return listaArchivoXmlDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 /**
  * 
     public static void main(String arg[]) {

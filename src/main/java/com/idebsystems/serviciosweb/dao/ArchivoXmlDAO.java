@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.ArchivoXml;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -48,6 +49,8 @@ public class ArchivoXmlDAO extends Persistencia {
         } catch (Exception exc) {
             rollbackTransaction();
             LOGGER.log(Level.SEVERE, null, exc);
+            if(exc.getMessage().contains("archivoxml_autorizacion_key"))
+                return "esa factura ya está cargada en la base de datos";
             throw new Exception(exc);
         } finally {
             closeEntityManager();
@@ -63,6 +66,29 @@ public class ArchivoXmlDAO extends Persistencia {
             List<ArchivoXml> listaArchivoXml = query.getResultList();
 
             return listaArchivoXml;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    public List<ArchivoXml> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga) throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal AND ax.idUsuarioCarga = :idUsuarioCarga");
+            query.setParameter("fechaInicio", fechaInicio);
+            query.setParameter("fechaFinal", fechaFinal);
+            query.setParameter("idUsuarioCarga", idUsuarioCarga);
+
+            List<ArchivoXml> listaPorFecha = query.getResultList();
+
+            return listaPorFecha;
 
        } catch (NoResultException exc) {
             return null;

@@ -8,6 +8,8 @@ package com.idebsystems.serviciosweb;
 import com.idebsystems.serviciosweb.dto.ArchivoXmlDTO;
 import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.servicio.ArchivoXmlServicio;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,6 +18,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -76,6 +79,34 @@ public class ArchivoXmlREST {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
             //buscar en la bdd los roles
             return service.listarArchivosXml();
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @GET
+    @Path("/listarPorFecha")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ArchivoXmlDTO> listarPorFecha(@QueryParam(value = "fechaInicio") String fechaInicio,
+                                              @QueryParam(value = "fechaFinal") String fechaFinal,
+                                              @QueryParam(value = "idUsuarioCarga") Long idUsuarioCarga) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaInicio);
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaFinal);
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", idUsuarioCarga);
+            Long variable = new Date().getTime();
+            LOGGER.log(Level.INFO, String.valueOf(variable));
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateInit = sdf.parse(fechaInicio);
+            Date dateFin = sdf.parse(fechaFinal);
+            //buscar en la bdd los roles
+            List<ArchivoXmlDTO> listaArchivo = service.listarPorFecha(dateInit, dateFin, idUsuarioCarga);
+            LOGGER.log(Level.INFO, "tamaño: {0}", listaArchivo);
+            
+            return listaArchivo;
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
