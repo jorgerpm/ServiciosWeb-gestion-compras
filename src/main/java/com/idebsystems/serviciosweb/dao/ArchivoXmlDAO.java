@@ -40,7 +40,7 @@ public class ArchivoXmlDAO extends Persistencia {
 
             em.getTransaction().commit();
 
-            return "Archivo xml guardado con éxito";
+            return "OK";
 
         } catch (SQLException exc) {
             rollbackTransaction();
@@ -48,9 +48,9 @@ public class ArchivoXmlDAO extends Persistencia {
             throw new Exception(exc);
         } catch (Exception exc) {
             rollbackTransaction();
-            LOGGER.log(Level.SEVERE, null, exc);
             if(exc.getMessage().contains("archivoxml_autorizacion_key"))
                 return "esa factura ya está cargada en la base de datos";
+            LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {
             closeEntityManager();
@@ -77,15 +77,28 @@ public class ArchivoXmlDAO extends Persistencia {
         }
     }
     
-    public List<ArchivoXml> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga) throws Exception {
+    public List<ArchivoXml> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga, Integer desde, Integer hasta) throws Exception {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal AND ax.idUsuarioCarga = :idUsuarioCarga");
+            String sql = "FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal ";
+            
+            if(Objects.nonNull(idUsuarioCarga)){
+                sql += " AND ax.idUsuarioCarga = :idUsuarioCarga";
+            }
+            
+            Query query = em.createQuery(sql);
+                    
             query.setParameter("fechaInicio", fechaInicio);
             query.setParameter("fechaFinal", fechaFinal);
-            query.setParameter("idUsuarioCarga", idUsuarioCarga);
+            
+            if(Objects.nonNull(idUsuarioCarga)){
+                query.setParameter("idUsuarioCarga", idUsuarioCarga);
+            }
 
+            //para la paginacion
+            query.setFirstResult(desde).setMaxResults(hasta);
+            
             List<ArchivoXml> listaPorFecha = query.getResultList();
 
             return listaPorFecha;

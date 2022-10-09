@@ -91,7 +91,9 @@ public class ArchivoXmlREST {
     @Produces({MediaType.APPLICATION_JSON})
     public List<ArchivoXmlDTO> listarPorFecha(@QueryParam(value = "fechaInicio") String fechaInicio,
                                               @QueryParam(value = "fechaFinal") String fechaFinal,
-                                              @QueryParam(value = "idUsuarioCarga") Long idUsuarioCarga) throws Exception {
+                                              @QueryParam(value = "idUsuarioCarga") Long idUsuarioCarga,
+                                              @QueryParam(value = "desde") int desde,
+                                              @QueryParam(value = "hasta") int hasta) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaInicio);
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaFinal);
@@ -103,7 +105,7 @@ public class ArchivoXmlREST {
             Date dateInit = sdf.parse(fechaInicio);
             Date dateFin = sdf.parse(fechaFinal);
             //buscar en la bdd los roles
-            List<ArchivoXmlDTO> listaArchivo = service.listarPorFecha(dateInit, dateFin, idUsuarioCarga);
+            List<ArchivoXmlDTO> listaArchivo = service.listarPorFecha(dateInit, dateFin, idUsuarioCarga, desde, hasta);
             LOGGER.log(Level.INFO, "tamaño: {0}", listaArchivo);
             
             return listaArchivo;

@@ -45,7 +45,7 @@ public class ArchivoXmlServicio {
 
     public final static int INDENTATION = 4;
     public final static String PATH_FILE = "";
-    public final static String TAG_RESPUESTA_AUTORIZACION = "ns2:RespuestaAutorizacion";
+    public final static String TAG_RESPUESTA_AUTORIZACION = "autorizacion";
     public final static String TAG_COMPROBANTE = "comprobante";
     public final static String TAG_FACTURA = "factura";
     public final static String TAG_SIGNATURE = "ds:Signature";
@@ -91,15 +91,41 @@ public class ArchivoXmlServicio {
             String xmlString = writer.getBuffer().toString();
 
             JSONObject jsonObj = XML.toJSONObject(xmlString);
+            
+            String tag = jsonObj.keys().next();
+            if (tag.toLowerCase().contains(TAG_RESPUESTA_AUTORIZACION)) {
+//            if (jsonObj.toString().equalsIgnoreCase(TAG_RESPUESTA_AUTORIZACION)) {
 
-            if (jsonObj.has(TAG_RESPUESTA_AUTORIZACION)) {
+                jsonObj = jsonObj.getJSONObject(tag);
 
-                jsonObj = jsonObj.getJSONObject(TAG_RESPUESTA_AUTORIZACION);
-
-                String xmlComp = jsonObj.getString(TAG_COMPROBANTE);
-                JSONObject jsonObjComp = XML.toJSONObject(xmlComp);
+                JSONObject jsonObjComp;
+                        
+                try{
+                    String xmlComp = jsonObj.getString(TAG_COMPROBANTE);
+                    jsonObjComp = XML.toJSONObject(xmlComp);
+                }catch(org.json.JSONException exc){
+                    jsonObjComp = jsonObj.getJSONObject(TAG_COMPROBANTE);
+                }
                 jsonObjComp.getJSONObject(TAG_FACTURA).remove(TAG_SIGNATURE);
                 jsonObj.put(TAG_COMPROBANTE, jsonObjComp.toString());
+                
+                LOGGER.log(Level.INFO, "fechaUat:: {0}", jsonObj.has("fechaAutorizacion"));
+                
+                try{
+                    LOGGER.log(Level.INFO, "fechaUat:: {0}", jsonObj.getJSONObject("fechaAutorizacion"));
+                    
+                    if(jsonObj.getJSONObject("fechaAutorizacion")!=null){
+                        LOGGER.log(Level.INFO, "si tiene fechaautorizacion");
+                       String fa = jsonObj.getJSONObject("fechaAutorizacion").getString("content");
+                       
+                       fa = fa.substring(0, 10);
+                       
+                       jsonObj.put("fechaAutorizacion", fa.replace(" ", "T").replace(".0", "-05:00"));
+                    }
+                    
+                }catch(org.json.JSONException exc){
+                    
+                }
 
                 String json = jsonObj.toString();
                 LOGGER.log(Level.INFO, "el comprbante xml a json?::: {0}", json);
@@ -123,10 +149,26 @@ public class ArchivoXmlServicio {
                 return dao.guardarDatosArchivo(archivoXml);
                 
             } else {
-                //el archivo no tiene los datos completos, solo es el xml
+                //el archivo no tiene los datos completos, solo es el xml del comprobante, y sin la autorizacion
+                LOGGER.log(Level.INFO, "Error, Mal estructura del archivo xml.");
+                
+                jsonObj.getJSONObject(TAG_FACTURA).remove(TAG_SIGNATURE);
+                
+                JSONObject objjson = new JSONObject();
+                objjson.put(TAG_COMPROBANTE, jsonObj.toString());
+                
+                String json = objjson.toString();
+                LOGGER.log(Level.INFO, "el comprbante xml a json?::: {0}", json);
+
+                ArchivoXmlDTO data = new Gson().fromJson(json, ArchivoXmlDTO.class);
+                LOGGER.log(Level.INFO, "ArchivoXmlDTO::: {0}", data);
+                
+                LOGGER.log(Level.INFO, "el comprobante::: {0}", data.getComprobante());
+                
+                return "Error, Mal estructura del archivo xml.";
             }
 
-            return "OK"; //Archivo guardado en la base de datos";
+            //return "OK"; //Archivo guardado en la base de datos";
 
         } catch (TransformerConfigurationException exc) {
             throw new Exception(exc);
@@ -137,7 +179,7 @@ public class ArchivoXmlServicio {
 
     public List<ArchivoXmlDTO> listarArchivosXml() throws Exception {
         try {
-            List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList<ArchivoXmlDTO>();
+            List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList();
             
             List<ArchivoXml> listaArchivoXml = dao.listarArchivosXml();
             
@@ -173,12 +215,12 @@ public class ArchivoXmlServicio {
         return archivoXml;
     }
     
-    public List<ArchivoXmlDTO> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga) throws Exception {
+    public List<ArchivoXmlDTO> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga, Integer desde, Integer hasta) throws Exception {
         try {
             
-            List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList<ArchivoXmlDTO>();
+            List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList();
             
-            List<ArchivoXml> listaArchivoXml = dao.listarPorFecha(FechaUtil.fechaInicial(fechaInicio), FechaUtil.fechaFinal(fechaFinal), idUsuarioCarga);
+            List<ArchivoXml> listaArchivoXml = dao.listarPorFecha(FechaUtil.fechaInicial(fechaInicio), FechaUtil.fechaFinal(fechaFinal), idUsuarioCarga, desde, hasta);
             
             listaArchivoXml.forEach(archivoXml->{
                 ArchivoXmlDTO archivoXmlDto = new ArchivoXmlDTO();
