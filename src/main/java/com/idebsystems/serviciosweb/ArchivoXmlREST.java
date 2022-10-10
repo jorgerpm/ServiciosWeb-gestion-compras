@@ -95,12 +95,12 @@ public class ArchivoXmlREST {
                                               @QueryParam(value = "desde") int desde,
                                               @QueryParam(value = "hasta") int hasta) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaInicio);
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", fechaFinal);
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", idUsuarioCarga);
+            LOGGER.log(Level.INFO, "fechaInicio: {0}", fechaInicio);
+            LOGGER.log(Level.INFO, "fechaFinal: {0}", fechaFinal);
+            LOGGER.log(Level.INFO, "idUsuarioCarga: {0}", idUsuarioCarga);
             Long variable = new Date().getTime();
             LOGGER.log(Level.INFO, String.valueOf(variable));
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date dateInit = sdf.parse(fechaInicio);
             Date dateFin = sdf.parse(fechaFinal);

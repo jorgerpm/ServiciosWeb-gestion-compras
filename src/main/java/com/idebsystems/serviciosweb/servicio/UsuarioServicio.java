@@ -9,6 +9,8 @@ import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.UsuarioMapper;
+import com.idebsystems.serviciosweb.util.MyMD5;
+import static com.idebsystems.serviciosweb.util.MyMD5.getInstance;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,18 +33,10 @@ public class UsuarioServicio {
     public UsuarioDTO loginSistema(UsuarioDTO userDto) throws Exception {
         try {
             Usuario user = dao.loginSistema(userDto.getUsuario(), userDto.getClave());
-
+            
             if (Objects.nonNull(user)) {
 
                 userDto = UsuarioMapper.INSTANCE.entityToDto(user);
-                
-//                userDto.setClave(user.getClave());
-//                userDto.setCorreo(user.getCorreo());
-//                userDto.setId(user.getId());
-//                userDto.setIdEstado(user.getIdEstado());
-//                userDto.setIdRol(user.getIdRol());
-//                userDto.setNombre(user.getNombre());
-//                userDto.setUsuario(user.getUsuario());
 
             } else {
                 return new UsuarioDTO();
@@ -101,11 +95,13 @@ public class UsuarioServicio {
                 .mapToObj(randomIndex -> String.valueOf(chars.charAt(randomIndex)))
                 .collect(Collectors.joining());
             
-            usuario.setClave(nuevaClave);
+            MyMD5 md = getInstance();
+            usuario.setClave(md.hashData(nuevaClave.getBytes()));
             
             usuario = dao.guardarUsuario(usuario);
             
             UsuarioDTO usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
+            usuarioDto.setClave(nuevaClave);
             
             return usuarioDto;
         } catch (Exception exc) {
