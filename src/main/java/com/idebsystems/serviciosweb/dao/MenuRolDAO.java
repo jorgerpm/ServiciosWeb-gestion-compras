@@ -71,4 +71,25 @@ public class MenuRolDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    public List<MenuRol> listarMenuRolPorRol(long idRol) throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM MenuRol m WHERE m.idRol = :idRol");
+            query.setParameter("idRol", idRol);
+
+            List<MenuRol> listaMenuRol = query.getResultList();
+
+            return listaMenuRol;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

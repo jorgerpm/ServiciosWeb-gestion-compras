@@ -52,4 +52,23 @@ public class MenuRolServicio {
             throw new Exception(exc);
         }
     }
+    
+    public List<MenuRolDTO> listarMenuRolPorRol(long idRol) throws Exception {
+        try {
+            List<MenuRolDTO> listaMenuRolDto = new ArrayList<MenuRolDTO>();
+            
+            List<MenuRol> listaMenuRol = dao.listarMenuRolPorRol(idRol);
+            
+            listaMenuRol.forEach(menuRol->{
+                MenuRolDTO menuRolDto = new MenuRolDTO();
+                menuRolDto = MenuRolMapper.INSTANCE.entityToDto(menuRol);
+                listaMenuRolDto.add(menuRolDto);
+            });
+
+            return listaMenuRolDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }
