@@ -7,7 +7,7 @@ public class MyMD5
 {
   private MessageDigest md = null;
   private static MyMD5 md5 = null;
-  private static final char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+  private static final char[] hexChars = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
   private MyMD5()
     throws NoSuchAlgorithmException
