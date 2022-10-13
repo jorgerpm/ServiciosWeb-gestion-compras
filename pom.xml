@@ -83,11 +83,13 @@
             <version>1.4.7</version>
         </dependency>
         
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
         <dependency>
-            <groupId>postgresql</groupId>
+            <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>9.1-901.jdbc4</version>
+            <version>42.5.0</version>
         </dependency>
+
     </dependencies>
 
     <build>

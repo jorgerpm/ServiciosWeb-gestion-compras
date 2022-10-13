@@ -25,7 +25,7 @@ public class RolDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Rol r");
+            Query query = em.createQuery("FROM Rol r order by r.nombre");
 
             List<Rol> listaRol = query.getResultList();
 

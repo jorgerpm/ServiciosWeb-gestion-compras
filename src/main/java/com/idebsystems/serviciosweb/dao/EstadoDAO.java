@@ -25,7 +25,7 @@ public class EstadoDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Estado e");
+            Query query = em.createQuery("FROM Estado e order by e.nombre");
 
             List<Estado> listaEstado = query.getResultList();
 

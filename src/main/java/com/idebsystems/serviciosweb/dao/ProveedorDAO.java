@@ -47,7 +47,7 @@ public class ProveedorDAO  extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Proveedor r");
+            Query query = em.createQuery("FROM Proveedor r order by r.nombre");
 
             List<Proveedor> listaProveedor = query.getResultList();
 

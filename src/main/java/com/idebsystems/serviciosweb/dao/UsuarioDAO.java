@@ -27,7 +27,7 @@ public class UsuarioDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Usuario u WHERE u.usuario = :usuario AND u.clave = :clave");
+            Query query = em.createQuery("FROM Usuario u WHERE u.usuario = :usuario AND u.clave = :clave order by u.nombre");
             query.setParameter("usuario", usuario);
             query.setParameter("clave", clave);
 

@@ -61,7 +61,7 @@ public class ArchivoXmlDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM ArchivoXml r");
+            Query query = em.createQuery("FROM ArchivoXml r order by r.fechaAutorizacion");
 
             List<ArchivoXml> listaArchivoXml = query.getResultList();
 
@@ -81,7 +81,7 @@ public class ArchivoXmlDAO extends Persistencia {
         try {
             getEntityManager();
 
-            String sql = "FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal ";
+            String sql = "FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal order by ax.fechaAutorizacion";
             
             if(Objects.nonNull(idUsuarioCarga)){
                 sql += " AND ax.idUsuarioCarga = :idUsuarioCarga";

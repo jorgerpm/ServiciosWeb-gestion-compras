@@ -25,7 +25,7 @@ public class ParametroDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Parametro p");
+            Query query = em.createQuery("FROM Parametro p order by p.nombre");
 
             List<Parametro> listaParametro = query.getResultList();
 

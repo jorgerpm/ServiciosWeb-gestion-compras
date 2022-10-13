@@ -25,7 +25,7 @@ public class MenuDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("FROM Menu m");
+            Query query = em.createQuery("FROM Menu m order by m.titulo");
 
             List<Menu> listaMenu = query.getResultList();
 
@@ -76,7 +76,7 @@ public class MenuDAO extends Persistencia {
         try {
             getEntityManager();
 
-            Query query = em.createQuery("SELECT m FROM Rol r, MenuRol mr, Menu m WHERE r.id=mr.idRol AND mr.idMenu=m.id AND r.id = :id");
+            Query query = em.createQuery("SELECT m FROM Rol r, MenuRol mr, Menu m WHERE r.id=mr.idRol AND mr.idMenu=m.id AND r.id = :id order by m.titulo");
             query.setParameter("id", idRol);
 
             List<Menu> menuLista = query.getResultList();
