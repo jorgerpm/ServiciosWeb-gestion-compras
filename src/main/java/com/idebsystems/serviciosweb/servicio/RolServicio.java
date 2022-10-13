@@ -10,6 +10,7 @@ import com.idebsystems.serviciosweb.entities.Rol;
 import com.idebsystems.serviciosweb.mappers.RolMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,7 +25,7 @@ public class RolServicio {
     
     public List<RolDTO> listarRoles() throws Exception {
         try {
-            List<RolDTO> listaRolDto = new ArrayList<RolDTO>();
+            List<RolDTO> listaRolDto = new ArrayList();
             
             List<Rol> listaRol = dao.listarRoles();
 
@@ -61,6 +62,26 @@ public class RolServicio {
             Rol rolRespuesta = dao.guardarRol(rol);
             rolDto = RolMapper.INSTANCE.entityToDto(rolRespuesta);
             return rolDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    
+    public RolDTO buscarRolPorId(Long idRol) throws Exception {
+        try {
+            Rol rol = dao.buscarRolPorId(idRol);
+            
+            if(Objects.nonNull(rol)){
+                RolDTO rolDto = RolMapper.INSTANCE.entityToDto(rol);
+                return rolDto;
+            }
+            else{
+                return new RolDTO();
+            }
+
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

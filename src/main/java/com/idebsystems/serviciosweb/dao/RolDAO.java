@@ -71,4 +71,26 @@ public class RolDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public Rol buscarRolPorId(Long idRol) throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM Rol r WHERE r.id = :idRol");
+            query.setParameter("idRol", idRol);
+
+            Rol rol = (Rol)query.getSingleResult();
+
+            return rol;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }
