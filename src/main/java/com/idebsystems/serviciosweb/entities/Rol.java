@@ -25,6 +25,7 @@ public class Rol implements Serializable {
     @Column(name = "id")
     private long id;
     private String nombre;
+    private boolean principal;
     private long idEstado;
 
     public long getId() {
@@ -43,6 +44,14 @@ public class Rol implements Serializable {
         this.nombre = nombre;
     }
 
+    public boolean isPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
+    }
+
     public long getIdEstado() {
         return idEstado;
     }
@@ -50,5 +59,4 @@ public class Rol implements Serializable {
     public void setIdEstado(long idEstado) {
         this.idEstado = idEstado;
     }
-    
 }

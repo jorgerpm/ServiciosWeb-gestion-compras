@@ -12,6 +12,7 @@ public class RolDTO {
     
     private long id;
     private String nombre;
+    private boolean principal;
     private long idEstado;
 
     public long getId() {
@@ -30,6 +31,14 @@ public class RolDTO {
         this.nombre = nombre;
     }
 
+    public boolean isPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(boolean principal) {
+        this.principal = principal;
+    }
+
     public long getIdEstado() {
         return idEstado;
     }
@@ -40,7 +49,6 @@ public class RolDTO {
 
     @Override
     public String toString() {
-        return "RolDTO{" + "id=" + id + ", nombre=" + nombre + ", idEstado=" + idEstado + '}';
+        return "RolDTO{" + "id=" + id + ", nombre=" + nombre + ", principal=" + principal + ", idEstado=" + idEstado + '}';
     }
-
 }
