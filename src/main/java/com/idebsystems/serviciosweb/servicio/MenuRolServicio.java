@@ -71,4 +71,31 @@ public class MenuRolServicio {
             throw new Exception(exc);
         }
     }
+    
+    public void eliminarMenuRolPorRol(long idRol) throws Exception {
+        try {
+            dao.eliminarMenuRolPorRol(idRol);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    public void guardarPermisos(List<MenuRolDTO> menuRolDtoLista) throws Exception {
+        try{
+            List<MenuRol> menuRolLista = new ArrayList();
+            for(int i=0; i<menuRolDtoLista.size(); i++){
+                MenuRolDTO menuRolDto = new MenuRolDTO();
+                menuRolDto = menuRolDtoLista.get(i);
+                MenuRol menuRol = new MenuRol();
+                menuRol = MenuRolMapper.INSTANCE.dtoToEntity(menuRolDto);
+                menuRolLista.add(menuRol);
+            }
+            dao.guardarPermisos(menuRolLista);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

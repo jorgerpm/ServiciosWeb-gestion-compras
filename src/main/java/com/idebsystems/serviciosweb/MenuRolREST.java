@@ -71,4 +71,36 @@ public class MenuRolREST {
             throw new Exception(exc);
         }
     }
+    
+    @POST
+    @Path("/eliminarMenuRolPorRol")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public String eliminarMenuRolPorRol(long idRol) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los menuRoles
+            service.eliminarMenuRolPorRol(idRol);
+            return "eliminado";
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @POST
+    @Path("/guardarPermisos")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public String guardarPermisos(List<MenuRolDTO> menuRolDtoLista) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los menuRoles
+            service.guardarPermisos(menuRolDtoLista);
+            return "insertado";
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

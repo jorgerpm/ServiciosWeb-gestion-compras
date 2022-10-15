@@ -80,7 +80,6 @@ public class UsuarioServicio {
         }
     }
     
-    
     public UsuarioDTO generarClavePorCorreo(String correo) throws Exception {
         try{
             Usuario usuario = dao.buscarUsuarioPorCorreo(correo);

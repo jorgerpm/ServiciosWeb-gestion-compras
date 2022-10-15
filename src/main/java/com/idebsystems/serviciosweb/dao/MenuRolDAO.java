@@ -51,7 +51,7 @@ public class MenuRolDAO extends Persistencia {
             if (Objects.nonNull(menuRol.getId()) && menuRol.getId() > 0) {
                 em.merge(menuRol); //update
             } else {
-                em.persist(menuRol); //insert
+                em.persist(menuRol); //insertc
             }
             em.flush(); //Confirmar el insert o update
 
@@ -86,6 +86,57 @@ public class MenuRolDAO extends Persistencia {
        } catch (NoResultException exc) {
             return null;
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    public void eliminarMenuRolPorRol(long idRol) throws Exception {
+        try {
+
+            getEntityManager();
+            em.getTransaction().begin();
+            Query query = em.createQuery("DELETE FROM MenuRol m WHERE m.idRol = :idRol");
+            query.setParameter("idRol", idRol);
+            query.executeUpdate();
+            em.flush(); //Confirmar el eliminar
+            em.getTransaction().commit();
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    
+    public void guardarPermisos(List<MenuRol> menuRolLista) throws Exception {
+        try {
+            getEntityManager();
+            em.getTransaction().begin();
+            Query query = em.createQuery("DELETE FROM MenuRol m WHERE m.idRol = :idRol");
+            query.setParameter("idRol", menuRolLista.get(0).getIdRol());
+            query.executeUpdate();
+            for(int i = 0; i<menuRolLista.size(); i++){
+                MenuRol menuRol = new MenuRol();
+                menuRol = menuRolLista.get(i);
+                em.persist(menuRol); //insert
+            }
+            em.flush(); //Confirmar el insert o update
+            em.getTransaction().commit();
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {
