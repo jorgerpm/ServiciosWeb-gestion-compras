@@ -7,15 +7,18 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.google.gson.Gson;
 import com.idebsystems.serviciosweb.dao.ArchivoXmlDAO;
+import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.ArchivoXmlDTO;
 import com.idebsystems.serviciosweb.dto.ProveedorDTO;
 import com.idebsystems.serviciosweb.entities.ArchivoXml;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.ArchivoXmlMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -50,6 +53,7 @@ public class ArchivoXmlServicio {
     public final static String TAG_FACTURA = "factura";
     public final static String TAG_SIGNATURE = "ds:Signature";
     public final static String TAG_INFO_TRIBUTARIO = "infoTributaria";
+    public final static String TAG_INFO_FACTURA = "infoFactura";
     public final static String TAG_RUC = "ruc";
     
     private final ArchivoXmlDAO dao = new ArchivoXmlDAO();
@@ -138,15 +142,29 @@ public class ArchivoXmlServicio {
                 ProveedorDTO dto = provSrv.buscarProveedorRuc(rucProveedor);
                 LOGGER.log(Level.INFO, "id del provv: {0}", dto.getId());
                 data.setIdProveedor(dto.getId());
-                //
+                
+                //obtener la fecha de emision, es importante para las busquedas
+                String fechaEmision = jsonObjComp.getJSONObject(TAG_FACTURA).getJSONObject(TAG_INFO_FACTURA).get("fechaEmision").toString();
+                //04/09/2022
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                
                 data.setNombreArchivoPdf(nombrePdf);
                 data.setNombreArchivoXml(nombreXml);
                 data.setUrlArchivo(urlArchivo);
                 data.setTipoDocumento(tipoDocumento);
+                data.setFechaEmision(sdf.parse(fechaEmision));
                 
                 ArchivoXml archivoXml = convertToEntity(data, idUsuario);
                 
-                return dao.guardarDatosArchivo(archivoXml);
+                String respuesta = dao.guardarDatosArchivo(archivoXml);
+                
+                //despues de que se guardo el archivo en bdd enviar el correo para notificar la carga
+                if(respuesta.equalsIgnoreCase("Ok")){
+                    CorreoServicio correoSrv = new CorreoServicio();
+                    correoSrv.enviarCorreoCargaArchivo(idUsuario, archivoXml);
+                }
+                
+                return respuesta;
                 
             } else {
                 //el archivo no tiene los datos completos, solo es el xml del comprobante, y sin la autorizacion
@@ -212,6 +230,7 @@ public class ArchivoXmlServicio {
         archivoXml.setNombreArchivoXml(dto.getNombreArchivoXml());
         archivoXml.setIdProveedor(dto.getIdProveedor());
         archivoXml.setTipoDocumento(dto.getTipoDocumento());
+        archivoXml.setFechaEmision(dto.getFechaEmision());
         return archivoXml;
     }
     
@@ -220,11 +239,25 @@ public class ArchivoXmlServicio {
             
             List<ArchivoXmlDTO> listaArchivoXmlDto = new ArrayList();
             
-            List<ArchivoXml> listaArchivoXml = dao.listarPorFecha(FechaUtil.fechaInicial(fechaInicio), FechaUtil.fechaFinal(fechaFinal), idUsuarioCarga, desde, hasta);
+            List<Object> respuesta = dao.listarPorFecha(FechaUtil.fechaInicial(fechaInicio), FechaUtil.fechaFinal(fechaFinal), idUsuarioCarga, desde, hasta);
+            
+            //sacar los resultados retornados
+            Integer totalRegistros = (Integer)respuesta.get(0);
+            List<ArchivoXml> listaArchivoXml = (List<ArchivoXml>)respuesta.get(1);
+            
+            //buscar los usuarios
+            UsuarioDAO userDao = new UsuarioDAO();
+            List<Usuario> listaUser = userDao.listarUsuarios();
             
             listaArchivoXml.forEach(archivoXml->{
                 ArchivoXmlDTO archivoXmlDto = new ArchivoXmlDTO();
                 archivoXmlDto = ArchivoXmlMapper.INSTANCE.entityToDto(archivoXml);
+                
+                //en base a la lista de usuarios colocar el nombre de usuairo que cargo el archivo
+                Usuario user = listaUser.stream().filter(u -> u.getId() == archivoXml.getIdUsuarioCarga()).findAny().get();
+                archivoXmlDto.setNombreUsuario(user.getNombre());
+                archivoXmlDto.setTotalRegistros(totalRegistros);
+                
                 listaArchivoXmlDto.add(archivoXmlDto);
             });
 

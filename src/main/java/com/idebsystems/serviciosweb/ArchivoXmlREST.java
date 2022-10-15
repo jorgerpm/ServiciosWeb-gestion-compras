@@ -98,6 +98,8 @@ public class ArchivoXmlREST {
             LOGGER.log(Level.INFO, "fechaInicio: {0}", fechaInicio);
             LOGGER.log(Level.INFO, "fechaFinal: {0}", fechaFinal);
             LOGGER.log(Level.INFO, "idUsuarioCarga: {0}", idUsuarioCarga);
+            LOGGER.log(Level.INFO, "desde: {0}", desde);
+            LOGGER.log(Level.INFO, "hasta: {0}", hasta);
             Long variable = new Date().getTime();
             LOGGER.log(Level.INFO, String.valueOf(variable));
             

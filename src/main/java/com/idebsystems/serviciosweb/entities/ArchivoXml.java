@@ -34,6 +34,8 @@ public class ArchivoXml implements Serializable {
     private String numeroAutorizacion;
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaAutorizacion;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaEmision;
     private String ambiente;
     private String comprobante;
     private Long idUsuarioCarga;
@@ -148,6 +150,12 @@ public class ArchivoXml implements Serializable {
         this.nombreArchivoPdf = nombreArchivoPdf;
     }
 
-    
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
 
 }

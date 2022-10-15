@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.ArchivoXml;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -77,16 +78,17 @@ public class ArchivoXmlDAO extends Persistencia {
         }
     }
     
-    public List<ArchivoXml> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga, Integer desde, Integer hasta) throws Exception {
+    public List<Object> listarPorFecha(Date fechaInicio, Date fechaFinal, Long idUsuarioCarga, Integer desde, Integer hasta) throws Exception {
         try {
+            List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            String sql = "FROM ArchivoXml ax WHERE ax.fechaAutorizacion between :fechaInicio AND :fechaFinal";
+            String sql = "FROM ArchivoXml ax WHERE ax.fechaEmision between :fechaInicio AND :fechaFinal";
             
             if(Objects.nonNull(idUsuarioCarga)){
                 sql += " AND ax.idUsuarioCarga = :idUsuarioCarga";
             }
-            sql += " order by ax.fechaAutorizacion";
+            sql += " order by ax.fechaEmision";
             
             Query query = em.createQuery(sql);
                     
@@ -97,12 +99,27 @@ public class ArchivoXmlDAO extends Persistencia {
                 query.setParameter("idUsuarioCarga", idUsuarioCarga);
             }
 
+            //para obtener el total de los registros a buscar
+            Integer totalRegistros = query.getResultList().size();
+            respuesta.add(totalRegistros);
+            
+            LOGGER.log(Level.INFO, "total de registeos: {0}", totalRegistros);
+            
             //para la paginacion
             query.setFirstResult(desde).setMaxResults(hasta);
             
             List<ArchivoXml> listaPorFecha = query.getResultList();
+            respuesta.add(listaPorFecha);
+            
+            LOGGER.log(Level.INFO, "consultados por rango desde hasta: {0}", listaPorFecha.size());
+                        
+//            CriteriaBuilder cb = em.getCriteriaBuilder();
+//            CriteriaQuery<ArchivoXml> criteriaQuery = cb.createQuery(ArchivoXml.class);
+//            Root<ArchivoXml> root = criteriaQuery.from(ArchivoXml.class);
+//            criteriaQuery.select(root).where(cb.between(root.get("fechaEmision"), fechaInicio, fechaFinal));
+//            em.createQuery(criteriaQuery).getResultList().size();
 
-            return listaPorFecha;
+            return respuesta;
 
        } catch (NoResultException exc) {
             return null;

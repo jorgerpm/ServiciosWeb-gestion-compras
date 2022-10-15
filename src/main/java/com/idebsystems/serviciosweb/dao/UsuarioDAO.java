@@ -120,4 +120,22 @@ public class UsuarioDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    public Usuario buscarUsuarioPorId(Long idUsuario) throws Exception {
+        try {
+            getEntityManager();
+
+            Usuario usuario = em.find(Usuario.class, idUsuario);
+
+            return usuario;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

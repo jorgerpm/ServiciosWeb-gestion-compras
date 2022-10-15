@@ -5,8 +5,10 @@
  */
 package com.idebsystems.serviciosweb.servicio;
 
+import com.idebsystems.serviciosweb.dao.RolDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
+import com.idebsystems.serviciosweb.entities.Rol;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.UsuarioMapper;
 import com.idebsystems.serviciosweb.util.MyMD5;
@@ -51,13 +53,20 @@ public class UsuarioServicio {
     
     public List<UsuarioDTO> listarUsuarios() throws Exception {
         try {
-            List<UsuarioDTO> listaUsuarioDto = new ArrayList<UsuarioDTO>();
+            List<UsuarioDTO> listaUsuarioDto = new ArrayList();
             
             List<Usuario> listaUsuario = dao.listarUsuarios();
+            //buscar los roles
+            RolDAO rolDao = new RolDAO();
+            List<Rol> listaRoles = rolDao.listarRoles();
             
             listaUsuario.forEach(usuario->{
                 UsuarioDTO usuarioDto = new UsuarioDTO();
                 usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
+                //buscar para colocar el nombre del rol
+                Rol rol = listaRoles.stream().filter(r -> r.getId() == usuario.getIdRol()).findAny().get();
+                usuarioDto.setNombreRol(rol.getNombre());
+                
                 listaUsuarioDto.add(usuarioDto);
             });
 

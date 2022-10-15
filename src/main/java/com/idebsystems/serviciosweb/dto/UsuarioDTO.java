@@ -18,6 +18,8 @@ public class UsuarioDTO {
     private String correo;
     private long idEstado;
     private long idRol;
+    //
+    private String nombreRol;
 
     public long getId() {
         return id;
@@ -77,11 +79,20 @@ public class UsuarioDTO {
         this.idRol = idRol;
     }
 
+    public String getNombreRol() {
+        return nombreRol;
+    }
+
+    public void setNombreRol(String nombreRol) {
+        this.nombreRol = nombreRol;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "UsuarioDTO{" + "id=" + id + ", nombre=" + nombre + ", usuario=" + usuario + ", clave=" + clave + ", correo=" + correo + ", idEstado=" + idEstado + '}';
     }
-    
     
     
 }

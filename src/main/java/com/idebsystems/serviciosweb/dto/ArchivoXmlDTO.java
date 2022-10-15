@@ -16,6 +16,7 @@ public class ArchivoXmlDTO {
     private String estado;
     private String numeroAutorizacion;
     private Date fechaAutorizacion;
+    private Date fechaEmision;
     private String ambiente;
     private String comprobante;
     private String xmlBase64;
@@ -28,6 +29,9 @@ public class ArchivoXmlDTO {
     private String nombreArchivoXml;
     private String nombreArchivoPdf;
     private String tipoDocumento;
+    //
+    private String nombreUsuario;
+    private Integer totalRegistros;
 
     public String getEstado() {
         return estado;
@@ -143,6 +147,31 @@ public class ArchivoXmlDTO {
         this.tipoDocumento = tipoDocumento;
     }
 
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
+
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public Integer getTotalRegistros() {
+        return totalRegistros;
+    }
+
+    public void setTotalRegistros(Integer totalRegistros) {
+        this.totalRegistros = totalRegistros;
+    }
+
+    
     
     
     @Override
