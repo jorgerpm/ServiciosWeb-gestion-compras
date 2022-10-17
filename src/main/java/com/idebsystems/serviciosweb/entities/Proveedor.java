@@ -26,6 +26,7 @@ public class Proveedor implements Serializable {
     private String nombre;
     private String ruc;
     private String codigoJD;
+    private String direccion;
 
     public Long getId() {
         return id;
