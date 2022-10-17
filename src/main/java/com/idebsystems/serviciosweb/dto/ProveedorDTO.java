@@ -11,7 +11,11 @@ package com.idebsystems.serviciosweb.dto;
  */
 public class ProveedorDTO {
     private Long id;
-    private String nombre;
+    private String nombreComercial;
+    private String razonSocial;
+    private String direccion;
+    private String telefono;
+    private String correo;
     private String ruc;
     private String codigoJD;
 
@@ -23,12 +27,44 @@ public class ProveedorDTO {
         this.id = id;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombreComercial() {
+        return nombreComercial;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombreComercial(String nombreComercial) {
+        this.nombreComercial = nombreComercial;
+    }
+
+    public String getRazonSocial() {
+        return razonSocial;
+    }
+
+    public void setRazonSocial(String razonSocial) {
+        this.razonSocial = razonSocial;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    public String getTelefono() {
+        return telefono;
+    }
+
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getRuc() {
@@ -49,7 +85,6 @@ public class ProveedorDTO {
 
     @Override
     public String toString() {
-        return "ProveedorDTO{" + "id=" + id + ", nombre=" + nombre + ", ruc=" + ruc + ", codigoJD=" + codigoJD + '}';
+        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + '}';
     }
-
 }
