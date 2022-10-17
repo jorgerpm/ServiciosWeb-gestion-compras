@@ -11,7 +11,7 @@
         
       <!-- estas para postgresql -->
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/cargaxmldb"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:postgresql://localhost:5432/gestionCompras"/>
       
       <!-- user y password -->
       <property name="javax.persistence.jdbc.user" value="postgres"/>
