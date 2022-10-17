@@ -30,6 +30,7 @@ public class Proveedor implements Serializable {
     private String correo;
     private String ruc;
     private String codigoJD;
+    private long idEstado;
 
     public Long getId() {
         return id;
@@ -93,5 +94,13 @@ public class Proveedor implements Serializable {
 
     public void setCodigoJD(String codigoJD) {
         this.codigoJD = codigoJD;
+    }
+    
+    public long getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(long idEstado) {
+        this.idEstado = idEstado;
     }
 }

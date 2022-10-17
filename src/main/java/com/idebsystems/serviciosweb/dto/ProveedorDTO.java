@@ -18,6 +18,7 @@ public class ProveedorDTO {
     private String correo;
     private String ruc;
     private String codigoJD;
+    private long idEstado;
 
     public Long getId() {
         return id;
@@ -82,9 +83,17 @@ public class ProveedorDTO {
     public void setCodigoJD(String codigoJD) {
         this.codigoJD = codigoJD;
     }
+    
+    public long getIdEstado() {
+        return idEstado;
+    }
+
+    public void setIdEstado(long idEstado) {
+        this.idEstado = idEstado;
+    }
 
     @Override
     public String toString() {
-        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + '}';
+        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + ", idEstado=" + idEstado + '}';
     }
 }
