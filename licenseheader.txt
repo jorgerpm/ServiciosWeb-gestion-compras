@@ -1,7 +1,7 @@
 <#if licenseFirst??>
 ${licenseFirst}
 </#if>
-${licensePrefix}Proyecto API Rest (ServiciosWeb)
+${licensePrefix}Proyecto API Rest (ServiciosWebGestionCompras)
 ${licensePrefix}IdebSystems Cia. Ltda. Derechos reservados. 2022
 ${licensePrefix}Prohibida la reproducción total o parcial de este producto
 <#if licenseLast??>
