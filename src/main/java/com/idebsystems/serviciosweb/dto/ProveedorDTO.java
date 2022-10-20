@@ -14,7 +14,8 @@ public class ProveedorDTO {
     private String nombreComercial;
     private String razonSocial;
     private String direccion;
-    private String telefono;
+    private String telefono1;
+    private String telefono2;
     private String correo;
     private String ruc;
     private String codigoJD;
@@ -52,12 +53,20 @@ public class ProveedorDTO {
         this.direccion = direccion;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getTelefono1() {
+        return telefono1;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setTelefono1(String telefono1) {
+        this.telefono1 = telefono1;
+    }
+
+    public String getTelefono2() {
+        return telefono2;
+    }
+
+    public void setTelefono2(String telefono2) {
+        this.telefono2 = telefono2;
     }
 
     public String getCorreo() {
@@ -83,7 +92,7 @@ public class ProveedorDTO {
     public void setCodigoJD(String codigoJD) {
         this.codigoJD = codigoJD;
     }
-    
+
     public long getIdEstado() {
         return idEstado;
     }
@@ -94,6 +103,6 @@ public class ProveedorDTO {
 
     @Override
     public String toString() {
-        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono=" + telefono + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + ", idEstado=" + idEstado + '}';
+        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono1=" + telefono1 + ", telefono2=" + telefono2 + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + ", idEstado=" + idEstado + '}';
     }
 }
