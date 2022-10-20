@@ -17,6 +17,7 @@ public class ProductoDTO {
     private double valorUnitario;
     private boolean tieneIva;
     private long idEstado;
+    private Integer totalRegistros;
 
     public long getId() {
         return id;
@@ -66,6 +67,16 @@ public class ProductoDTO {
         this.idEstado = idEstado;
     }
 
+    public Integer getTotalRegistros() {
+        return totalRegistros;
+    }
+
+    public void setTotalRegistros(Integer totalRegistros) {
+        this.totalRegistros = totalRegistros;
+    }
+
+    
+    
     @Override
     public String toString() {
         return "ProductoDTO{" + "id=" + id + ", codigoProducto=" + codigoProducto + ", nombre=" + nombre + ", valorUnitario=" + valorUnitario + ", tieneIva=" + tieneIva + ", idEstado=" + idEstado + '}';

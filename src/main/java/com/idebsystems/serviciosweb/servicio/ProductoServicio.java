@@ -11,6 +11,7 @@ import com.idebsystems.serviciosweb.entities.Producto;
 import com.idebsystems.serviciosweb.mappers.ProductoMapper;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,18 +24,32 @@ public class ProductoServicio {
     
     private final ProductoDAO dao = new ProductoDAO();
     
-    public List<ProductoDTO> listarProductos() throws Exception {
+    public List<ProductoDTO> listarProductos(Integer desde, Integer hasta, String valorBusqueda) throws Exception {
         try {
             List<ProductoDTO> listaProductoDto = new ArrayList();
             
-            List<Producto> listaProducto = dao.listarProductos();
+            List<Object> respuesta = dao.listarProductos(desde, hasta, valorBusqueda);
             
-            listaProducto.forEach(producto->{
-                ProductoDTO productoDto = new ProductoDTO();
-                productoDto = ProductoMapper.INSTANCE.entityToDto(producto);
-                listaProductoDto.add(productoDto);
-            });
-            return listaProductoDto;
+            if(Objects.nonNull(respuesta)){
+
+                //sacar los resultados retornados
+                Integer totalRegistros = (Integer)respuesta.get(0);
+                List<Producto> listaProducto = (List<Producto>)respuesta.get(1);
+
+                listaProducto.forEach(producto->{
+                    ProductoDTO productoDto = new ProductoDTO();
+                    productoDto = ProductoMapper.INSTANCE.entityToDto(producto);
+                    //agregar el total de registros
+                    productoDto.setTotalRegistros(totalRegistros);
+
+                    listaProductoDto.add(productoDto);
+                });
+                return listaProductoDto;
+            }
+            else{
+                return new ArrayList();
+            }
+            
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

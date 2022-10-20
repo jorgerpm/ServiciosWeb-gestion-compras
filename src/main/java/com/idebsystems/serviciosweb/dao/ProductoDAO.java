@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.Producto;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -22,15 +23,36 @@ import javax.persistence.Query;
 public class ProductoDAO extends Persistencia {
     private static final Logger LOGGER = Logger.getLogger(ProductoDAO.class.getName());
     
-    public List<Producto> listarProductos() throws Exception {
+    public List<Object> listarProductos(Integer desde, Integer hasta, String valorBusqueda) throws Exception {
         try {
+            List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            Query query = em.createQuery("FROM Producto p order by p.nombre");
+            String sql = "FROM Producto p ";
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                sql = sql.concat(" WHERE UPPER(p.nombre) like :valorBusqueda ");
+            }
+            
+            sql = sql.concat(" order by p.nombre");
+            
+            Query query = em.createQuery(sql);
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                query.setParameter("valorBusqueda", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
+            }
 
+            //para obtener el total de los registros a buscar
+            Integer totalRegistros = query.getResultList().size();
+            respuesta.add(totalRegistros);
+            
+            //para la paginacion
+            query.setFirstResult(desde).setMaxResults(hasta);
+            
             List<Producto> listaProducto = query.getResultList();
+            respuesta.add(listaProducto);
 
-            return listaProducto;
+            return respuesta;
 
        } catch (NoResultException exc) {
             return null;
