@@ -31,7 +31,7 @@ public class ProductoDAO extends Persistencia {
             String sql = "FROM Producto p ";
             
             if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
-                sql = sql.concat(" WHERE UPPER(p.nombre) like :valorBusqueda ");
+                sql = sql.concat(" WHERE UPPER(p.nombre) like :valorBusqueda OR UPPER(p.codigoProducto) like :valorBusqueda1");
             }
             
             sql = sql.concat(" order by p.nombre");
@@ -40,6 +40,7 @@ public class ProductoDAO extends Persistencia {
             
             if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
                 query.setParameter("valorBusqueda", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
+                query.setParameter("valorBusqueda1", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
             }
 
             //para obtener el total de los registros a buscar

@@ -6,11 +6,8 @@
 package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
-import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
-import com.idebsystems.serviciosweb.entities.ArchivoXml;
 import com.idebsystems.serviciosweb.entities.Parametro;
-import com.idebsystems.serviciosweb.entities.Usuario;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Objects;
@@ -144,41 +141,5 @@ public class CorreoServicio {
         }
     }
 
-    public void enviarCorreoCargaArchivo(Long idUsuario, ArchivoXml archivoXml) throws Exception {
-        try {
-            Thread correo = new Thread(() -> {
-                try {
-                    //buscar el usuario con el iduser
-                    UsuarioDAO userDao = new UsuarioDAO();
-                    Usuario user = userDao.buscarUsuarioPorId(idUsuario);
-                    
-                    //consultar los prametros del correo desde la base de datos.
-                    ParametroDAO paramDao = new ParametroDAO();
-                    List<Parametro> listaParams = paramDao.listarParametros();
-                    
-                    List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
-                    
-                    Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
-                    Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_CA")).findAny().get();
-                    Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_CA")).findAny().get();
-                    Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
-                    Parametro destinatario = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("DESTINOMAIL_CA")).findAny().get();
-                    
-                    //transformar el mensaje con los datos
-                    String mensajeText = paramMsm.getValor().replace("[nombre]", user.getNombre());
-                    
-                    enviarCorreo(destinatario.getValor(), paramSubect.getValor(), mensajeText, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
-                    
-                } catch (Exception exc) {
-                    LOGGER.log(Level.SEVERE, null, exc);
-                }
-            });
-
-            correo.start();
-
-        } catch (Exception exc) {
-            LOGGER.log(Level.SEVERE, null, exc);
-            throw new Exception(exc);
-        }
-    }
+    
 }
