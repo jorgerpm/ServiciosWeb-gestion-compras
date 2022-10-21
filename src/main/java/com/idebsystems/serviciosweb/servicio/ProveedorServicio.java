@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.servicio;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dto.ProveedorDTO;
 import com.idebsystems.serviciosweb.entities.Proveedor;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,25 @@ public class ProveedorServicio {
         try{
             Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
             Proveedor proveedorRespuesta = dao.guardarProveedor(proveedor);
+            proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
+            return proveedorDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public ProveedorDTO guardarProveedorUsuario(ProveedorDTO proveedorDto) throws Exception {
+        try{
+            Usuario usuario = new Usuario();
+            usuario.setNombre(proveedorDto.getRazonSocial());
+            usuario.setUsuario(proveedorDto.getRuc());
+            usuario.setClave(proveedorDto.getClave());
+            usuario.setCorreo(proveedorDto.getCorreo());
+            usuario.setIdEstado(proveedorDto.getIdEstado());
+            usuario.setIdRol(2);
+            Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
+            Proveedor proveedorRespuesta = dao.guardarProveedorUsuario(proveedor, usuario);
             proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
             return proveedorDto;
         } catch (Exception exc) {

@@ -55,4 +55,19 @@ public class ProveedorREST {
             throw new Exception(exc);
         }
     }
+    
+    @POST
+    @Path("/guardarProveedorUsuario")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public ProveedorDTO guardarProveedorUsuario(ProveedorDTO proveedorDto) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //guardar en la bdd el rol
+            return service.guardarProveedorUsuario(proveedorDto);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

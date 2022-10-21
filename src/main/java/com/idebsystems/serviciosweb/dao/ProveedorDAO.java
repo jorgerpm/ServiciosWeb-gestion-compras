@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dao;
 
 import com.idebsystems.serviciosweb.entities.Proveedor;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
 import java.util.List;
@@ -72,6 +73,39 @@ public class ProveedorDAO  extends Persistencia {
                 em.merge(proveedor); //update
             } else {
                 em.persist(proveedor); //insert
+            }
+            
+            em.flush(); //Confirmar el insert o update
+            em.getTransaction().commit();
+            return proveedor;
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    public Proveedor guardarProveedorUsuario(Proveedor proveedor, Usuario usuario) throws Exception {
+        try {
+            getEntityManager();
+            em.getTransaction().begin();
+            
+            if (Objects.nonNull(proveedor.getId()) && proveedor.getId() > 0) {
+                em.merge(proveedor); //update
+            } else {
+                em.persist(proveedor); //insert
+            }
+            
+            if (Objects.nonNull(usuario.getId()) && usuario.getId() > 0) {
+                em.merge(usuario); //update
+            } else {
+                em.persist(usuario); //insert
             }
             
             em.flush(); //Confirmar el insert o update
