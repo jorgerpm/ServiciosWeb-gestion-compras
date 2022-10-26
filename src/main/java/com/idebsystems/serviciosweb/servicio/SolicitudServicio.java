@@ -5,7 +5,6 @@
  */
 package com.idebsystems.serviciosweb.servicio;
 
-import com.idebsystems.serviciosweb.SolicitudREST;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dto.SolicitudDTO;
 import com.idebsystems.serviciosweb.entities.Solicitud;
@@ -23,7 +22,7 @@ import java.util.logging.Level;
  */
 public class SolicitudServicio {
 
-    private static final Logger LOGGER = Logger.getLogger(SolicitudREST.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(SolicitudServicio.class.getName());
 
     private final SolicitudDAO dao = new SolicitudDAO();
 
@@ -51,6 +50,22 @@ public class SolicitudServicio {
             return listaSolicitudDto;
             
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public SolicitudDTO guardarCotizacion(SolicitudDTO solicitudDto) throws Exception {
+        try{
+            Solicitud solicitud = SolicitudMapper.INSTANCE.dtoToEntity(solicitudDto);
+            
+            solicitud = dao.guardarCotizacion(solicitud);
+            
+            solicitudDto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
+            
+            return solicitudDto;
+            
+        }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

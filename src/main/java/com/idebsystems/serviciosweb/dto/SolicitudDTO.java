@@ -15,7 +15,6 @@ import java.util.List;
 public class SolicitudDTO {
     
     private long id;
-    private String codigoSolicitud;
     private Date fechaSolicitud;
     private String codigoRC;
     private String estado;
@@ -32,14 +31,6 @@ public class SolicitudDTO {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getCodigoSolicitud() {
-        return codigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        this.codigoSolicitud = codigoSolicitud;
     }
 
     public Date getFechaSolicitud() {
@@ -108,7 +99,7 @@ public class SolicitudDTO {
 
     @Override
     public String toString() {
-        return "SolicitudDTO{" + "id=" + id + ", codigoSolicitud=" + codigoSolicitud + ", fechaSolicitud=" + fechaSolicitud + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + '}';
+        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + '}';
     }
     
     

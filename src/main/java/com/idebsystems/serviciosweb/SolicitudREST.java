@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -43,6 +44,21 @@ public class SolicitudREST {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
             return servicio.listarSolicitudes(fechaInicial, fechaFinal, codSolicitud, desde, hasta);
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @POST
+    @Path("/guardarSolicitud")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public SolicitudDTO guardarCotizacion(SolicitudDTO solicitudDto) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "solicitud: {0}", solicitudDto);
+            LOGGER.log(Level.INFO, "detalles: {0}", solicitudDto.getListaDetalles());
+            return servicio.guardarCotizacion(solicitudDto);
+        }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

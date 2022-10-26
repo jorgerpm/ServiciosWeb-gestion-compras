@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.entities;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -31,8 +32,6 @@ public class Solicitud implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-    @Column(name = "codigo_solicitud")
-    private String codigoSolicitud;
     @Column(name = "fecha_solicitud")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaSolicitud;
@@ -52,14 +51,6 @@ public class Solicitud implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public String getCodigoSolicitud() {
-        return codigoSolicitud;
-    }
-
-    public void setCodigoSolicitud(String codigoSolicitud) {
-        this.codigoSolicitud = codigoSolicitud;
     }
 
     public Date getFechaSolicitud() {
