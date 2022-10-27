@@ -34,6 +34,9 @@ public class ProveedorServicio {
                 dto.setCodigoJD(data.getCodigoJD());
                 dto.setId(data.getId());
                 dto.setRuc(data.getRuc());
+                dto.setRazonSocial(data.getRazonSocial());
+                dto.setTelefono1(data.getTelefono1());
+                dto.setDireccion(data.getDireccion());
                 return dto;
             }
             return new ProveedorDTO();

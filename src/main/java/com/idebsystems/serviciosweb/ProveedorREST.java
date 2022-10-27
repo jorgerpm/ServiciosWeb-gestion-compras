@@ -14,6 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -25,6 +26,21 @@ public class ProveedorREST {
     private static final Logger LOGGER = Logger.getLogger(ProveedorREST.class.getName());
 
     private final ProveedorServicio service = new ProveedorServicio();
+    
+    @GET
+    @Path("/buscarProveedorRuc")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public ProveedorDTO buscarProveedorRuc(@QueryParam(value = "ruc") String ruc) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los roles
+            return service.buscarProveedorRuc(ruc);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
     
     @GET
     @Path("/listarProveedores")
