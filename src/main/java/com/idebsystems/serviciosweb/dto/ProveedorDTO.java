@@ -21,6 +21,8 @@ public class ProveedorDTO {
     private String codigoJD;
     private long idEstado;
     private String clave;
+    
+    private String archivoBase64;
 
     public Long getId() {
         return id;
@@ -110,8 +112,16 @@ public class ProveedorDTO {
         this.clave = clave;
     }
 
+    public String getArchivoBase64() {
+        return archivoBase64;
+    }
+
+    public void setArchivoBase64(String archivoBase64) {
+        this.archivoBase64 = archivoBase64;
+    }
+
     @Override
     public String toString() {
-        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono1=" + telefono1 + ", telefono2=" + telefono2 + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + ", idEstado=" + idEstado + ", clave=" + clave + '}';
+        return "ProveedorDTO{" + "id=" + id + ", nombreComercial=" + nombreComercial + ", razonSocial=" + razonSocial + ", direccion=" + direccion + ", telefono1=" + telefono1 + ", telefono2=" + telefono2 + ", correo=" + correo + ", ruc=" + ruc + ", codigoJD=" + codigoJD + ", idEstado=" + idEstado + ", clave=" + clave + ", archivoBase64=" + archivoBase64 + '}';
     }
 }

@@ -86,4 +86,21 @@ public class ProveedorREST {
             throw new Exception(exc);
         }
     }
+    
+    @POST
+    @Path("/cargaMasivaProveedores")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public ProveedorDTO cargaMasivaProveedores(ProveedorDTO proveedorDto) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto);
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto.getArchivoBase64());
+            //guardar en la bdd el rol
+            service.cargaMasivaProveedores(proveedorDto.getArchivoBase64());
+            return proveedorDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

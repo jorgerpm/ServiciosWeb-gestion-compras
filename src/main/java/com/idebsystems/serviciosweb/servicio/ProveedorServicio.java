@@ -10,7 +10,10 @@ import com.idebsystems.serviciosweb.dto.ProveedorDTO;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -91,6 +94,24 @@ public class ProveedorServicio {
             Proveedor proveedorRespuesta = dao.guardarProveedorUsuario(proveedor, usuario);
             proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
             return proveedorDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public String cargaMasivaProveedores(String archivoBase64) throws Exception {
+        try{
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] fileBytes = decoder.decode(archivoBase64);
+            InputStream targetStream = new ByteArrayInputStream(fileBytes);
+            
+            int content;
+            while ((content = targetStream.read()) != -1) {
+                System.out.print((char)content);
+            }
+            
+            return "Datos del archivo subidos con éxito";
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
