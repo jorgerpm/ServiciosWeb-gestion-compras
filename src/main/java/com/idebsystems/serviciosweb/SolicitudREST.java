@@ -36,13 +36,13 @@ public class SolicitudREST {
     public List<SolicitudDTO> listarSolicitudes(
             @QueryParam(value = "fechaInicial") String fechaInicial,
             @QueryParam(value = "fechaFinal") String fechaFinal,
-            @QueryParam(value = "codSolicitud") String codSolicitud,
+            @QueryParam(value = "codigoRC") String codigoRC,
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codSolicitud, desde, hasta);
+            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codigoRC, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -53,11 +53,26 @@ public class SolicitudREST {
     @Path("/guardarSolicitud")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public SolicitudDTO guardarCotizacion(SolicitudDTO solicitudDto) throws Exception {
+    public SolicitudDTO guardarSolicitud(SolicitudDTO solicitudDto) throws Exception {
         try{
             LOGGER.log(Level.INFO, "solicitud: {0}", solicitudDto);
             LOGGER.log(Level.INFO, "detalles: {0}", solicitudDto.getListaDetalles());
-            return servicio.guardarCotizacion(solicitudDto);
+            return servicio.guardarSolicitud(solicitudDto);
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @GET
+    @Path("/buscarSolicitudPorNumero")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public SolicitudDTO buscarSolicitudPorNumero(@QueryParam(value = "numeroRC") String numeroRC) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "numeroRC: {0}", numeroRC);
+            
+            return servicio.buscarSolicitudPorNumero(numeroRC);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

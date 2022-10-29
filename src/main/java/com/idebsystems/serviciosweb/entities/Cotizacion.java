@@ -27,12 +27,12 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = "cotizacion")
 public class Cotizacion implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-    
+
     @Column(name = "fecha_cotizacion")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCotizacion;
@@ -42,10 +42,10 @@ public class Cotizacion implements Serializable {
     private String codigoCotizacion;
     private String estado;
     private String usuario;
-    
-    @Column(name = "id_proveedor")
-    private Long idProveedor;
-    
+
+    @Column(name = "ruc_proveedor")
+    private String rucProveedor;
+
     private BigDecimal subtotal;
     @Column(name = "subtotal_sin_iva")
     private BigDecimal subtotalSinIva;
@@ -53,7 +53,14 @@ public class Cotizacion implements Serializable {
     private BigDecimal total;
     private BigDecimal descuento = BigDecimal.ZERO;
     private String observacion;
-    
+    @Column(name = "tiempo_entrega")
+    private String tiempoEntrega;
+    @Column(name = "validez_cotizacion")
+    private String validezCotizacion;
+    @Column(name = "forma_pago")
+    private String formaPago;
+    private String adicionales;
+
     @OneToMany(mappedBy = "cotizacion", fetch = FetchType.LAZY)
     private List<CotizacionDetalle> listaDetalles;
 
@@ -105,12 +112,12 @@ public class Cotizacion implements Serializable {
         this.usuario = usuario;
     }
 
-    public Long getIdProveedor() {
-        return idProveedor;
+    public String getRucProveedor() {
+        return rucProveedor;
     }
 
-    public void setIdProveedor(Long idProveedor) {
-        this.idProveedor = idProveedor;
+    public void setRucProveedor(String rucProveedor) {
+        this.rucProveedor = rucProveedor;
     }
 
     public BigDecimal getSubtotal() {
@@ -168,6 +175,37 @@ public class Cotizacion implements Serializable {
     public void setListaDetalles(List<CotizacionDetalle> listaDetalles) {
         this.listaDetalles = listaDetalles;
     }
-    
-    
+
+    public String getTiempoEntrega() {
+        return tiempoEntrega;
+    }
+
+    public void setTiempoEntrega(String tiempoEntrega) {
+        this.tiempoEntrega = tiempoEntrega;
+    }
+
+    public String getValidezCotizacion() {
+        return validezCotizacion;
+    }
+
+    public void setValidezCotizacion(String validezCotizacion) {
+        this.validezCotizacion = validezCotizacion;
+    }
+
+    public String getFormaPago() {
+        return formaPago;
+    }
+
+    public void setFormaPago(String formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    public String getAdicionales() {
+        return adicionales;
+    }
+
+    public void setAdicionales(String adicionales) {
+        this.adicionales = adicionales;
+    }
+
 }

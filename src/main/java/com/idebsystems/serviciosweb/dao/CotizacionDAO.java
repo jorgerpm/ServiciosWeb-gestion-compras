@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.util.Persistencia;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,20 +32,25 @@ public class CotizacionDAO extends Persistencia {
             List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            String sql = "FROM Cotizacion c WHERE c.fechaCotizacion BETWEEN :fechaInicial AND :fechaFinal ";
+            String sql = "FROM Cotizacion c ";
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
-                sql = sql.concat(" AND UPPER(c.codigoRC) = :codigoRC ");
+                sql = sql.concat(" WHERE UPPER(c.codigoRC) = :codigoRC ");
+            }
+            else{
+                sql = sql.concat(" WHERE c.fechaCotizacion BETWEEN :fechaInicial AND :fechaFinal ");
             }
 
             sql = sql.concat(" order by c.fechaCotizacion");
 
             Query query = em.createQuery(sql);
-            query.setParameter("fechaInicial", fechaInicial);
-            query.setParameter("fechaFinal", fechaFinal);
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 query.setParameter("codigoRC", codigoRC.toUpperCase());
+            }
+            else{
+                query.setParameter("fechaInicial", fechaInicial);
+                query.setParameter("fechaFinal", fechaFinal);
             }
 
             //para obtener el total de los registros a buscar
@@ -62,6 +68,45 @@ public class CotizacionDAO extends Persistencia {
         } catch (NoResultException exc) {
             return null;
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    
+    public Cotizacion guardarCotizacion(Cotizacion cotizacion) throws Exception {
+        try{
+            getEntityManager();
+
+            em.getTransaction().begin();
+
+            if (Objects.nonNull(cotizacion.getId()) && cotizacion.getId() > 0) {
+                em.merge(cotizacion); //update
+            } else {
+                em.persist(cotizacion); //insert
+            }
+            
+            cotizacion.getListaDetalles().forEach(detalle -> {
+                detalle.setCotizacion(cotizacion);
+                em.persist(detalle);
+            });
+            
+            em.flush(); //Confirmar el insert o update
+
+            em.getTransaction().commit();
+
+            return cotizacion;
+            
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            if(exc.getMessage() != null && exc.getMessage().contains("cotizacion_codigo_cotizacion_uk"))
+                throw new Exception("YA EXISTE EL CODIGO DE COTIZACION");
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {

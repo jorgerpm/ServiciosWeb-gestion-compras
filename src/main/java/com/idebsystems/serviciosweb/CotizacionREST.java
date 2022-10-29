@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -41,8 +42,24 @@ public class CotizacionREST {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
+            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
             return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoRC, desde, hasta);
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @POST
+    @Path("/guardarCotizacion")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public CotizacionDTO guardarCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "solicitud: {0}", cotizacionDTO);
+            LOGGER.log(Level.INFO, "detalles: {0}", cotizacionDTO.getListaDetalles());
+            return servicio.guardarCotizacion(cotizacionDTO);
+        }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

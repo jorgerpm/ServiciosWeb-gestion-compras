@@ -64,7 +64,7 @@ public class UsuarioREST {
     @Path("/guardarUsuario")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public UsuarioDTO guardarRol(UsuarioDTO usuarioDto) throws Exception {
+    public UsuarioDTO guardarUsuario(UsuarioDTO usuarioDto) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
             //guardar en la bdd el rol

@@ -16,6 +16,7 @@ public class SolicitudDTO {
     
     private long id;
     private Date fechaSolicitud;
+    private String fechaTexto;
     private String codigoRC;
     private String estado;
     private String usuario;
@@ -95,6 +96,14 @@ public class SolicitudDTO {
 
     public void setTotalRegistros(Integer totalRegistros) {
         this.totalRegistros = totalRegistros;
+    }
+
+    public String getFechaTexto() {
+        return fechaTexto;
+    }
+
+    public void setFechaTexto(String fechaTexto) {
+        this.fechaTexto = fechaTexto;
     }
 
     @Override

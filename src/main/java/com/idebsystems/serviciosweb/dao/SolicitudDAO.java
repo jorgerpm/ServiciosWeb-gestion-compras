@@ -31,20 +31,25 @@ public class SolicitudDAO extends Persistencia {
             List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            String sql = "FROM Solicitud s WHERE s.fechaSolicitud BETWEEN :fechaInicial AND :fechaFinal ";
+            String sql = "FROM Solicitud s ";
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
-                sql = sql.concat(" AND UPPER(s.codigoRC) = :codigoRC ");
+                sql = sql.concat(" WHERE UPPER(s.codigoRC) = :codigoRC ");
+            }
+            else{
+                sql = sql.concat(" WHERE s.fechaSolicitud BETWEEN :fechaInicial AND :fechaFinal ");
             }
 
             sql = sql.concat(" order by s.fechaSolicitud");
 
             Query query = em.createQuery(sql);
-            query.setParameter("fechaInicial", fechaInicial);
-            query.setParameter("fechaFinal", fechaFinal);
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 query.setParameter("codigoRC", codigoRC.toUpperCase());
+            }
+            else{
+                query.setParameter("fechaInicial", fechaInicial);
+                query.setParameter("fechaFinal", fechaFinal);
             }
 
             //para obtener el total de los registros a buscar
@@ -69,7 +74,7 @@ public class SolicitudDAO extends Persistencia {
         }
     }
     
-    public Solicitud guardarCotizacion(Solicitud solicitud) throws Exception {
+    public Solicitud guardarSolicitud(Solicitud solicitud) throws Exception {
         try{
             getEntityManager();
 
@@ -98,9 +103,33 @@ public class SolicitudDAO extends Persistencia {
             throw new Exception(exc);
         } catch (Exception exc) {
             rollbackTransaction();
+            if(exc.getMessage()!=null && exc.getMessage().contains("solicitud_codigo_rc_uk"))
+                throw new Exception("YA EXISTE REGISTRADA UNA SOLICITUD CON EL CODIGO DE RC: ".concat(solicitud.getCodigoRC()));
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {
+            closeEntityManager();
+        }
+    }
+    
+    
+    public Solicitud buscarSolicitudPorNumero(String numeroRC) throws Exception {
+        try{
+            getEntityManager();
+            
+            Query query = em.createQuery("FROM Solicitud s WHERE s.codigoRC = :numeroRC");
+            query.setParameter("numeroRC", numeroRC);
+            
+            Solicitud solicitud = (Solicitud)query.getSingleResult();
+            
+            return solicitud;
+            
+        } catch (NoResultException exc) {
+            return null;
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }finally {
             closeEntityManager();
         }
     }

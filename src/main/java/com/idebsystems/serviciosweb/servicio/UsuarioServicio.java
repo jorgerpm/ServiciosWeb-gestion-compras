@@ -64,8 +64,9 @@ public class UsuarioServicio {
                 UsuarioDTO usuarioDto = new UsuarioDTO();
                 usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
                 //buscar para colocar el nombre del rol
-                Rol rol = listaRoles.stream().filter(r -> r.getId() == usuario.getIdRol()).findAny().get();
-                usuarioDto.setNombreRol(rol.getNombre());
+                Rol rol = listaRoles.stream().filter(r -> r.getId() == usuario.getIdRol()).findAny().orElse(null);
+                if(Objects.nonNull(rol))
+                    usuarioDto.setNombreRol(rol.getNombre());
                 
                 listaUsuarioDto.add(usuarioDto);
             });

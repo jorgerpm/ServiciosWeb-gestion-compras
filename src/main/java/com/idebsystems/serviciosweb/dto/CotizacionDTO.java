@@ -17,17 +17,22 @@ public class CotizacionDTO {
     
     private long id;
     private Date fechaCotizacion;
+    private String fechaTexto;
     private String codigoRC;
     private String codigoCotizacion;
     private String estado;
     private String usuario;
-    private Long idProveedor;
+    private String rucProveedor;
     private BigDecimal subtotal;
     private BigDecimal subtotalSinIva;
     private BigDecimal iva;
     private BigDecimal total;
     private BigDecimal descuento = BigDecimal.ZERO;
     private String observacion;
+    private String tiempoEntrega;
+    private String validezCotizacion;
+    private String formaPago;
+    private String adicionales;
     private List<CotizacionDetalleDTO> listaDetalles;
     //
     private Integer totalRegistros;
@@ -80,13 +85,15 @@ public class CotizacionDTO {
         this.usuario = usuario;
     }
 
-    public Long getIdProveedor() {
-        return idProveedor;
+    public String getRucProveedor() {
+        return rucProveedor;
     }
 
-    public void setIdProveedor(Long idProveedor) {
-        this.idProveedor = idProveedor;
+    public void setRucProveedor(String rucProveedor) {
+        this.rucProveedor = rucProveedor;
     }
+
+    
 
     public BigDecimal getSubtotal() {
         return subtotal;
@@ -152,11 +159,51 @@ public class CotizacionDTO {
         this.observacion = observacion;
     }
 
+    public String getTiempoEntrega() {
+        return tiempoEntrega;
+    }
+
+    public void setTiempoEntrega(String tiempoEntrega) {
+        this.tiempoEntrega = tiempoEntrega;
+    }
+
+    public String getValidezCotizacion() {
+        return validezCotizacion;
+    }
+
+    public void setValidezCotizacion(String validezCotizacion) {
+        this.validezCotizacion = validezCotizacion;
+    }
+
+    public String getFormaPago() {
+        return formaPago;
+    }
+
+    public void setFormaPago(String formaPago) {
+        this.formaPago = formaPago;
+    }
+
+    public String getAdicionales() {
+        return adicionales;
+    }
+
+    public void setAdicionales(String adicionales) {
+        this.adicionales = adicionales;
+    }
+
+    public String getFechaTexto() {
+        return fechaTexto;
+    }
+
+    public void setFechaTexto(String fechaTexto) {
+        this.fechaTexto = fechaTexto;
+    }
+
     
     
     @Override
     public String toString() {
-        return "CotizacionDTO{" + "id=" + id + ", fechaCotizacion=" + fechaCotizacion + ", codigoRC=" + codigoRC + ", codigoCotizacion=" + codigoCotizacion + ", estado=" + estado + ", usuario=" + usuario + ", idProveedor=" + idProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + '}';
+        return "CotizacionDTO{" + "id=" + id + ", fechaCotizacion=" + fechaCotizacion + ", codigoRC=" + codigoRC + ", codigoCotizacion=" + codigoCotizacion + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + '}';
     }
     
     

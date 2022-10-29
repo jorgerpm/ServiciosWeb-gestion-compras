@@ -9,6 +9,8 @@ import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
 import com.idebsystems.serviciosweb.entities.Parametro;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
@@ -96,8 +98,11 @@ public class CorreoServicio {
             properties.put("mail.smtp.port", port);
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.starttls.enable", "true");
+            properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
             properties.put("mail.user", userName);
             properties.put("mail.password", password);
+            //
+            properties.setProperty("mail.debug.auth", "true");
 
             // creates a new session with an authenticator
             Authenticator auth = new Authenticator() {
@@ -109,10 +114,26 @@ public class CorreoServicio {
             Session session = Session.getInstance(properties, auth);
 
             LOGGER.info("paramNomRemit::: " + nombreRemitente);
+            
+            //seccion para comprobar si el correo tiene mas de uno, con el ;
+            List<InternetAddress> correosDestino = new ArrayList<>();
+            if(correo.contains(";")){
+                List<String> correos = Arrays.asList(correo.split(";"));
+                for(String c : correos){
+                    if(Objects.nonNull(c) && !c.isBlank()){
+                        InternetAddress addressEmail = new InternetAddress(c);
+                        correosDestino.add(addressEmail);
+                    }
+                }
+            }
+            else{
+                InternetAddress addressEmail = new InternetAddress(correo);
+                correosDestino.add(addressEmail);
+            }
 
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(aliasCorreoEnvio, nombreRemitente));
-            msg.addRecipient(Message.RecipientType.TO, new InternetAddress(correo, ""));
+            msg.addRecipients(Message.RecipientType.TO, correosDestino.toArray(new InternetAddress[correosDestino.size()]));
             msg.setSubject(asunto);
 //            msg.setText(mensajeText);
             BodyPart messageBodyPart = new MimeBodyPart();

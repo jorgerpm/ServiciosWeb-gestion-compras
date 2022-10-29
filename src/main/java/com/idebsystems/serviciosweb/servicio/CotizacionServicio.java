@@ -12,6 +12,7 @@ import com.idebsystems.serviciosweb.mappers.CotizacionMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,6 +51,31 @@ public class CotizacionServicio {
             return listaCotizacionDto;
             
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public CotizacionDTO guardarCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            
+            Calendar c = Calendar.getInstance();
+            c.setTime(sdf.parse(cotizacionDTO.getFechaTexto()));
+            c.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+            c.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+            
+            cotizacionDTO.setFechaCotizacion(c.getTime());
+            
+            Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
+            
+            cotizacion = dao.guardarCotizacion(cotizacion);
+            
+            cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
+            
+            return cotizacionDTO;
+            
+        }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
