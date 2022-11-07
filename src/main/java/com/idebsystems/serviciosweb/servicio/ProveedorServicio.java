@@ -10,8 +10,10 @@ import com.idebsystems.serviciosweb.dto.ProveedorDTO;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -100,18 +102,45 @@ public class ProveedorServicio {
         }
     }
     
-    public String cargaMasivaProveedores(String archivoBase64) throws Exception {
+    public ProveedorDTO cargaMasivaProveedores(String archivoBase64) throws Exception {
         try{
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] fileBytes = decoder.decode(archivoBase64);
             InputStream targetStream = new ByteArrayInputStream(fileBytes);
+            BufferedReader br = new BufferedReader(new InputStreamReader(targetStream));
             
-            int content;
-            while ((content = targetStream.read()) != -1) {
-                System.out.print((char)content);
+            String content;
+            List<ProveedorDTO> listaProveedoresDto = new ArrayList<>();
+            ProveedorDTO proveedorDto = new ProveedorDTO();
+            int i = 0;
+            while ((content = br.readLine()) != null) {
+                if(i>0){
+                    String[] textoSeparado = content.split(";");
+                    /*LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[0]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[1]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[2]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[3]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[4]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[5]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[6]);
+                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[7]);*/
+                    proveedorDto.setCodigoJD(textoSeparado[0]);
+                    proveedorDto.setRuc(textoSeparado[1]);
+                    proveedorDto.setRazonSocial(textoSeparado[2]);
+                    proveedorDto.setNombreComercial(textoSeparado[3]);
+                    proveedorDto.setDireccion(textoSeparado[4]);
+                    proveedorDto.setCorreo(textoSeparado[5]);
+                    proveedorDto.setTelefono1(textoSeparado[6]);
+                    proveedorDto.setTelefono2(textoSeparado[7]);
+                    proveedorDto.setIdEstado(1);
+                    
+                    listaProveedoresDto.add(proveedorDto);
+                    Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
+                    dao.cargaMasivaProveedores(proveedor);
+                }
+                i++;
             }
-            
-            return "Datos del archivo subidos con éxito";
+            return proveedorDto;
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

@@ -123,4 +123,31 @@ public class ProveedorDAO  extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    public Proveedor cargaMasivaProveedores(Proveedor proveedor) throws Exception {
+        try {
+            getEntityManager();
+            em.getTransaction().begin();
+            
+            if (Objects.nonNull(proveedor.getId()) && proveedor.getId() > 0) {
+                em.merge(proveedor); //update
+            } else {
+                em.persist(proveedor); //insert
+            }
+            
+            em.flush(); //Confirmar el insert o update
+            em.getTransaction().commit();
+            return proveedor;
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }
