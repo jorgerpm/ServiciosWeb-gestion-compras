@@ -124,7 +124,7 @@ public class ProveedorDAO  extends Persistencia {
         }
     }
     
-    public Proveedor cargaMasivaProveedores(Proveedor proveedor) throws Exception {
+    public String cargaMasivaProveedores(Proveedor proveedor) throws Exception {
         try {
             getEntityManager();
             em.getTransaction().begin();
@@ -137,7 +137,7 @@ public class ProveedorDAO  extends Persistencia {
             
             em.flush(); //Confirmar el insert o update
             em.getTransaction().commit();
-            return proveedor;
+            return "ok";
         } catch (SQLException exc) {
             rollbackTransaction();
             LOGGER.log(Level.SEVERE, null, exc);

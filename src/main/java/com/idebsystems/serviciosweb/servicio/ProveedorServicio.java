@@ -102,7 +102,7 @@ public class ProveedorServicio {
         }
     }
     
-    public ProveedorDTO cargaMasivaProveedores(String archivoBase64) throws Exception {
+    public String cargaMasivaProveedores(String archivoBase64) throws Exception {
         try{
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] fileBytes = decoder.decode(archivoBase64);
@@ -116,14 +116,6 @@ public class ProveedorServicio {
             while ((content = br.readLine()) != null) {
                 if(i>0){
                     String[] textoSeparado = content.split(";");
-                    /*LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[0]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[1]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[2]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[3]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[4]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[5]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[6]);
-                    LOGGER.log(Level.INFO, "linea: {0}", textoSeparado[7]);*/
                     proveedorDto.setCodigoJD(textoSeparado[0]);
                     proveedorDto.setRuc(textoSeparado[1]);
                     proveedorDto.setRazonSocial(textoSeparado[2]);
@@ -140,7 +132,7 @@ public class ProveedorServicio {
                 }
                 i++;
             }
-            return proveedorDto;
+            return "ok";
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

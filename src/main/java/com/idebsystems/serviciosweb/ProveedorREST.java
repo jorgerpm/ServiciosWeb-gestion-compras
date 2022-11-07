@@ -5,6 +5,7 @@
 package com.idebsystems.serviciosweb;
 
 import com.idebsystems.serviciosweb.dto.ProveedorDTO;
+import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.servicio.ProveedorServicio;
 import java.util.List;
 import java.util.logging.Level;
@@ -91,13 +92,13 @@ public class ProveedorREST {
     @Path("/cargaMasivaProveedores")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public ProveedorDTO cargaMasivaProveedores(ProveedorDTO proveedorDto) throws Exception {
+    public RespuestaDTO cargaMasivaProveedores(ProveedorDTO proveedorDto) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto);
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto.getArchivoBase64());
             //guardar en la bdd el rol
-            service.cargaMasivaProveedores(proveedorDto.getArchivoBase64());
-            return proveedorDto;
+            String resp = service.cargaMasivaProveedores(proveedorDto.getArchivoBase64());
+            return new RespuestaDTO(resp);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
