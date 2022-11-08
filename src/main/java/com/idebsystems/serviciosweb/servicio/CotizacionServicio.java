@@ -80,4 +80,20 @@ public class CotizacionServicio {
             throw new Exception(exc);
         }
     }
+    
+    
+    public CotizacionDTO buscarCotizacionRucNumeroRC(String numeroRC, String ruc) throws Exception {
+        try{
+            
+            Cotizacion cotizacion = dao.buscarCotizacionRucNumeroRC(numeroRC, ruc);
+            
+            CotizacionDTO cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
+            
+            return cotizacionDTO;
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

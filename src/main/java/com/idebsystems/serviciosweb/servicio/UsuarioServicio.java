@@ -37,11 +37,15 @@ public class UsuarioServicio {
             Usuario user = dao.loginSistema(userDto.getUsuario(), userDto.getClave());
             
             if (Objects.nonNull(user)) {
-
                 userDto = UsuarioMapper.INSTANCE.entityToDto(user);
-
+                userDto.setRespuesta("OK");
+                
+                if(userDto.getIdEstado() != 1){//es porque no esta activo el usuario, el idestado no es 1=activo
+                    userDto.setId(0);
+                    userDto.setRespuesta("USUARIO INACTIVO");
+                }
             } else {
-                return new UsuarioDTO();
+                return new UsuarioDTO("OK");
             }
 
             return userDto;

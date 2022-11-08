@@ -63,6 +63,8 @@ public class CotizacionDAO extends Persistencia {
             List<Cotizacion> listaCotiz = query.getResultList();
             respuesta.add(listaCotiz);
 
+            //new BufferedReader(new InputStreamReader(inputstream));
+            
             return respuesta;
 
         } catch (NoResultException exc) {
@@ -93,6 +95,11 @@ public class CotizacionDAO extends Persistencia {
                 em.persist(detalle);
             });
             
+            //cambiar el estado de la solicitud a cotizado
+            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'COTIZADO' WHERE s.codigoRC = :codigoRc");
+            query.setParameter("codigoRc", cotizacion.getCodigoRC());
+            query.executeUpdate();
+            
             em.flush(); //Confirmar el insert o update
 
             em.getTransaction().commit();
@@ -114,4 +121,30 @@ public class CotizacionDAO extends Persistencia {
         }
     }
     
+    
+    public Cotizacion buscarCotizacionRucNumeroRC(String codigoRC, String ruc) throws Exception {
+        try {
+            getEntityManager();
+
+            String sql = "FROM Cotizacion c WHERE UPPER(c.codigoCotizacion) = :codigoCotizacion ";            
+
+            Query query = em.createQuery(sql);
+            query.setParameter("codigoCotizacion", codigoRC.toUpperCase().concat("-").concat(ruc));
+
+            if(query.getResultList().isEmpty()){
+                return new Cotizacion();
+            }
+            else{
+                return (Cotizacion)query.getResultList().get(0);
+            }
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

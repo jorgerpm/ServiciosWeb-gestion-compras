@@ -82,6 +82,10 @@ public class SolicitudDAO extends Persistencia {
 
             if (Objects.nonNull(solicitud.getId()) && solicitud.getId() > 0) {
                 em.merge(solicitud); //update
+                
+                //buscar los detalles de la sol pra eliminarlos y volver a ingresar los nuevos
+                Query query = em.createQuery("DELETE FROM SolicitudDetalle d WHERE d.solicitud.id = " + solicitud.getId());
+                int tantos = query.executeUpdate();
             } else {
                 em.persist(solicitud); //insert
             }

@@ -64,4 +64,23 @@ public class CotizacionREST {
             throw new Exception(exc);
         }
     }
+    
+    
+    @GET
+    @Path("/buscarCotizacionRucNumeroRC")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public CotizacionDTO buscarCotizacionRucNumeroRC(
+            @QueryParam(value = "codigoRC") String codigoRC,
+            @QueryParam(value = "ruc") String ruc) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+            LOGGER.log(Level.INFO, "ruc: {0}", ruc);
+            
+            return servicio.buscarCotizacionRucNumeroRC(codigoRC, ruc);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

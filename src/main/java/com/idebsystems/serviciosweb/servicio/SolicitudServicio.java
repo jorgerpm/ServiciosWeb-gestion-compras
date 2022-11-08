@@ -7,9 +7,11 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
+import com.idebsystems.serviciosweb.dao.SolicitudEnvioDAO;
 import com.idebsystems.serviciosweb.dto.SolicitudDTO;
 import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Solicitud;
+import com.idebsystems.serviciosweb.entities.SolicitudEnvio;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,6 +23,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.crypto.BadPaddingException;
@@ -86,10 +89,10 @@ public class SolicitudServicio {
             
             solicitud = dao.guardarSolicitud(solicitud);
             
-            //una vez guardada correctamente se envia por correo
-            //enviarCorreoProveedores(solicitudDto.getCorreos(), solicitudDto.getCodigoRC());
-            
             solicitudDto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
+            
+            //una vez guardada correctamente se envia por correo
+            enviarCorreoProveedores(solicitudDto);
             
             return solicitudDto;
             
@@ -111,10 +114,10 @@ public class SolicitudServicio {
         }
     }
     
-    private void enviarCorreoProveedores(String correos, String codigoRC){
+    private void enviarCorreoProveedores(SolicitudDTO solicitudDto){
         try{
             //generar la url que se envia a los proveedores
-            String encriptado = encriptar(codigoRC, null);
+            String encriptado = encriptar(solicitudDto.getCodigoRC(), null);
             
             //buscar los parametros para el envio
             //consultar los prametros del correo desde la base de datos.
@@ -136,9 +139,21 @@ public class SolicitudServicio {
             String mensaje = paramMsm.getValor();
             mensaje = mensaje.replace("[url]", url);
             
+            LOGGER.log(Level.INFO, "la url: {0}", url);
+            //guardar quien envia la solicitud a los proveedores para tener un registro de que cada vez se envia
+            SolicitudEnvioDAO envioDao = new SolicitudEnvioDAO();
+            SolicitudEnvio solicitudEnvio = new SolicitudEnvio();
+            solicitudEnvio.setCorreosEnvia(solicitudDto.getCorreos());
+            solicitudEnvio.setFechaEnvia(new Date());
+            solicitudEnvio.setNumeroRC(solicitudDto.getCodigoRC());
+            solicitudEnvio.setUsuarioEnvia(solicitudDto.getUsuario());
+            solicitudEnvio.setIdSolicitud(solicitudDto.getId());
+            solicitudEnvio.setUrl(url);
+            envioDao.guardarSolicitudEnvio(solicitudEnvio);
             
-            CorreoServicio srvCorreo = new CorreoServicio();
-            srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            
+//            CorreoServicio srvCorreo = new CorreoServicio();
+//            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
@@ -177,19 +192,19 @@ public class SolicitudServicio {
 //        return datos;
 //    }
 //    
-    public static void main(String arg[]){
-        try{
-            
-        Cipher cipher = Cipher.getInstance("AES");
-                cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("hashidebsystems1".getBytes(), "AES"));
-                byte[] encodedValue = cipher.doFinal("alguno123".getBytes());
-                String encript =  Base64.getEncoder().encodeToString(encodedValue);
-                
-                System.out.println("encript: " + encript);
-                
-        }catch(Exception exc){
-            exc.printStackTrace();
-        }
-    }
+//    public static void main(String arg[]){
+//        try{
+//            
+//        Cipher cipher = Cipher.getInstance("AES");
+//                cipher.init(Cipher.ENCRYPT_MODE, new SecretKeySpec("hashidebsystems1".getBytes(), "AES"));
+//                byte[] encodedValue = cipher.doFinal("alguno123".getBytes());
+//                String encript =  Base64.getEncoder().encodeToString(encodedValue);
+//                
+//                System.out.println("encript: " + encript);
+//                
+//        }catch(Exception exc){
+//            exc.printStackTrace();
+//        }
+//    }
     
 }
