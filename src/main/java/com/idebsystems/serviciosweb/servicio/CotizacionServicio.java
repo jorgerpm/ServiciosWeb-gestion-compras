@@ -6,9 +6,12 @@
 package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
+import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dto.CotizacionDTO;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
+import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.mappers.CotizacionMapper;
+import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,11 +45,19 @@ public class CotizacionServicio {
             //sacar los registros
             List<Cotizacion> listaCotizacion = (List<Cotizacion>) respuesta.get(1);
 
-            listaCotizacion.forEach(sol -> {
-                CotizacionDTO dto = CotizacionMapper.INSTANCE.entityToDto(sol);
+            //se debe buscar el provedor para enviarlo con la cotizacion
+            ProveedorDAO proDao = new ProveedorDAO();
+            
+            for(Cotizacion cotiz : listaCotizacion){
+                //se debe buscar el provedor para enviarlo con la cotizacion
+                Proveedor prov = proDao.buscarProveedorRuc(cotiz.getRucProveedor());
+                
+                CotizacionDTO dto = CotizacionMapper.INSTANCE.entityToDto(cotiz);
                 dto.setTotalRegistros(totalRegistros);
+                dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                
                 listaCotizacionDto.add(dto);
-            });
+            }
 
             return listaCotizacionDto;
             
@@ -88,6 +99,11 @@ public class CotizacionServicio {
             Cotizacion cotizacion = dao.buscarCotizacionRucNumeroRC(numeroRC, ruc);
             
             CotizacionDTO cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
+            
+            //se debe buscar el provedor para enviarlo con la cotizacion
+            ProveedorDAO proDao = new ProveedorDAO();
+            Proveedor prov = proDao.buscarProveedorRuc(cotizacion.getRucProveedor());
+            cotizacionDTO.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
             
             return cotizacionDTO;
             

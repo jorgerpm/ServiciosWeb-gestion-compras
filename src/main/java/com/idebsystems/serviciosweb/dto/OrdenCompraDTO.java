@@ -13,13 +13,12 @@ import java.util.List;
  *
  * @author jorge
  */
-public class CotizacionDTO {
+public class OrdenCompraDTO {
 
     private long id;
-    private Date fechaCotizacion;
-    private String fechaTexto;
+    private Date fechaOrdenCompra;
     private String codigoRC;
-    private String codigoCotizacion;
+    private String codigoOrdenCompra;
     private String estado;
     private String usuario;
     private String rucProveedor;
@@ -29,14 +28,10 @@ public class CotizacionDTO {
     private BigDecimal total;
     private BigDecimal descuento = BigDecimal.ZERO;
     private String observacion;
-    private String tiempoEntrega;
-    private String validezCotizacion;
     private String formaPago;
-    private String adicionales;
-    private List<CotizacionDetalleDTO> listaDetalles;
+    private List<OrdenCompraDetalleDTO> listaDetalles;
     //
-    private Integer totalRegistros;
-    private ProveedorDTO proveedorDto;
+    private String fechaTexto;
 
     public long getId() {
         return id;
@@ -46,12 +41,12 @@ public class CotizacionDTO {
         this.id = id;
     }
 
-    public Date getFechaCotizacion() {
-        return fechaCotizacion;
+    public Date getFechaOrdenCompra() {
+        return fechaOrdenCompra;
     }
 
-    public void setFechaCotizacion(Date fechaCotizacion) {
-        this.fechaCotizacion = fechaCotizacion;
+    public void setFechaOrdenCompra(Date fechaOrdenCompra) {
+        this.fechaOrdenCompra = fechaOrdenCompra;
     }
 
     public String getCodigoRC() {
@@ -62,12 +57,12 @@ public class CotizacionDTO {
         this.codigoRC = codigoRC;
     }
 
-    public String getCodigoCotizacion() {
-        return codigoCotizacion;
+    public String getCodigoOrdenCompra() {
+        return codigoOrdenCompra;
     }
 
-    public void setCodigoCotizacion(String codigoCotizacion) {
-        this.codigoCotizacion = codigoCotizacion;
+    public void setCodigoOrdenCompra(String codigoOrdenCompra) {
+        this.codigoOrdenCompra = codigoOrdenCompra;
     }
 
     public String getEstado() {
@@ -138,40 +133,8 @@ public class CotizacionDTO {
         return observacion;
     }
 
-    public List<CotizacionDetalleDTO> getListaDetalles() {
-        return listaDetalles;
-    }
-
-    public void setListaDetalles(List<CotizacionDetalleDTO> listaDetalles) {
-        this.listaDetalles = listaDetalles;
-    }
-
-    public Integer getTotalRegistros() {
-        return totalRegistros;
-    }
-
-    public void setTotalRegistros(Integer totalRegistros) {
-        this.totalRegistros = totalRegistros;
-    }
-
     public void setObservacion(String observacion) {
         this.observacion = observacion;
-    }
-
-    public String getTiempoEntrega() {
-        return tiempoEntrega;
-    }
-
-    public void setTiempoEntrega(String tiempoEntrega) {
-        this.tiempoEntrega = tiempoEntrega;
-    }
-
-    public String getValidezCotizacion() {
-        return validezCotizacion;
-    }
-
-    public void setValidezCotizacion(String validezCotizacion) {
-        this.validezCotizacion = validezCotizacion;
     }
 
     public String getFormaPago() {
@@ -182,12 +145,12 @@ public class CotizacionDTO {
         this.formaPago = formaPago;
     }
 
-    public String getAdicionales() {
-        return adicionales;
+    public List<OrdenCompraDetalleDTO> getListaDetalles() {
+        return listaDetalles;
     }
 
-    public void setAdicionales(String adicionales) {
-        this.adicionales = adicionales;
+    public void setListaDetalles(List<OrdenCompraDetalleDTO> listaDetalles) {
+        this.listaDetalles = listaDetalles;
     }
 
     public String getFechaTexto() {
@@ -198,17 +161,11 @@ public class CotizacionDTO {
         this.fechaTexto = fechaTexto;
     }
 
-    public ProveedorDTO getProveedorDto() {
-        return proveedorDto;
-    }
-
-    public void setProveedorDto(ProveedorDTO proveedorDto) {
-        this.proveedorDto = proveedorDto;
-    }
-
     @Override
     public String toString() {
-        return "CotizacionDTO{" + "id=" + id + ", fechaCotizacion=" + fechaCotizacion + ", codigoRC=" + codigoRC + ", codigoCotizacion=" + codigoCotizacion + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + '}';
+        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + '}';
     }
 
+    
+    
 }
