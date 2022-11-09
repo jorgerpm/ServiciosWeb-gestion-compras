@@ -8,9 +8,13 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 /**
@@ -74,4 +78,54 @@ public class OrdenCompraDAO extends Persistencia {
         }
     }
     
+    public List<Object> listarOrdenesCompras(Date fechaInicial, Date fechaFinal, String codigoRC,
+            Integer desde, Integer hasta) throws Exception {
+        try {
+            List<Object> respuesta = new ArrayList<>();
+            getEntityManager();
+
+            String sql = "FROM OrdenCompra oc ";
+
+            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+                sql = sql.concat(" WHERE UPPER(oc.codigoRC) = :codigoRC ");
+            }
+            else{
+                sql = sql.concat(" WHERE oc.fechaOrdenCompra BETWEEN :fechaInicial AND :fechaFinal ");
+            }
+
+            sql = sql.concat(" order by oc.fechaOrdenCompra");
+
+            Query query = em.createQuery(sql);
+
+            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+                query.setParameter("codigoRC", codigoRC.toUpperCase());
+            }
+            else{
+                query.setParameter("fechaInicial", fechaInicial);
+                query.setParameter("fechaFinal", fechaFinal);
+            }
+
+            //para obtener el total de los registros a buscar
+            Integer totalRegistros = query.getResultList().size();
+            respuesta.add(totalRegistros);
+
+            //para la paginacion
+            query.setFirstResult(desde).setMaxResults(hasta);
+
+            List<OrdenCompra> listaOrdenCompra = query.getResultList();
+            respuesta.add(listaOrdenCompra);
+
+            //new BufferedReader(new InputStreamReader(inputstream));
+            
+            return respuesta;
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

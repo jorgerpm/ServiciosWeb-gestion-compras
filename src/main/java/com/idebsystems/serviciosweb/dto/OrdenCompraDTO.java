@@ -31,7 +31,9 @@ public class OrdenCompraDTO {
     private String formaPago;
     private List<OrdenCompraDetalleDTO> listaDetalles;
     //
+    private Integer totalRegistros;
     private String fechaTexto;
+    private ProveedorDTO proveedorDto;
 
     public long getId() {
         return id;
@@ -153,6 +155,14 @@ public class OrdenCompraDTO {
         this.listaDetalles = listaDetalles;
     }
 
+    public Integer getTotalRegistros() {
+        return totalRegistros;
+    }
+
+    public void setTotalRegistros(Integer totalRegistros) {
+        this.totalRegistros = totalRegistros;
+    }
+
     public String getFechaTexto() {
         return fechaTexto;
     }
@@ -161,11 +171,16 @@ public class OrdenCompraDTO {
         this.fechaTexto = fechaTexto;
     }
 
-    @Override
-    public String toString() {
-        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + '}';
+    public ProveedorDTO getProveedorDto() {
+        return proveedorDto;
     }
 
-    
-    
+    public void setProveedorDto(ProveedorDTO proveedorDto) {
+        this.proveedorDto = proveedorDto;
+    }
+
+    @Override
+    public String toString() {
+        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", listaDetalles=" + listaDetalles + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", proveedorDto=" + proveedorDto + '}';
+    }
 }

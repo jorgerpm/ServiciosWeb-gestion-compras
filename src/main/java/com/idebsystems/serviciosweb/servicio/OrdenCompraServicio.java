@@ -7,12 +7,17 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
+import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDTO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDetalleDTO;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.CotizacionDetalle;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
+import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.mappers.OrdenCompraMapper;
+import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
+import com.idebsystems.serviciosweb.util.FechaUtil;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -73,6 +78,43 @@ public class OrdenCompraServicio {
             return ordenCompraDTO;
             
         }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public List<OrdenCompraDTO> listarOrdenesCompras(String fechaInicial, String fechaFinal, String codigoRC,
+            Integer desde, Integer hasta) throws Exception {
+        try {
+            List<OrdenCompraDTO> listaOrdenCompraDto = new ArrayList<>();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            List<Object> respuesta = dao.listarOrdenesCompras(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), FechaUtil.fechaFinal(sdf.parse(fechaFinal)),
+                    codigoRC, desde, hasta);
+
+            //sacar los resultados retornados
+            Integer totalRegistros = (Integer) respuesta.get(0);
+            //sacar los registros
+            List<OrdenCompra> listaOrdenCompra = (List<OrdenCompra>) respuesta.get(1);
+
+            //se debe buscar el provedor para enviarlo con la cotizacion
+            ProveedorDAO proDao = new ProveedorDAO();
+            
+            for(OrdenCompra ordCompra : listaOrdenCompra){
+                //se debe buscar el provedor para enviarlo con la cotizacion
+                Proveedor prov = proDao.buscarProveedorRuc(ordCompra.getRucProveedor());
+                
+                OrdenCompraDTO dto = OrdenCompraMapper.INSTANCE.entityToDto(ordCompra);
+                dto.setTotalRegistros(totalRegistros);
+                dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                
+                listaOrdenCompraDto.add(dto);
+            }
+
+            return listaOrdenCompraDto;
+            
+        } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

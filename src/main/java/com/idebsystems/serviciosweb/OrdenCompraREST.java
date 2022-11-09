@@ -7,12 +7,15 @@ package com.idebsystems.serviciosweb;
 
 import com.idebsystems.serviciosweb.dto.OrdenCompraDTO;
 import com.idebsystems.serviciosweb.servicio.OrdenCompraServicio;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -35,6 +38,27 @@ public class OrdenCompraREST {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
             //guardar en la bdd el rol
             return servicio.generarOrdenCompra(ordenCompraDTO);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @GET
+    @Path("/listarOrdenesCompras")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<OrdenCompraDTO> listarOrdenesCompras(
+            @QueryParam(value = "fechaInicial") String fechaInicial,
+            @QueryParam(value = "fechaFinal") String fechaFinal,
+            @QueryParam(value = "codigoRC") String codigoRC,
+            @QueryParam(value = "desde") Integer desde,
+            @QueryParam(value = "hasta") Integer hasta) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
+            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
+            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+            return servicio.listarOrdenesCompras(fechaInicial, fechaFinal, codigoRC, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
