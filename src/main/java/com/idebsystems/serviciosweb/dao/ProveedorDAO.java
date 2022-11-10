@@ -9,6 +9,7 @@ import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -44,15 +45,37 @@ public class ProveedorDAO  extends Persistencia {
         }
     }
     
-    public List<Proveedor> listarProveedores() throws Exception {
+    public List<Object> listarProveedores(Integer desde, Integer hasta, String valorBusqueda) throws Exception {
         try {
+            List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            Query query = em.createQuery("FROM Proveedor r order by r.nombreComercial");
+            String sql = "FROM Proveedor r ";
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                sql = sql.concat(" WHERE UPPER(r.razonSocial) like :valorBusqueda OR r.ruc = :ruc ");
+            }
+            
+            sql = sql.concat(" order by r.razonSocial");
+            
+            Query query = em.createQuery(sql);
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                query.setParameter("valorBusqueda", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
+                query.setParameter("ruc", valorBusqueda);
+            }
+            
+            //para obtener el total de los registros a buscar
+            Integer totalRegistros = query.getResultList().size();
+            respuesta.add(totalRegistros);
+            
+            //para la paginacion
+            query.setFirstResult(desde).setMaxResults(hasta);
 
             List<Proveedor> listaProveedor = query.getResultList();
+            respuesta.add(listaProveedor);
 
-            return listaProveedor;
+            return respuesta;
 
        } catch (NoResultException exc) {
             return null;
