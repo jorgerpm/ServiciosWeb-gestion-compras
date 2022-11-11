@@ -145,4 +145,23 @@ public class ProveedorServicio {
             throw new Exception(exc);
         }
     }
+    
+    
+    public List<ProveedorDTO> listarProveedoresActivosNombre(String valorBusqueda) throws Exception {
+        try {
+            List<ProveedorDTO> listaProveedorDto = new ArrayList();
+            
+            List<Proveedor> listaProveedor = dao.listarProveedoresActivosNombre(valorBusqueda);
+            
+            listaProveedor.forEach(proveedor->{
+                ProveedorDTO proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedor);
+                listaProveedorDto.add(proveedorDto);
+            });
+
+            return listaProveedorDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

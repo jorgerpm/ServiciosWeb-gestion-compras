@@ -174,4 +174,40 @@ public class ProveedorDAO  extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public List<Proveedor> listarProveedoresActivosNombre(String valorBusqueda) throws Exception {
+        try {
+            
+            getEntityManager();
+
+            String sql = "FROM Proveedor r WHERE r.idEstado = 1 ";
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                sql = sql.concat(" AND UPPER(r.razonSocial) like :valorBusqueda OR r.ruc = :ruc OR r.codigoJD = :codigoJD ");
+            }
+            
+            sql = sql.concat(" order by r.razonSocial");
+            
+            Query query = em.createQuery(sql);
+            
+            if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
+                query.setParameter("valorBusqueda", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
+                query.setParameter("ruc", valorBusqueda);
+                query.setParameter("codigoJD", valorBusqueda);
+            }
+
+            List<Proveedor> listaProveedor = query.getResultList();
+
+            return listaProveedor;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

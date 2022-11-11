@@ -109,4 +109,20 @@ public class ProveedorREST {
             throw new Exception(exc);
         }
     }
+    
+    @GET
+    @Path("/listarProveedoresActivosNombre")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<ProveedorDTO> listarProveedoresActivosNombre(
+            @QueryParam(value = "valBusq") String valorBusqueda) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "valorBusqueda: {0}", valorBusqueda);
+            //buscar en la bdd los proveedores
+            return service.listarProveedoresActivosNombre(valorBusqueda);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }
