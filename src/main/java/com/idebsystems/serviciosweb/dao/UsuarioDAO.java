@@ -138,4 +138,24 @@ public class UsuarioDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    public List<Usuario> listarUsuariosActivos() throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM Usuario u WHERE u.idEstado = 1");
+
+            List<Usuario> listaUsuariosActivos = query.getResultList();
+
+            return listaUsuariosActivos;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

@@ -88,4 +88,19 @@ public class UsuarioREST {
             return new RespuestaDTO("ERROR".concat(exc.getMessage()));
         }
     }
+    
+    @GET
+    @Path("/listarUsuariosActivos")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<UsuarioDTO> listarUsuariosActivos() throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los roles
+            return service.listarUsuariosActivos();
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }
