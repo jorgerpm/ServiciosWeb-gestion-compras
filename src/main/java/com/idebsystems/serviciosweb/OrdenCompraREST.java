@@ -64,4 +64,25 @@ public class OrdenCompraREST {
             throw new Exception(exc);
         }
     }
+    
+    @POST
+    @Path("/autorizarOrdenCompra")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    /*en el ordenCompraDto se debe enviar:
+    //idUsuario
+    //observacion
+    //usuario
+    //estado
+    // y el id
+    */
+    public OrdenCompraDTO autorizarOrdenCompra(OrdenCompraDTO ordenCompraDto) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "ordenCompraDto: {0}", ordenCompraDto);
+            return servicio.autorizarOrdenCompra(ordenCompraDto);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

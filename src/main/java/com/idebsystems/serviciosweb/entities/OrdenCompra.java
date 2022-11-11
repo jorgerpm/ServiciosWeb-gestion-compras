@@ -16,6 +16,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,13 +27,15 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "orden_compra")
+@SequenceGenerator(name = "orden_compra_id_seq", initialValue = 1, sequenceName = "orden_compra_id_seq", allocationSize = 1)
 public class OrdenCompra implements Serializable {
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "orden_compra_id_seq")
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private long id;
-    
+
     @Column(name = "fecha_orden_compra")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaOrdenCompra;
@@ -58,6 +61,12 @@ public class OrdenCompra implements Serializable {
 
     @OneToMany(mappedBy = "ordenCompra", fetch = FetchType.LAZY)
     private List<OrdenCompraDetalle> listaDetalles;
+
+    @Column(name = "usuario_modifica")
+    private String usuarioModifica;
+    @Column(name = "fecha_modifica")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaModifica;
 
     public long getId() {
         return id;
@@ -178,6 +187,21 @@ public class OrdenCompra implements Serializable {
     public void setListaDetalles(List<OrdenCompraDetalle> listaDetalles) {
         this.listaDetalles = listaDetalles;
     }
-    
-    
+
+    public String getUsuarioModifica() {
+        return usuarioModifica;
+    }
+
+    public void setUsuarioModifica(String usuarioModifica) {
+        this.usuarioModifica = usuarioModifica;
+    }
+
+    public Date getFechaModifica() {
+        return fechaModifica;
+    }
+
+    public void setFechaModifica(Date fechaModifica) {
+        this.fechaModifica = fechaModifica;
+    }
+
 }

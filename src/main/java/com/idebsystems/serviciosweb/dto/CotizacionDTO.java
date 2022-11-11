@@ -37,6 +37,8 @@ public class CotizacionDTO {
     //
     private Integer totalRegistros;
     private ProveedorDTO proveedorDto;
+    private String usuarioModifica;
+    private Date fechaModifica;
 
     public long getId() {
         return id;
@@ -204,6 +206,22 @@ public class CotizacionDTO {
 
     public void setProveedorDto(ProveedorDTO proveedorDto) {
         this.proveedorDto = proveedorDto;
+    }
+
+    public String getUsuarioModifica() {
+        return usuarioModifica;
+    }
+
+    public void setUsuarioModifica(String usuarioModifica) {
+        this.usuarioModifica = usuarioModifica;
+    }
+
+    public Date getFechaModifica() {
+        return fechaModifica;
+    }
+
+    public void setFechaModifica(Date fechaModifica) {
+        this.fechaModifica = fechaModifica;
     }
 
     @Override

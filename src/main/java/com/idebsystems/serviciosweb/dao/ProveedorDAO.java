@@ -53,7 +53,7 @@ public class ProveedorDAO  extends Persistencia {
             String sql = "FROM Proveedor r ";
             
             if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
-                sql = sql.concat(" WHERE UPPER(r.razonSocial) like :valorBusqueda OR r.ruc = :ruc ");
+                sql = sql.concat(" WHERE UPPER(r.razonSocial) like :valorBusqueda OR r.ruc = :ruc OR r.codigoJD = :codigoJD ");
             }
             
             sql = sql.concat(" order by r.razonSocial");
@@ -63,6 +63,7 @@ public class ProveedorDAO  extends Persistencia {
             if(Objects.nonNull(valorBusqueda) && !valorBusqueda.isBlank()){
                 query.setParameter("valorBusqueda", "%".concat(valorBusqueda.toUpperCase()).concat("%"));
                 query.setParameter("ruc", valorBusqueda);
+                query.setParameter("codigoJD", valorBusqueda);
             }
             
             //para obtener el total de los registros a buscar

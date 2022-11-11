@@ -98,6 +98,8 @@ public class SolicitudDAO extends Persistencia {
             em.flush(); //Confirmar el insert o update
 
             em.getTransaction().commit();
+            
+            LOGGER.log(Level.INFO, "id solic generado: {0}", solicitud.getId());
 
             return solicitud;
             

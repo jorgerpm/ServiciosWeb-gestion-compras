@@ -5,6 +5,7 @@
  */
 package com.idebsystems.serviciosweb.dao;
 
+import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
@@ -49,8 +50,9 @@ public class OrdenCompraDAO extends Persistencia {
             
             //colocar a todas las cotizaciones como rechazadas
             //y que la solicitud seleccionada quede como GENERADO_OC
-            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO' WHERE c.codigoRC = :codigoRc");
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO' WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
             query.executeUpdate();
             
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'GENERADO_OC' WHERE c.codigoCotizacion = :codigoCotizacion");
@@ -122,6 +124,73 @@ public class OrdenCompraDAO extends Persistencia {
         } catch (NoResultException exc) {
             return null;
         } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    public OrdenCompra buscarOrdenCompraID(Long idOrdenCompra) throws Exception {
+        try {
+            
+            getEntityManager();
+
+            OrdenCompra orden = em.find(OrdenCompra.class, idOrdenCompra);
+            
+            return orden;
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    public OrdenCompra autorizarOrdenCompra(OrdenCompra ordenCompra, AutorizacionOrdenCompra autorizacion) throws Exception {
+        try{
+            getEntityManager();
+
+            em.getTransaction().begin();
+            
+            em.merge(ordenCompra); //update
+            
+            if(Objects.nonNull(autorizacion.getId()) && autorizacion.getId() > 0){
+                em.merge(autorizacion);
+            }
+            else{
+                em.persist(autorizacion);
+            }
+            
+            //cambiar el estado de la solicitud a GENERADO_OC
+            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado WHERE s.codigoRC = :codigoRc");
+            query.setParameter("estado", ordenCompra.getEstado());
+            query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.executeUpdate();
+            
+            //cambiar el estado de la cotizacion
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado WHERE c.codigoCotizacion = :codigoCotizacion");
+            query.setParameter("estado", ordenCompra.getEstado());
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.executeUpdate();
+            
+            em.flush(); //Confirmar el insert o update
+
+            em.getTransaction().commit();
+
+            return ordenCompra;
+            
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            if(exc.getMessage() != null && exc.getMessage().contains("orden_compra_codigo_orden_compra_uk"))
+                throw new Exception("YA EXISTE EL CODIGO DE ORDEN DE COMPRA");
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {

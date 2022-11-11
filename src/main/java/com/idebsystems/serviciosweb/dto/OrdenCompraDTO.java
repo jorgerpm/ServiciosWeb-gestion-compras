@@ -34,6 +34,11 @@ public class OrdenCompraDTO {
     private Integer totalRegistros;
     private String fechaTexto;
     private ProveedorDTO proveedorDto;
+    private Long idUsuario;
+    private String usuarioModifica;
+    private Date fechaModifica;
+    private String respuesta;
+    
 
     public long getId() {
         return id;
@@ -179,8 +184,42 @@ public class OrdenCompraDTO {
         this.proveedorDto = proveedorDto;
     }
 
+    public Long getIdUsuario() {
+        return idUsuario;
+    }
+
+    public void setIdUsuario(Long idUsuario) {
+        this.idUsuario = idUsuario;
+    }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
+    }
+
+    public String getUsuarioModifica() {
+        return usuarioModifica;
+    }
+
+    public void setUsuarioModifica(String usuarioModifica) {
+        this.usuarioModifica = usuarioModifica;
+    }
+
+    public Date getFechaModifica() {
+        return fechaModifica;
+    }
+
+    public void setFechaModifica(Date fechaModifica) {
+        this.fechaModifica = fechaModifica;
+    }
+
     @Override
     public String toString() {
-        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", listaDetalles=" + listaDetalles + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", proveedorDto=" + proveedorDto + '}';
+        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", idUsuario=" + idUsuario + '}';
     }
+
+    
 }

@@ -13,7 +13,7 @@ import java.util.List;
  * @author jorge
  */
 public class SolicitudDTO {
-    
+
     private long id;
     private Date fechaSolicitud;
     private String fechaTexto;
@@ -25,6 +25,8 @@ public class SolicitudDTO {
     private List<SolicitudDetalleDTO> listaDetalles;
     //
     private Integer totalRegistros;
+    private String usuarioModifica;
+    private Date fechaModifica;
 
     public long getId() {
         return id;
@@ -106,11 +108,25 @@ public class SolicitudDTO {
         this.fechaTexto = fechaTexto;
     }
 
+    public String getUsuarioModifica() {
+        return usuarioModifica;
+    }
+
+    public void setUsuarioModifica(String usuarioModifica) {
+        this.usuarioModifica = usuarioModifica;
+    }
+
+    public Date getFechaModifica() {
+        return fechaModifica;
+    }
+
+    public void setFechaModifica(Date fechaModifica) {
+        this.fechaModifica = fechaModifica;
+    }
+
     @Override
     public String toString() {
         return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + '}';
     }
-    
-    
-    
+
 }
