@@ -44,19 +44,28 @@ public class OrdenCompraDAO extends Persistencia {
             });
             
             //cambiar el estado de la solicitud a GENERADO_OC
-            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'GENERADO_OC' WHERE s.codigoRC = :codigoRc");
+            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'GENERADO_OC', s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
+                    + " WHERE s.codigoRC = :codigoRc");
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
             //colocar a todas las cotizaciones como rechazadas
             //y que la solicitud seleccionada quede como GENERADO_OC
-            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO' WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
+                    + " WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
-            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'GENERADO_OC' WHERE c.codigoCotizacion = :codigoCotizacion");
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'GENERADO_OC', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
+                    + " WHERE c.codigoCotizacion = :codigoCotizacion");
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
             em.flush(); //Confirmar el insert o update

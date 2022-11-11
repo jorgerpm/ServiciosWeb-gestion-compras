@@ -16,6 +16,7 @@ import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,6 +78,7 @@ public class CotizacionServicio {
             c.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             
             cotizacionDTO.setFechaCotizacion(c.getTime());
+            cotizacionDTO.setFechaModifica(new Date());
             
             Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
             

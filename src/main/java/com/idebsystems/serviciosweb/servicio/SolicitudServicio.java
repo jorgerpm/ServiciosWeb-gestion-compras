@@ -81,7 +81,7 @@ public class SolicitudServicio {
             c.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             
             solicitudDto.setFechaSolicitud(c.getTime());
-            
+            solicitudDto.setFechaModifica(new Date());
             
             LOGGER.log(Level.INFO, "fecha soli: {0}", solicitudDto.getFechaSolicitud());
             
@@ -146,7 +146,7 @@ public class SolicitudServicio {
             solicitudEnvio.setCorreosEnvia(solicitudDto.getCorreos());
             solicitudEnvio.setFechaEnvia(new Date());
             solicitudEnvio.setNumeroRC(solicitudDto.getCodigoRC());
-            solicitudEnvio.setUsuarioEnvia(solicitudDto.getUsuario());
+            solicitudEnvio.setUsuarioEnvia(solicitudDto.getUsuarioModifica());
             solicitudEnvio.setIdSolicitud(solicitudDto.getId());
             solicitudEnvio.setUrl(url);
             envioDao.guardarSolicitudEnvio(solicitudEnvio);

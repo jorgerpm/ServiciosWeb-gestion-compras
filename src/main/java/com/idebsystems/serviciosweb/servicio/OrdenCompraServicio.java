@@ -71,6 +71,8 @@ public class OrdenCompraServicio {
             ordenCompraDTO.setUsuario(ordenCompraDTO.getUsuario());
             ordenCompraDTO.setEstado(ordenCompraDTO.getEstado());
             ordenCompraDTO.setFechaOrdenCompra(new Date());
+            ordenCompraDTO.setUsuarioModifica(ordenCompraDTO.getIdUsuario()+"");
+            ordenCompraDTO.setFechaModifica(new Date());
             
             OrdenCompra ordenCompra = OrdenCompraMapper.INSTANCE.dtoToEntity(ordenCompraDTO);
             
