@@ -3,45 +3,24 @@
  * IdebSystems Cia. Ltda. Derechos reservados. 2022
  * Prohibida la reproducción total o parcial de este producto
  */
-package com.idebsystems.serviciosweb.entities;
+package com.idebsystems.serviciosweb.dto;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
  * @author jorge
  */
-@Entity
-@Table(name = "historial_documentos")
-public class HistorialDocumento implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+public class HistorialDocumentoDTO {
+ 
     private long id;
-
-    @Column(name = "id_documento")
     private Long idDocumento;
     private String documento;
-    @Column(name = "codigo_rc")
     private String codigoRC;
     private String estado;
-    @Column(name = "fecha_cambio")
-    @Temporal(TemporalType.TIMESTAMP)
     private Date fechaCambio;
-    @Column(name = "usuario_cambio")
     private String usuarioCambio;
-    @Column(name = "valor_total")
     private BigDecimal valorTotal;
     private String observacion;
 
@@ -51,6 +30,14 @@ public class HistorialDocumento implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Long getIdDocumento() {
+        return idDocumento;
+    }
+
+    public void setIdDocumento(Long idDocumento) {
+        this.idDocumento = idDocumento;
     }
 
     public String getDocumento() {
@@ -109,13 +96,9 @@ public class HistorialDocumento implements Serializable {
         this.observacion = observacion;
     }
 
-    public Long getIdDocumento() {
-        return idDocumento;
+    @Override
+    public String toString() {
+        return "HistorialDocumentoDTO{" + "id=" + id + ", idDocumento=" + idDocumento + ", documento=" + documento + ", codigoRC=" + codigoRC + ", estado=" + estado + ", fechaCambio=" + fechaCambio + ", usuarioCambio=" + usuarioCambio + ", valorTotal=" + valorTotal + ", observacion=" + observacion + '}';
     }
-
-    public void setIdDocumento(Long idDocumento) {
-        this.idDocumento = idDocumento;
-    }
-    
     
 }
