@@ -38,6 +38,8 @@ public class OrdenCompraDTO {
     private String usuarioModifica;
     private Date fechaModifica;
     private String respuesta;
+    private String autorizador;
+    private List<AutorizacionOrdenCompraDTO> listaAutorizaciones;
     
 
     public long getId() {
@@ -214,6 +216,22 @@ public class OrdenCompraDTO {
 
     public void setFechaModifica(Date fechaModifica) {
         this.fechaModifica = fechaModifica;
+    }
+
+    public String getAutorizador() {
+        return autorizador;
+    }
+
+    public void setAutorizador(String autorizador) {
+        this.autorizador = autorizador;
+    }
+
+    public List<AutorizacionOrdenCompraDTO> getListaAutorizaciones() {
+        return listaAutorizaciones;
+    }
+
+    public void setListaAutorizaciones(List<AutorizacionOrdenCompraDTO> listaAutorizaciones) {
+        this.listaAutorizaciones = listaAutorizaciones;
     }
 
     @Override

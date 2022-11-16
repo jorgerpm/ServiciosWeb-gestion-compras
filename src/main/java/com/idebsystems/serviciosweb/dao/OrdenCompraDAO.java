@@ -175,15 +175,21 @@ public class OrdenCompraDAO extends Persistencia {
             }
             
             //cambiar el estado de la solicitud a GENERADO_OC
-            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado WHERE s.codigoRC = :codigoRc");
+            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
+                    + " WHERE s.codigoRC = :codigoRc");
             query.setParameter("estado", ordenCompra.getEstado());
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
             //cambiar el estado de la cotizacion
-            query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado WHERE c.codigoCotizacion = :codigoCotizacion");
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado, c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
+                    + " WHERE c.codigoCotizacion = :codigoCotizacion");
             query.setParameter("estado", ordenCompra.getEstado());
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
             em.flush(); //Confirmar el insert o update
@@ -206,4 +212,48 @@ public class OrdenCompraDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public List<Object[]> listarOrdenesPorAutorizar(String codigoRC, Long idUsuario, boolean rolPrincipal) throws Exception {
+        try {
+            getEntityManager();
+
+            String sql = "select oc.*, u.nombre from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
+                        " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') " ;
+                        
+
+//            String sql = "select oc from OrdenCompra oc, AutorizacionOrdenCompra aoc where oc.id = aoc.idOrdenCompra AND oc.estado = :estado ";
+
+            if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
+                sql = sql.concat(" AND oc.codigo_rc = ?codigoRC ");
+            }
+            if(!rolPrincipal){
+                sql = sql.concat(" and aoc.id_usuario = ?idUsuario ");
+            }
+            sql = sql.concat(" order by oc.fecha_orden_compra");
+
+            Query query = em.createNativeQuery(sql);
+//            query.setParameter("estado", "POR_AUTORIZAR");
+            
+            if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
+                query.setParameter("codigoRC", codigoRC);
+            }
+            if(!rolPrincipal){
+                query.setParameter("idUsuario", idUsuario);
+            }
+            
+            List<Object[]> listaOrdenCompra = query.getResultList();
+            
+            return listaOrdenCompra;
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
 }

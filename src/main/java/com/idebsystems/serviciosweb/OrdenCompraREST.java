@@ -85,4 +85,24 @@ public class OrdenCompraREST {
             throw new Exception(exc);
         }
     }
+    
+    
+    
+    @GET
+    @Path("/listarOrdenesPorAutorizar")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<OrdenCompraDTO> listarOrdenesPorAutorizar(
+            @QueryParam(value = "codigoRC") String codigoRC,
+            @QueryParam(value = "idUsuario") Long idUsuario,
+            @QueryParam(value = "rolPrincipal") boolean rolPrincipal) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
+            LOGGER.log(Level.INFO, "rolPrincipal: {0}", rolPrincipal);
+            return servicio.listarOrdenesPorAutorizar(codigoRC, idUsuario, rolPrincipal);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

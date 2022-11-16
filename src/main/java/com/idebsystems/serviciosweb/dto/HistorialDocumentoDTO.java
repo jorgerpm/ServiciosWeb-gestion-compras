@@ -23,6 +23,8 @@ public class HistorialDocumentoDTO {
     private String usuarioCambio;
     private BigDecimal valorTotal;
     private String observacion;
+    //
+    private Integer totalRegistros;
 
     public long getId() {
         return id;
@@ -94,6 +96,14 @@ public class HistorialDocumentoDTO {
 
     public void setObservacion(String observacion) {
         this.observacion = observacion;
+    }
+
+    public Integer getTotalRegistros() {
+        return totalRegistros;
+    }
+
+    public void setTotalRegistros(Integer totalRegistros) {
+        this.totalRegistros = totalRegistros;
     }
 
     @Override

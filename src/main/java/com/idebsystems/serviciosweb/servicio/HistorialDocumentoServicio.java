@@ -38,7 +38,7 @@ public class HistorialDocumentoServicio {
                 HistorialDocumentoDTO hisDto = HistorialDocumentoMapper.INSTANCE.entityToDto(hist);
                 
                 hisDto.setUsuarioCambio(listusers.stream().filter(u -> hist.getUsuarioCambio().equals(u.getId()+"")).findAny().orElse(new Usuario()).getNombre());
-                
+                hisDto.setTotalRegistros(listaHist.size());
                 listaDto.add(hisDto);
             });
 

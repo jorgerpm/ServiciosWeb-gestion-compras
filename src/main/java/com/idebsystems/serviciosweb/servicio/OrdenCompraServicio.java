@@ -8,17 +8,25 @@ package com.idebsystems.serviciosweb.servicio;
 import com.idebsystems.serviciosweb.dao.AutorizacionOrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
+import com.idebsystems.serviciosweb.dao.OrdenCompraDetalleDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
+import com.idebsystems.serviciosweb.dao.UsuarioDAO;
+import com.idebsystems.serviciosweb.dto.AutorizacionOrdenCompraDTO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDTO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDetalleDTO;
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.CotizacionDetalle;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
+import com.idebsystems.serviciosweb.entities.OrdenCompraDetalle;
 import com.idebsystems.serviciosweb.entities.Proveedor;
+import com.idebsystems.serviciosweb.entities.Usuario;
+import com.idebsystems.serviciosweb.mappers.AutorizacionOrdenCompraMapper;
+import com.idebsystems.serviciosweb.mappers.OrdenCompraDetalleMapper;
 import com.idebsystems.serviciosweb.mappers.OrdenCompraMapper;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,7 +60,7 @@ public class OrdenCompraServicio {
             ordenCompraDTO.setRucProveedor(cotizacion.getRucProveedor());
             ordenCompraDTO.setSubtotal(cotizacion.getSubtotal());
             ordenCompraDTO.setSubtotalSinIva(cotizacion.getSubtotalSinIva());
-            ordenCompraDTO.setTotal(cotizacion.getIva());
+            ordenCompraDTO.setTotal(cotizacion.getTotal());
             final List<OrdenCompraDetalleDTO> listaDetalles = new ArrayList<>();
             for(CotizacionDetalle det : cotizacion.getListaDetalles()) {
                 OrdenCompraDetalleDTO ordenCompraDet = new OrdenCompraDetalleDTO();
@@ -103,8 +111,15 @@ public class OrdenCompraServicio {
             //sacar los registros
             List<OrdenCompra> listaOrdenCompra = (List<OrdenCompra>) respuesta.get(1);
 
+            //buscar los usuarios
+            UsuarioDAO usdao = new UsuarioDAO();
+            List<Usuario> listUsers = usdao.listarUsuarios();
+            
             //se debe buscar el provedor para enviarlo con la cotizacion
             ProveedorDAO proDao = new ProveedorDAO();
+            
+            //para los usuarios autorizadores
+            AutorizacionOrdenCompraDAO autDao = new AutorizacionOrdenCompraDAO();
             
             for(OrdenCompra ordCompra : listaOrdenCompra){
                 //se debe buscar el provedor para enviarlo con la cotizacion
@@ -113,6 +128,17 @@ public class OrdenCompraServicio {
                 OrdenCompraDTO dto = OrdenCompraMapper.INSTANCE.entityToDto(ordCompra);
                 dto.setTotalRegistros(totalRegistros);
                 dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                
+                dto.setListaAutorizaciones(new ArrayList<>());
+                List<AutorizacionOrdenCompra> listAuts = autDao.getAutorizacionesIDOrdenCompra(ordCompra.getId());
+                listAuts.forEach(aut -> {
+                    AutorizacionOrdenCompraDTO autdto = AutorizacionOrdenCompraMapper.INSTANCE.entityToDto(aut);
+                    String nombreUsuario = listUsers.stream().filter(u -> aut.getIdUsuario() == u.getId()).findAny().orElse(new Usuario()).getNombre();
+                    autdto.setNombreUsuario(nombreUsuario);
+                    
+                    dto.getListaAutorizaciones().add(autdto);
+                });
+                
                 
                 listaOrdenCompraDto.add(dto);
             }
@@ -139,7 +165,7 @@ public class OrdenCompraServicio {
             AutorizacionOrdenCompraDAO ordenDao = new AutorizacionOrdenCompraDAO();
             List<AutorizacionOrdenCompra> autorizaciones = ordenDao.getAutorizacionesIDOrdenCompra(ordenDto.getId());
             for(AutorizacionOrdenCompra aut : autorizaciones){
-                if(aut.getEstado().equalsIgnoreCase("RECHAZADO") || aut.getEstado().equalsIgnoreCase("ANULADO")){
+                if(Objects.nonNull(aut.getEstado()) && (aut.getEstado().equalsIgnoreCase("RECHAZADO") || aut.getEstado().equalsIgnoreCase("ANULADO"))){
                     ordenDto.setRespuesta("ESTA ORDEN DE COMPRA YA FUE RECHAZADA");
                     return ordenDto;
                 }
@@ -194,6 +220,68 @@ public class OrdenCompraServicio {
             ordenDto.setRespuesta("OK");
             
             return ordenDto;
+            
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    public List<OrdenCompraDTO> listarOrdenesPorAutorizar(String codigoRC, Long idUsuario, boolean rolPrincipal) throws Exception {
+        try {
+            List<OrdenCompraDTO> listaOrdenCompraDto = new ArrayList<>();
+
+            List<Object[]> listaOrdenCompra = dao.listarOrdenesPorAutorizar(codigoRC, idUsuario, rolPrincipal);
+            
+            //se debe buscar el provedor para enviarlo con la cotizacion
+            ProveedorDAO proDao = new ProveedorDAO();
+            
+            //para los detalles
+            OrdenCompraDetalleDAO detDao = new OrdenCompraDetalleDAO();
+            
+            for(Object[] ordCompra : listaOrdenCompra){
+                //se debe buscar el provedor para enviarlo con la cotizacion
+                Proveedor prov = proDao.buscarProveedorRuc(ordCompra[6].toString());
+                
+                OrdenCompraDTO dto = new OrdenCompraDTO();
+                dto.setAutorizador(ordCompra[16].toString());
+                dto.setCodigoOrdenCompra(ordCompra[3].toString());
+                dto.setCodigoRC(ordCompra[2].toString());
+                dto.setDescuento(ordCompra[12]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[12].toString())) : BigDecimal.ZERO);
+                dto.setEstado(ordCompra[4].toString());
+                dto.setFechaModifica(ordCompra[15]!=null?(Date)ordCompra[15]:null);
+                dto.setFechaOrdenCompra(ordCompra[1]!=null?(Date)ordCompra[1]:null);
+//                dto.setFechaTexto(ordCompra);
+                dto.setFormaPago(ordCompra[13].toString());
+                dto.setId((Long)ordCompra[0]);
+//                dto.setIdUsuario(ordCompra[]);
+                dto.setIva(ordCompra[10]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[10].toString())) : BigDecimal.ZERO);
+                dto.setObservacion(ordCompra[7]!=null?ordCompra[7].toString():null);
+//                dto.setRespuesta(ordCompra);
+                dto.setRucProveedor(ordCompra[6].toString());
+                dto.setSubtotal(ordCompra[8]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[8].toString())) : BigDecimal.ZERO);
+                dto.setSubtotalSinIva(ordCompra[9]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[9].toString())) : BigDecimal.ZERO);
+                dto.setTotal(ordCompra[11]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[11].toString())) : BigDecimal.ZERO);
+                dto.setUsuario(ordCompra[5].toString());
+                dto.setUsuarioModifica(ordCompra[14].toString());
+                
+                
+                dto.setListaDetalles(new ArrayList<>());
+                List<OrdenCompraDetalle> listaDetalles = detDao.buscarDetallesOC(dto.getId());
+                listaDetalles.forEach(det -> {
+                    dto.getListaDetalles().add(OrdenCompraDetalleMapper.INSTANCE.entityToDto(det));
+                });
+                
+                
+                dto.setTotalRegistros(listaOrdenCompra.size());
+                dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                
+                
+                listaOrdenCompraDto.add(dto);
+            }
+
+            return listaOrdenCompraDto;
             
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
