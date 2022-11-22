@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,6 +83,14 @@ public class CotizacionServicio {
             
             Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
             
+            //buscar la cotizacion del mismo proveedor para que no se vuelva a enviar si ya la envio y debe estar RECHAZADO
+            Cotizacion cot = dao.buscarCotizacionRucNumeroRC(cotizacion.getCodigoRC(), cotizacion.getRucProveedor());
+            if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("RECHAZADO")){
+                CotizacionDTO dot = new CotizacionDTO();
+                dot.setRespuesta("Ya cotizacion ya fue enviada. No se puede enviar nuevamente la misma cotizacion");
+                return dot;
+            }
+            
             cotizacion = dao.guardarCotizacion(cotizacion);
             
             cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
@@ -106,6 +115,28 @@ public class CotizacionServicio {
             ProveedorDAO proDao = new ProveedorDAO();
             Proveedor prov = proDao.buscarProveedorRuc(cotizacion.getRucProveedor());
             cotizacionDTO.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+            
+            return cotizacionDTO;
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    public CotizacionDTO cambiarEstadoCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
+        try{
+            Cotizacion cotizacion = dao.buscarCotizacionID(cotizacionDTO.getId());
+            
+            cotizacion.setFechaModifica(new Date());
+            cotizacion.setEstado(cotizacionDTO.getEstado());
+            cotizacion.setUsuarioModifica(cotizacionDTO.getUsuarioModifica());
+            cotizacion.setObservacion(cotizacionDTO.getObservacion());
+            
+            cotizacion = dao.cambiarEstadoCotizacion(cotizacion);
+            
+            cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
             
             return cotizacionDTO;
             

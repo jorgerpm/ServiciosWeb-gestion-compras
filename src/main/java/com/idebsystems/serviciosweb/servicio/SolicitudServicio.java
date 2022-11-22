@@ -152,8 +152,8 @@ public class SolicitudServicio {
             envioDao.guardarSolicitudEnvio(solicitudEnvio);
             
             
-//            CorreoServicio srvCorreo = new CorreoServicio();
-//            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            CorreoServicio srvCorreo = new CorreoServicio();
+            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

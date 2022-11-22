@@ -149,4 +149,62 @@ public class CotizacionDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    
+    public Cotizacion cambiarEstadoCotizacion(Cotizacion cotizacion) throws Exception {
+        try{
+            getEntityManager();
+
+            em.getTransaction().begin();
+
+            if (Objects.nonNull(cotizacion.getId()) && cotizacion.getId() > 0) {
+                em.merge(cotizacion); //update
+            }
+            //SOLO SE CAMBIA EL ESTADO A LA COTIZACION, PORQUE SOLO ES A UNA Y NO A TODA LA SOLCIITUD
+            //cambiar el estado de la solicitud al estado de la cotizacion que se envia desde pantalla
+//            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoRC = :codigoRc");
+//            query.setParameter("codigoRc", cotizacion.getCodigoRC());
+//            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
+//            query.setParameter("fechaModifica", new Date());
+//            query.setParameter("estado", cotizacion.getEstado());
+//            query.executeUpdate();
+            
+            em.flush(); //Confirmar el insert o update
+
+            em.getTransaction().commit();
+
+            return cotizacion;
+            
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            if(exc.getMessage() != null && exc.getMessage().contains("cotizacion_codigo_cotizacion_uk"))
+                throw new Exception("YA EXISTE EL CODIGO DE COTIZACION");
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
+    
+    public Cotizacion buscarCotizacionID(Long id) throws Exception {
+        try {
+            getEntityManager();
+
+            return em.find(Cotizacion.class, id);
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

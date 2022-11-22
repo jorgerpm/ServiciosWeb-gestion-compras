@@ -219,7 +219,8 @@ public class OrdenCompraDAO extends Persistencia {
             getEntityManager();
 
             String sql = "select oc.*, u.nombre from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
-                        " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') " ;
+                        " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id " +
+                        " AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') AND aoc.estado IS NULL " ;
                         
 
 //            String sql = "select oc from OrdenCompra oc, AutorizacionOrdenCompra aoc where oc.id = aoc.idOrdenCompra AND oc.estado = :estado ";

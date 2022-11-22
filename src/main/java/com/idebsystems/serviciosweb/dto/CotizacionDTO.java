@@ -36,6 +36,7 @@ public class CotizacionDTO {
     private List<CotizacionDetalleDTO> listaDetalles;
     //
     private Integer totalRegistros;
+    private String respuesta;
     private ProveedorDTO proveedorDto;
     private String usuarioModifica;
     private Date fechaModifica;
@@ -222,6 +223,14 @@ public class CotizacionDTO {
 
     public void setFechaModifica(Date fechaModifica) {
         this.fechaModifica = fechaModifica;
+    }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
     }
 
     @Override

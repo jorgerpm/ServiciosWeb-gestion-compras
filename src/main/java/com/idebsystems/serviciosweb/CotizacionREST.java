@@ -83,4 +83,20 @@ public class CotizacionREST {
             throw new Exception(exc);
         }
     }
+    
+    
+    
+    @POST
+    @Path("/cambiarEstadoCotizacion")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public CotizacionDTO cambiarEstadoCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "CotizacionDTO: {0}", cotizacionDTO);
+            return servicio.cambiarEstadoCotizacion(cotizacionDTO);
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }
