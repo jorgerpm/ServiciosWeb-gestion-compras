@@ -85,15 +85,23 @@ public class CotizacionServicio {
             
             //buscar la cotizacion del mismo proveedor para que no se vuelva a enviar si ya la envio y debe estar RECHAZADO
             Cotizacion cot = dao.buscarCotizacionRucNumeroRC(cotizacion.getCodigoRC(), cotizacion.getRucProveedor());
-            if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("RECHAZADO")){
+            if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("ANULADO")){
                 CotizacionDTO dot = new CotizacionDTO();
-                dot.setRespuesta("Ya cotizacion ya fue enviada. No se puede enviar nuevamente la misma cotizacion");
+                dot.setRespuesta("La cotización ya fue enviada. No se puede enviar nuevamente la misma cotización");
                 return dot;
+            }
+            if(Objects.nonNull(cot)){
+                cotizacion.setId(cot.getId());
+                cotizacion.getListaDetalles().forEach(d -> {
+                    d.setCotizacion(cot);
+                    d.getCotizacion().setId(cot.getId());
+                });
             }
             
             cotizacion = dao.guardarCotizacion(cotizacion);
             
             cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
+            cotizacionDTO.setRespuesta("OK");
             
             return cotizacionDTO;
             
