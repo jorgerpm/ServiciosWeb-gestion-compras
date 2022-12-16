@@ -93,4 +93,25 @@ public class RolDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public List<Rol> buscarRolCheckList() throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM Rol r WHERE r.cheklistRecepcion = TRUE AND r.idEstado = 1 ORDER BY r.nombre");
+
+            List<Rol> listaRoles = query.getResultList();
+
+            return listaRoles;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

@@ -63,6 +63,8 @@ public class Cotizacion implements Serializable {
     @Column(name = "forma_pago")
     private String formaPago;
     private String adicionales;
+    @Column(name = "codigo_solicitud")
+    private String codigoSolicitud;
 
     @OneToMany(mappedBy = "cotizacion", fetch = FetchType.LAZY)
     private List<CotizacionDetalle> listaDetalles;
@@ -231,6 +233,14 @@ public class Cotizacion implements Serializable {
 
     public void setFechaModifica(Date fechaModifica) {
         this.fechaModifica = fechaModifica;
+    }
+
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
     }
 
 }

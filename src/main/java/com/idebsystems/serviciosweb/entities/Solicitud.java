@@ -52,6 +52,8 @@ public class Solicitud implements Serializable {
     @Column(name = "fecha_modifica")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModifica;
+    @Column(name = "codigo_solicitud")
+    private String codigoSolicitud;
 
     public long getId() {
         return id;
@@ -131,6 +133,14 @@ public class Solicitud implements Serializable {
 
     public void setFechaModifica(Date fechaModifica) {
         this.fechaModifica = fechaModifica;
+    }
+
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
     }
 
 }

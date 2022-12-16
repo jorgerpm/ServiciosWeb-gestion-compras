@@ -44,6 +44,8 @@ public class HistorialDocumento implements Serializable {
     @Column(name = "valor_total")
     private BigDecimal valorTotal;
     private String observacion;
+    @Column(name = "codigo_solicitud")
+    private String codigoSolicitud;
 
     public long getId() {
         return id;
@@ -115,6 +117,14 @@ public class HistorialDocumento implements Serializable {
 
     public void setIdDocumento(Long idDocumento) {
         this.idDocumento = idDocumento;
+    }
+
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
     }
     
     

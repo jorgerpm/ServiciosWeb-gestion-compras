@@ -36,6 +36,7 @@ public class CotizacionREST {
     public List<CotizacionDTO> listarCotizaciones(
             @QueryParam(value = "fechaInicial") String fechaInicial,
             @QueryParam(value = "fechaFinal") String fechaFinal,
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "codigoRC") String codigoRC,
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
@@ -43,7 +44,7 @@ public class CotizacionREST {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
             LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoRC, desde, hasta);
+            return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -67,17 +68,17 @@ public class CotizacionREST {
     
     
     @GET
-    @Path("/buscarCotizacionRucNumeroRC")
+    @Path("/buscarCotizacionRucNumeroSol")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public CotizacionDTO buscarCotizacionRucNumeroRC(
-            @QueryParam(value = "codigoRC") String codigoRC,
+    public CotizacionDTO buscarCotizacionRucNumeroSol(
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "ruc") String ruc) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoSolicitud);
             LOGGER.log(Level.INFO, "ruc: {0}", ruc);
             
-            return servicio.buscarCotizacionRucNumeroRC(codigoRC, ruc);
+            return servicio.buscarCotizacionRucNumeroSol(codigoSolicitud, ruc);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -94,6 +95,21 @@ public class CotizacionREST {
         try{
             LOGGER.log(Level.INFO, "CotizacionDTO: {0}", cotizacionDTO);
             return servicio.cambiarEstadoCotizacion(cotizacionDTO);
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+
+    @GET
+    @Path("/getCotizacionesParaComparativo")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})    
+    public List<CotizacionDTO> getCotizacionesParaComparativo(
+        @QueryParam(value = "codigoSolicitud") String codigoSolicitud) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+            return servicio.getCotizacionesParaComparativo(codigoSolicitud);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

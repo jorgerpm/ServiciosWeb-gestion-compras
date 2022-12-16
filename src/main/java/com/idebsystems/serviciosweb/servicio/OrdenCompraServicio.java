@@ -10,16 +10,20 @@ import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDetalleDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
+import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.AutorizacionOrdenCompraDTO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDTO;
 import com.idebsystems.serviciosweb.dto.OrdenCompraDetalleDTO;
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
+import com.idebsystems.serviciosweb.entities.Comparativo;
+import com.idebsystems.serviciosweb.entities.ComparativoDetalle;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.CotizacionDetalle;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.entities.OrdenCompraDetalle;
 import com.idebsystems.serviciosweb.entities.Proveedor;
+import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.AutorizacionOrdenCompraMapper;
 import com.idebsystems.serviciosweb.mappers.OrdenCompraDetalleMapper;
@@ -47,10 +51,46 @@ public class OrdenCompraServicio {
     
     public OrdenCompraDTO generarOrdenCompra(OrdenCompraDTO ordenCompraDTO) throws Exception {
         try{
-            //buscar la cotizacion para en base a esa generar la orden de compra
             CotizacionDAO cotDao = new CotizacionDAO();
-            Cotizacion cotizacion = cotDao.buscarCotizacionRucNumeroRC(ordenCompraDTO.getCodigoRC(), ordenCompraDTO.getRucProveedor());
-
+            
+            
+            //aqui tambien se debe guardar la comparacion en la base de datos. esto en el DAO
+            //buscar la solicitud
+            SolicitudDAO soldao = new SolicitudDAO();
+            Solicitud solic = soldao.buscarSolicitudPorNumero(ordenCompraDTO.getCodigoSolicitud());
+            
+            Comparativo comparativo = new Comparativo();
+            comparativo.setObservacion(ordenCompraDTO.getObservacion());
+            comparativo.setCodigoComparativo(solic.getCodigoSolicitud());
+            comparativo.setCodigoSolicitud(solic.getCodigoSolicitud());
+            comparativo.setEstado("GENERADO");
+            comparativo.setFechaComparativo(new Date());
+            comparativo.setFechaModifica(new Date());
+            comparativo.setSolicitud(solic);
+            comparativo.setUsuario(ordenCompraDTO.getUsuario());
+            comparativo.setUsuarioModifica(ordenCompraDTO.getIdUsuario());
+            //buscar las cotizaciones para generar los detalles
+            List<ComparativoDetalle> listDetCompat = new ArrayList();
+            List<Cotizacion> listaCot = cotDao.getCotizacionesParaComparativo(ordenCompraDTO.getCodigoSolicitud());
+            for(Cotizacion cot : listaCot){
+                ComparativoDetalle cd = new ComparativoDetalle();
+                cd.setComparativo(comparativo);
+                cd.setCotizacion(cot);
+                if(cot.getRucProveedor().equalsIgnoreCase(ordenCompraDTO.getRucProveedor()))
+                    cd.setSeleccionada(Boolean.TRUE);
+                else
+                    cd.setSeleccionada(Boolean.FALSE);
+                
+                listDetCompat.add(cd);
+            }
+            comparativo.setListaDetalles(listDetCompat);
+            
+            
+            //buscar la cotizacion para en base a esa generar la orden de compra
+            
+            Cotizacion cotizacion = cotDao.buscarCotizacionRucNumeroSol(ordenCompraDTO.getCodigoSolicitud(), ordenCompraDTO.getRucProveedor());
+            
+            //GENERAR LA ORDENCOMPRADTO
             ordenCompraDTO.setCodigoOrdenCompra(cotizacion.getCodigoCotizacion());
             ordenCompraDTO.setCodigoRC(cotizacion.getCodigoRC());
             ordenCompraDTO.setDescuento(cotizacion.getDescuento());
@@ -61,6 +101,8 @@ public class OrdenCompraServicio {
             ordenCompraDTO.setSubtotal(cotizacion.getSubtotal());
             ordenCompraDTO.setSubtotalSinIva(cotizacion.getSubtotalSinIva());
             ordenCompraDTO.setTotal(cotizacion.getTotal());
+            ordenCompraDTO.setCodigoSolicitud(cotizacion.getCodigoSolicitud());
+            
             final List<OrdenCompraDetalleDTO> listaDetalles = new ArrayList<>();
             for(CotizacionDetalle det : cotizacion.getListaDetalles()) {
                 OrdenCompraDetalleDTO ordenCompraDet = new OrdenCompraDetalleDTO();
@@ -75,7 +117,6 @@ public class OrdenCompraServicio {
             }
             ordenCompraDTO.setListaDetalles(listaDetalles);
             
-            
             ordenCompraDTO.setUsuario(ordenCompraDTO.getUsuario());
             ordenCompraDTO.setEstado(ordenCompraDTO.getEstado());
             ordenCompraDTO.setFechaOrdenCompra(new Date());
@@ -84,7 +125,7 @@ public class OrdenCompraServicio {
             
             OrdenCompra ordenCompra = OrdenCompraMapper.INSTANCE.dtoToEntity(ordenCompraDTO);
             
-            ordenCompra = dao.generarOrdenCompra(ordenCompra);
+            ordenCompra = dao.generarOrdenCompra(ordenCompra, comparativo);
             
             ordenCompraDTO = OrdenCompraMapper.INSTANCE.entityToDto(ordenCompra);
             

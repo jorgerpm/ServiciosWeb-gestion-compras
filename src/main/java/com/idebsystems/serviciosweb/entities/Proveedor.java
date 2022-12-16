@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.entities;
 
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -19,19 +20,29 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "proveedor")
 public class Proveedor implements Serializable {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String ruc;
     private String nombreComercial;
     private String razonSocial;
     private String direccion;
     private String telefono1;
     private String telefono2;
+    private String contacto;
     private String correo;
-    private String ruc;
+    private String contabilidad;
+    @Column(name = "telefono_contabilidad")
+    private String telefonoContabilidad;
+    @Column(name = "correo_contabilidad")
+    private String correoContabilidad;
     private String codigoJD;
     private long idEstado;
+    private String carpeta;
+    @Column(name = "servicio_producto")
+    private String servicioProducto;
+    private String credito;
 
     public Long getId() {
         return id;
@@ -112,4 +123,64 @@ public class Proveedor implements Serializable {
     public void setIdEstado(long idEstado) {
         this.idEstado = idEstado;
     }
+
+    public String getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(String contacto) {
+        this.contacto = contacto;
+    }
+
+    public String getContabilidad() {
+        return contabilidad;
+    }
+
+    public void setContabilidad(String contabilidad) {
+        this.contabilidad = contabilidad;
+    }
+
+    public String getCorreoContabilidad() {
+        return correoContabilidad;
+    }
+
+    public void setCorreoContabilidad(String correoContabilidad) {
+        this.correoContabilidad = correoContabilidad;
+    }
+
+    
+
+    public String getCarpeta() {
+        return carpeta;
+    }
+
+    public void setCarpeta(String carpeta) {
+        this.carpeta = carpeta;
+    }
+
+    public String getServicioProducto() {
+        return servicioProducto;
+    }
+
+    public void setServicioProducto(String servicioProducto) {
+        this.servicioProducto = servicioProducto;
+    }
+
+    public String getCredito() {
+        return credito;
+    }
+
+    public void setCredito(String credito) {
+        this.credito = credito;
+    }
+
+    public String getTelefonoContabilidad() {
+        return telefonoContabilidad;
+    }
+
+    public void setTelefonoContabilidad(String telefonoContabilidad) {
+        this.telefonoContabilidad = telefonoContabilidad;
+    }
+    
+    
 }

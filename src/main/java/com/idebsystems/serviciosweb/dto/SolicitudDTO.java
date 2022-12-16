@@ -27,6 +27,7 @@ public class SolicitudDTO {
     private Integer totalRegistros;
     private String usuarioModifica;
     private Date fechaModifica;
+    private String codigoSolicitud;
 
     public long getId() {
         return id;
@@ -124,9 +125,19 @@ public class SolicitudDTO {
         this.fechaModifica = fechaModifica;
     }
 
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
     @Override
     public String toString() {
-        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + '}';
+        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + '}';
     }
+
+
 
 }

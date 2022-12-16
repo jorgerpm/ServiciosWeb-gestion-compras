@@ -22,6 +22,15 @@ public class ProveedorDTO {
     private long idEstado;
     private String clave;
     
+    private String contacto;
+    private String contabilidad;
+    private String telefonoContabilidad;
+    private String correoContabilidad;
+    private String carpeta;
+    private String servicioProducto;
+    private String credito;
+    
+    //
     private Integer totalRegistros;
     private String archivoBase64;
 
@@ -127,6 +136,64 @@ public class ProveedorDTO {
 
     public void setTotalRegistros(Integer totalRegistros) {
         this.totalRegistros = totalRegistros;
+    }
+
+    public String getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(String contacto) {
+        this.contacto = contacto;
+    }
+
+    public String getContabilidad() {
+        return contabilidad;
+    }
+
+    public void setContabilidad(String contabilidad) {
+        this.contabilidad = contabilidad;
+    }
+
+    public String getCorreoContabilidad() {
+        return correoContabilidad;
+    }
+
+    public void setCorreoContabilidad(String correoContabilidad) {
+        this.correoContabilidad = correoContabilidad;
+    }
+
+    
+
+    public String getCarpeta() {
+        return carpeta;
+    }
+
+    public void setCarpeta(String carpeta) {
+        this.carpeta = carpeta;
+    }
+
+    public String getServicioProducto() {
+        return servicioProducto;
+    }
+
+    public void setServicioProducto(String servicioProducto) {
+        this.servicioProducto = servicioProducto;
+    }
+
+    public String getCredito() {
+        return credito;
+    }
+
+    public void setCredito(String credito) {
+        this.credito = credito;
+    }
+
+    public String getTelefonoContabilidad() {
+        return telefonoContabilidad;
+    }
+
+    public void setTelefonoContabilidad(String telefonoContabilidad) {
+        this.telefonoContabilidad = telefonoContabilidad;
     }
 
     @Override

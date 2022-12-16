@@ -40,6 +40,7 @@ public class OrdenCompraDTO {
     private String respuesta;
     private String autorizador;
     private List<AutorizacionOrdenCompraDTO> listaAutorizaciones;
+    private String codigoSolicitud;
     
 
     public long getId() {
@@ -234,10 +235,19 @@ public class OrdenCompraDTO {
         this.listaAutorizaciones = listaAutorizaciones;
     }
 
-    @Override
-    public String toString() {
-        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", idUsuario=" + idUsuario + '}';
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
     }
 
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
+    @Override
+    public String toString() {
+        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", idUsuario=" + idUsuario + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", respuesta=" + respuesta + ", autorizador=" + autorizador + ", codigoSolicitud=" + codigoSolicitud + '}';
+    }
+
+    
     
 }

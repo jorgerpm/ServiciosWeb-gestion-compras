@@ -7,11 +7,14 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
+import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dto.CotizacionDTO;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.Proveedor;
+import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.mappers.CotizacionMapper;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
+import com.idebsystems.serviciosweb.mappers.SolicitudMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,15 +35,15 @@ public class CotizacionServicio {
 
     private final CotizacionDAO dao = new CotizacionDAO();
 
-    public List<CotizacionDTO> listarCotizaciones(String fechaInicial, String fechaFinal, String codigoRC,
+    public List<CotizacionDTO> listarCotizaciones(String fechaInicial, String fechaFinal, String codigoSolicitud, String codigoRC,
             Integer desde, Integer hasta) throws Exception {
         try {
             List<CotizacionDTO> listaCotizacionDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-            List<Object> respuesta = dao.listarCotizaciones(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), FechaUtil.fechaFinal(sdf.parse(fechaFinal)),
-                    codigoRC, desde, hasta);
+            List<Object> respuesta = dao.listarCotizaciones(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
+                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
 
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);
@@ -84,7 +87,7 @@ public class CotizacionServicio {
             Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
             
             //buscar la cotizacion del mismo proveedor para que no se vuelva a enviar si ya la envio y debe estar RECHAZADO
-            Cotizacion cot = dao.buscarCotizacionRucNumeroRC(cotizacion.getCodigoRC(), cotizacion.getRucProveedor());
+            Cotizacion cot = dao.buscarCotizacionRucNumeroSol(cotizacion.getCodigoSolicitud(), cotizacion.getRucProveedor());
             if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("ANULADO")){
                 CotizacionDTO dot = new CotizacionDTO();
                 dot.setRespuesta("La cotización ya fue enviada. No se puede enviar nuevamente la misma cotización");
@@ -112,10 +115,10 @@ public class CotizacionServicio {
     }
     
     
-    public CotizacionDTO buscarCotizacionRucNumeroRC(String numeroRC, String ruc) throws Exception {
+    public CotizacionDTO buscarCotizacionRucNumeroSol(String codigoSolicitud, String ruc) throws Exception {
         try{
             
-            Cotizacion cotizacion = dao.buscarCotizacionRucNumeroRC(numeroRC, ruc);
+            Cotizacion cotizacion = dao.buscarCotizacionRucNumeroSol(codigoSolicitud, ruc);
             
             CotizacionDTO cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
             
@@ -147,6 +150,42 @@ public class CotizacionServicio {
             cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
             
             return cotizacionDTO;
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    public List<CotizacionDTO> getCotizacionesParaComparativo(String codigoSolicitud) throws Exception {
+        try{
+        
+            List<Cotizacion> listaCotizaciones = dao.getCotizacionesParaComparativo(codigoSolicitud);
+           
+            List<CotizacionDTO> listaDto = new ArrayList<>();
+            
+            //buscar la solicitud para enviar junto con la cotizacion
+            SolicitudDAO soldao = new SolicitudDAO();
+            Solicitud sol = soldao.buscarSolicitudPorNumero(codigoSolicitud);
+            
+            //se debe buscar el provedor para enviarlo con la cotizacion
+            ProveedorDAO proDao = new ProveedorDAO();
+            
+            for(Cotizacion cot : listaCotizaciones){
+                
+                CotizacionDTO cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cot);
+                
+                //se debe buscar el provedor para enviarlo con la cotizacion
+                Proveedor prov = proDao.buscarProveedorRuc(cot.getRucProveedor());
+                cotizacionDTO.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                
+                //agregar la solicitud
+                cotizacionDTO.setSolicitudDto(SolicitudMapper.INSTANCE.entityToDto(sol));
+                
+                listaDto.add(cotizacionDTO);
+            }
+            
+            return listaDto;
             
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

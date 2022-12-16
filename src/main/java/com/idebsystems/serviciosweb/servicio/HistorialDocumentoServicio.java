@@ -25,11 +25,11 @@ public class HistorialDocumentoServicio {
     private static final Logger LOGGER = Logger.getLogger(HistorialDocumentoServicio.class.getName());
     private final HistorialDocumentoDAO dao = new HistorialDocumentoDAO();
     
-    public List<HistorialDocumentoDTO> buscarHistorialDocs(String codigoRC, String tipoDocumento) throws Exception {
+    public List<HistorialDocumentoDTO> buscarHistorialDocs(String codigoSolicitud, String codigoRC, String tipoDocumento) throws Exception {
         try {
             List<HistorialDocumentoDTO> listaDto = new ArrayList();
             
-            List<HistorialDocumento> listaHist = dao.buscarHistorialDocs(codigoRC, tipoDocumento);
+            List<HistorialDocumento> listaHist = dao.buscarHistorialDocs(codigoSolicitud, codigoRC, tipoDocumento);
             
             UsuarioDAO usdao = new UsuarioDAO();
             List<Usuario> listusers = usdao.listarUsuarios();

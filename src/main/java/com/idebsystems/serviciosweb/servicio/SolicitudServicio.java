@@ -42,15 +42,15 @@ public class SolicitudServicio {
 
     private final SolicitudDAO dao = new SolicitudDAO();
 
-    public List<SolicitudDTO> listarSolicitudes(String fechaInicial, String fechaFinal, String codigoRC,
+    public List<SolicitudDTO> listarSolicitudes(String fechaInicial, String fechaFinal, String codigoSolicitud, String codigoRC,
             Integer desde, Integer hasta) throws Exception {
         try {
             List<SolicitudDTO> listaSolicitudDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-            List<Object> respuesta = dao.listarSolicitudes(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), FechaUtil.fechaFinal(sdf.parse(fechaFinal)),
-                    codigoRC, desde, hasta);
+            List<Object> respuesta = dao.listarSolicitudes(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
+                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
 
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);
@@ -103,9 +103,9 @@ public class SolicitudServicio {
     }
     
     
-    public SolicitudDTO buscarSolicitudPorNumero(String numeroRC) throws Exception {
+    public SolicitudDTO buscarSolicitudPorNumero(String numeroSolicitud) throws Exception {
         try{
-            Solicitud solicitud = dao.buscarSolicitudPorNumero(numeroRC);
+            Solicitud solicitud = dao.buscarSolicitudPorNumero(numeroSolicitud);
             SolicitudDTO dto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
             return dto;
         }catch(Exception exc){
@@ -117,7 +117,7 @@ public class SolicitudServicio {
     private void enviarCorreoProveedores(SolicitudDTO solicitudDto){
         try{
             //generar la url que se envia a los proveedores
-            String encriptado = encriptar(solicitudDto.getCodigoRC(), null);
+            String encriptado = encriptar(solicitudDto.getCodigoSolicitud(), null);
             
             //buscar los parametros para el envio
             //consultar los prametros del correo desde la base de datos.
@@ -153,7 +153,7 @@ public class SolicitudServicio {
             
             
             CorreoServicio srvCorreo = new CorreoServicio();
-            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            //srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

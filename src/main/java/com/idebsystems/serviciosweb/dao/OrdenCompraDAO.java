@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dao;
 
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
+import com.idebsystems.serviciosweb.entities.Comparativo;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class OrdenCompraDAO extends Persistencia {
     
     private static final Logger LOGGER = Logger.getLogger(OrdenCompraDAO.class.getName());
     
-    public OrdenCompra generarOrdenCompra(OrdenCompra ordenCompra) throws Exception {
+    public OrdenCompra generarOrdenCompra(OrdenCompra ordenCompra, Comparativo comparativo) throws Exception {
         try{
             getEntityManager();
 
@@ -45,8 +46,8 @@ public class OrdenCompraDAO extends Persistencia {
             
             //cambiar el estado de la solicitud a GENERADO_OC
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'GENERADO_OC', s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
-                    + " WHERE s.codigoRC = :codigoRc");
-            query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+                    + " WHERE s.codigoSolicitud = :codigoSolicitud");
+            query.setParameter("codigoSolicitud", ordenCompra.getCodigoSolicitud());
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
@@ -56,17 +57,26 @@ public class OrdenCompraDAO extends Persistencia {
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
                     + " WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
-            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
             
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'GENERADO_OC', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
                     + " WHERE c.codigoCotizacion = :codigoCotizacion");
-            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
+            
+            
+            ///guardar el comparativo
+            em.persist(comparativo);
+            
+            comparativo.getListaDetalles().forEach(detalle -> {
+                detalle.setComparativo(comparativo);
+                em.persist(detalle);
+            });
             
             em.flush(); //Confirmar el insert o update
 
@@ -176,9 +186,9 @@ public class OrdenCompraDAO extends Persistencia {
             
             //cambiar el estado de la solicitud a GENERADO_OC
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
-                    + " WHERE s.codigoRC = :codigoRc");
+                    + " WHERE s.codigoSolicitud = :codigoSolicitud");
             query.setParameter("estado", ordenCompra.getEstado());
-            query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.setParameter("codigoSolicitud", ordenCompra.getCodigoSolicitud());
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
@@ -187,7 +197,7 @@ public class OrdenCompraDAO extends Persistencia {
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado, c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
                     + " WHERE c.codigoCotizacion = :codigoCotizacion");
             query.setParameter("estado", ordenCompra.getEstado());
-            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();

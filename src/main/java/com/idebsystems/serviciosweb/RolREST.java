@@ -72,4 +72,18 @@ public class RolREST {
             throw new Exception(exc);
         }
     }
+    
+    @GET
+    @Path("/buscarRolCheckList")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<RolDTO> buscarRolCheckList() throws Exception {
+        try {
+            //buscar en la bdd los roles
+            return service.buscarRolCheckList();
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

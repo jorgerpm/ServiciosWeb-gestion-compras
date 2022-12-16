@@ -5,6 +5,7 @@
  */
 package com.idebsystems.serviciosweb.dto;
 
+import com.idebsystems.serviciosweb.entities.Solicitud;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -40,6 +41,8 @@ public class CotizacionDTO {
     private ProveedorDTO proveedorDto;
     private String usuarioModifica;
     private Date fechaModifica;
+    private String codigoSolicitud;
+    private SolicitudDTO solicitudDto;
 
     public long getId() {
         return id;
@@ -233,9 +236,27 @@ public class CotizacionDTO {
         this.respuesta = respuesta;
     }
 
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public SolicitudDTO getSolicitudDto() {
+        return solicitudDto;
+    }
+
+    public void setSolicitudDto(SolicitudDTO solicitudDto) {
+        this.solicitudDto = solicitudDto;
+    }
+
     @Override
     public String toString() {
-        return "CotizacionDTO{" + "id=" + id + ", fechaCotizacion=" + fechaCotizacion + ", codigoRC=" + codigoRC + ", codigoCotizacion=" + codigoCotizacion + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + '}';
+        return "CotizacionDTO{" + "id=" + id + ", fechaCotizacion=" + fechaCotizacion + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", codigoCotizacion=" + codigoCotizacion + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", tiempoEntrega=" + tiempoEntrega + ", validezCotizacion=" + validezCotizacion + ", formaPago=" + formaPago + ", adicionales=" + adicionales + ", totalRegistros=" + totalRegistros + ", respuesta=" + respuesta + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + '}';
     }
+
+    
 
 }

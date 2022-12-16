@@ -149,4 +149,53 @@ public class UsuarioServicio {
             throw new Exception(exc);
         }
     }
+    
+    
+    public UsuarioDTO buscarUsuarioPorId(long idUsuario) throws Exception {
+        try {
+            Usuario usuario = dao.buscarUsuarioPorId(idUsuario);
+            //buscar los roles
+            RolDAO rolDao = new RolDAO();
+            List<Rol> listaRoles = rolDao.listarRoles();
+            
+            UsuarioDTO usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
+            //buscar para colocar el nombre del rol
+            Rol rol = listaRoles.stream().filter(r -> r.getId() == usuario.getIdRol()).findAny().orElse(null);
+            if(Objects.nonNull(rol))
+                usuarioDto.setNombreRol(rol.getNombre());
+
+            return usuarioDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    public List<UsuarioDTO> listarUsuariosActivosPorRol(long idRol) throws Exception {
+        try {
+            List<UsuarioDTO> listaUsuarioDto = new ArrayList();
+            
+            List<Usuario> listaUsuario = dao.listarUsuariosActivosPorRol(idRol);
+            //buscar los roles
+            RolDAO rolDao = new RolDAO();
+            List<Rol> listaRoles = rolDao.listarRoles();
+            
+            listaUsuario.forEach(usuario->{
+                UsuarioDTO usuarioDto = new UsuarioDTO();
+                usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuario);
+                //buscar para colocar el nombre del rol
+                Rol rol = listaRoles.stream().filter(r -> r.getId() == usuario.getIdRol()).findAny().orElse(null);
+                if(Objects.nonNull(rol))
+                    usuarioDto.setNombreRol(rol.getNombre());
+                
+                listaUsuarioDto.add(usuarioDto);
+            });
+
+            return listaUsuarioDto;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

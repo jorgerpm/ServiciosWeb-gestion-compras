@@ -87,4 +87,25 @@ public class RolServicio {
             throw new Exception(exc);
         }
     }
+    
+    
+    public List<RolDTO> buscarRolCheckList() throws Exception {
+        try {
+            List<Rol> roles = dao.buscarRolCheckList();
+           
+            List<RolDTO> rolesDto = new ArrayList<>();
+                    
+            roles.forEach(rol -> {
+                RolDTO rolDto = RolMapper.INSTANCE.entityToDto(rol);
+                
+                rolesDto.add(rolDto);
+            });
+            
+            return rolesDto;
+
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

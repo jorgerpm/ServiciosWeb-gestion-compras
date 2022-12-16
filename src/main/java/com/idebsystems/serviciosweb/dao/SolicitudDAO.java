@@ -25,7 +25,7 @@ public class SolicitudDAO extends Persistencia {
 
     private static final Logger LOGGER = Logger.getLogger(SolicitudDAO.class.getName());
 
-    public List<Object> listarSolicitudes(Date fechaInicial, Date fechaFinal, String codigoRC,
+    public List<Object> listarSolicitudes(Date fechaInicial, Date fechaFinal, String codigoSolicitud, String codigoRC,
             Integer desde, Integer hasta) throws Exception {
         try {
             List<Object> respuesta = new ArrayList<>();
@@ -33,7 +33,10 @@ public class SolicitudDAO extends Persistencia {
 
             String sql = "FROM Solicitud s ";
 
-            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                sql = sql.concat(" WHERE UPPER(s.codigoSolicitud) = :codigoSolicitud ");
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 sql = sql.concat(" WHERE UPPER(s.codigoRC) = :codigoRC ");
             }
             else{
@@ -44,7 +47,10 @@ public class SolicitudDAO extends Persistencia {
 
             Query query = em.createQuery(sql);
 
-            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 query.setParameter("codigoRC", codigoRC.toUpperCase());
             }
             else{
@@ -109,8 +115,8 @@ public class SolicitudDAO extends Persistencia {
             throw new Exception(exc);
         } catch (Exception exc) {
             rollbackTransaction();
-            if(exc.getMessage()!=null && exc.getMessage().contains("solicitud_codigo_rc_uk"))
-                throw new Exception("YA EXISTE REGISTRADA UNA SOLICITUD CON EL CODIGO DE RC: ".concat(solicitud.getCodigoRC()));
+            if(exc.getMessage()!=null && exc.getMessage().contains("solicitud_codigo_sol_uk"))
+                throw new Exception("YA EXISTE REGISTRADA UNA SOLICITUD CON EL CODIGO DE SOLICITUD: ".concat(solicitud.getCodigoSolicitud()));
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {
@@ -119,12 +125,12 @@ public class SolicitudDAO extends Persistencia {
     }
     
     
-    public Solicitud buscarSolicitudPorNumero(String numeroRC) throws Exception {
+    public Solicitud buscarSolicitudPorNumero(String numeroSolicitud) throws Exception {
         try{
             getEntityManager();
             
-            Query query = em.createQuery("FROM Solicitud s WHERE s.codigoRC = :numeroRC");
-            query.setParameter("numeroRC", numeroRC);
+            Query query = em.createQuery("FROM Solicitud s WHERE s.codigoSolicitud = :numeroSolicitud");
+            query.setParameter("numeroSolicitud", numeroSolicitud);
             
             Solicitud solicitud = (Solicitud)query.getSingleResult();
             

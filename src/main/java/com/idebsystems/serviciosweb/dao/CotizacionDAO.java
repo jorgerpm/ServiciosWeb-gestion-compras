@@ -26,7 +26,7 @@ public class CotizacionDAO extends Persistencia {
 
     private static final Logger LOGGER = Logger.getLogger(CotizacionDAO.class.getName());
 
-    public List<Object> listarCotizaciones(Date fechaInicial, Date fechaFinal, String codigoRC,
+    public List<Object> listarCotizaciones(Date fechaInicial, Date fechaFinal, String codigoSolicitud, String codigoRC,
             Integer desde, Integer hasta) throws Exception {
         try {
             List<Object> respuesta = new ArrayList<>();
@@ -34,7 +34,10 @@ public class CotizacionDAO extends Persistencia {
 
             String sql = "FROM Cotizacion c ";
 
-            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                sql = sql.concat(" WHERE UPPER(c.codigoSolicitud) = :codigoSolicitud ");
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 sql = sql.concat(" WHERE UPPER(c.codigoRC) = :codigoRC ");
             }
             else{
@@ -45,7 +48,10 @@ public class CotizacionDAO extends Persistencia {
 
             Query query = em.createQuery(sql);
 
-            if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 query.setParameter("codigoRC", codigoRC.toUpperCase());
             }
             else{
@@ -124,14 +130,14 @@ public class CotizacionDAO extends Persistencia {
     }
     
     
-    public Cotizacion buscarCotizacionRucNumeroRC(String codigoRC, String ruc) throws Exception {
+    public Cotizacion buscarCotizacionRucNumeroSol(String codigoSolicitud, String ruc) throws Exception {
         try {
             getEntityManager();
 
             String sql = "FROM Cotizacion c WHERE UPPER(c.codigoCotizacion) = :codigoCotizacion ";            
 
             Query query = em.createQuery(sql);
-            query.setParameter("codigoCotizacion", codigoRC.toUpperCase().concat("-").concat(ruc));
+            query.setParameter("codigoCotizacion", codigoSolicitud.toUpperCase().concat("-").concat(ruc));
 
             if(query.getResultList().isEmpty()){
                 return new Cotizacion();
@@ -207,4 +213,28 @@ public class CotizacionDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    public List<Cotizacion> getCotizacionesParaComparativo(String codigoSolicitud) throws Exception {
+        try {
+            getEntityManager();
+
+            String sql = "FROM Cotizacion c WHERE UPPER(c.codigoSolicitud) = :codigoSolicitud AND c.estado = 'COTIZADO' ";            
+
+            Query query = em.createQuery(sql);
+            query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+
+            List<Cotizacion> lista = query.getResultList();
+            
+            return lista;
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
 }

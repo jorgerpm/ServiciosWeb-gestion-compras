@@ -33,13 +33,14 @@ public class HistorialDocumentoREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public List<HistorialDocumentoDTO> buscarHistorialDocs(
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud, 
             @QueryParam(value = "codigoRC") String codigoRC, 
             @QueryParam(value = "tipoDocumento") String tipoDocumento) throws Exception {
         try {
             LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
             LOGGER.log(Level.INFO, "tipoDocumento: {0}", tipoDocumento);
             //buscar en la bdd los roles
-            return servicio.buscarHistorialDocs(codigoRC, tipoDocumento);
+            return servicio.buscarHistorialDocs(codigoSolicitud, codigoRC, tipoDocumento);
 
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);

@@ -36,13 +36,14 @@ public class SolicitudREST {
     public List<SolicitudDTO> listarSolicitudes(
             @QueryParam(value = "fechaInicial") String fechaInicial,
             @QueryParam(value = "fechaFinal") String fechaFinal,
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "codigoRC") String codigoRC,
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codigoRC, desde, hasta);
+            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -68,11 +69,11 @@ public class SolicitudREST {
     @Path("/buscarSolicitudPorNumero")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public SolicitudDTO buscarSolicitudPorNumero(@QueryParam(value = "numeroRC") String numeroRC) throws Exception {
+    public SolicitudDTO buscarSolicitudPorNumero(@QueryParam(value = "numeroSolicitud") String numeroSolicitud) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "numeroRC: {0}", numeroRC);
+            LOGGER.log(Level.INFO, "numeroSolicitud: {0}", numeroSolicitud);
             
-            return servicio.buscarSolicitudPorNumero(numeroRC);
+            return servicio.buscarSolicitudPorNumero(numeroSolicitud);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

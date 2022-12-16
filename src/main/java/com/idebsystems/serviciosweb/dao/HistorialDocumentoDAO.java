@@ -84,23 +84,40 @@ public class HistorialDocumentoDAO extends Persistencia {
         return his;
     }
     
-    public List<HistorialDocumento> buscarHistorialDocs(String codigoRC, String tipoDocumento) throws Exception {
+    public List<HistorialDocumento> buscarHistorialDocs(String codigoSolicitud, String codigoRC, String tipoDocumento) throws Exception {
         try {
             getEntityManager();
 
-            String sql = "FROM HistorialDocumento h WHERE h.codigoRC = :codigoRC ";
+            String sql = "FROM HistorialDocumento h ";
             
-            if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
-                sql = sql.concat(" AND h.documento = :documento ");
+            if(Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()){
+                sql = sql.concat(" WHERE UPPER(h.codigoSolicitud) = :codigoSolicitud ");
+                if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
+                    sql = sql.concat(" AND h.documento = :documento ");
+                }
+            }
+            else if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
+                sql = sql.concat(" WHERE UPPER(h.codigoRC) = :codigoRC ");
+                if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
+                    sql = sql.concat(" AND h.documento = :documento ");
+                }
             }
             
             sql = sql.concat(" order by h.fechaCambio "); //, h.valorTotal, h.documento ");
             
             Query query = em.createQuery(sql);
-            query.setParameter("codigoRC", codigoRC);
             
-            if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
-                query.setParameter("documento", tipoDocumento);
+            if(Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()){
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+                if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
+                    query.setParameter("documento", tipoDocumento);
+                }
+            }
+            else if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
+                query.setParameter("codigoRC", codigoRC.toUpperCase());
+                if(Objects.nonNull(tipoDocumento) && !tipoDocumento.isBlank()){
+                    query.setParameter("documento", tipoDocumento);
+                }
             }
 
             List<HistorialDocumento> lista = query.getResultList();

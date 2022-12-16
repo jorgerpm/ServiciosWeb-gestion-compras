@@ -103,4 +103,20 @@ public class UsuarioREST {
             throw new Exception(exc);
         }
     }
+    
+    ;
+    @GET
+    @Path("/listarUsuariosActivosPorRol")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<UsuarioDTO> listarUsuariosActivosPorRol(@QueryParam(value = "idRol") long idRol) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "idRol: {0}", idRol);
+            //buscar en la bdd los roles
+            return service.listarUsuariosActivosPorRol(idRol);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

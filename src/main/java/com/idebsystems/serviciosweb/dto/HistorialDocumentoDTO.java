@@ -23,6 +23,7 @@ public class HistorialDocumentoDTO {
     private String usuarioCambio;
     private BigDecimal valorTotal;
     private String observacion;
+    private String codigoSolicitud;
     //
     private Integer totalRegistros;
 
@@ -106,9 +107,17 @@ public class HistorialDocumentoDTO {
         this.totalRegistros = totalRegistros;
     }
 
+    public String getCodigoSolicitud() {
+        return codigoSolicitud;
+    }
+
+    public void setCodigoSolicitud(String codigoSolicitud) {
+        this.codigoSolicitud = codigoSolicitud;
+    }
+
     @Override
     public String toString() {
-        return "HistorialDocumentoDTO{" + "id=" + id + ", idDocumento=" + idDocumento + ", documento=" + documento + ", codigoRC=" + codigoRC + ", estado=" + estado + ", fechaCambio=" + fechaCambio + ", usuarioCambio=" + usuarioCambio + ", valorTotal=" + valorTotal + ", observacion=" + observacion + '}';
+        return "HistorialDocumentoDTO{" + "id=" + id + ", idDocumento=" + idDocumento + ", documento=" + documento + ", codigoRC=" + codigoRC + ", estado=" + estado + ", fechaCambio=" + fechaCambio + ", usuarioCambio=" + usuarioCambio + ", valorTotal=" + valorTotal + ", observacion=" + observacion + ", codigoSolicitud=" + codigoSolicitud + ", totalRegistros=" + totalRegistros + '}';
     }
     
 }

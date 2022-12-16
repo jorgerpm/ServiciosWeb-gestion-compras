@@ -14,6 +14,7 @@ public class RolDTO {
     private String nombre;
     private boolean principal;
     private long idEstado;
+    private boolean cheklistRecepcion;
 
     public long getId() {
         return id;
@@ -46,6 +47,16 @@ public class RolDTO {
     public void setIdEstado(long idEstado) {
         this.idEstado = idEstado;
     }
+
+    public boolean isCheklistRecepcion() {
+        return cheklistRecepcion;
+    }
+
+    public void setCheklistRecepcion(boolean cheklistRecepcion) {
+        this.cheklistRecepcion = cheklistRecepcion;
+    }
+
+    
 
     @Override
     public String toString() {
