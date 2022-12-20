@@ -9,6 +9,7 @@ import com.idebsystems.serviciosweb.dao.AutorizacionOrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDetalleDAO;
+import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
@@ -22,6 +23,7 @@ import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.CotizacionDetalle;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.entities.OrdenCompraDetalle;
+import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.entities.Usuario;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -260,6 +263,11 @@ public class OrdenCompraServicio {
             ordenDto = OrdenCompraMapper.INSTANCE.entityToDto(ordenCompra);
             ordenDto.setRespuesta("OK");
             
+            //para enviar el correo al proveedor seleccionado , se envia solo cuando sea autorizado.
+            if(ordenCompra.getEstado().equalsIgnoreCase("AUTORIZADO")){
+                enviarCorreoOCAutorizado(ordenDto);
+            }
+            
             return ordenDto;
             
         } catch (Exception exc) {
@@ -269,11 +277,11 @@ public class OrdenCompraServicio {
     }
     
     
-    public List<OrdenCompraDTO> listarOrdenesPorAutorizar(String codigoRC, Long idUsuario, boolean rolPrincipal) throws Exception {
+    public List<OrdenCompraDTO> listarOrdenesPorAutorizar(String codigoRC, String codigoSolicitud, Long idUsuario, boolean rolPrincipal) throws Exception {
         try {
             List<OrdenCompraDTO> listaOrdenCompraDto = new ArrayList<>();
 
-            List<Object[]> listaOrdenCompra = dao.listarOrdenesPorAutorizar(codigoRC, idUsuario, rolPrincipal);
+            List<Object[]> listaOrdenCompra = dao.listarOrdenesPorAutorizar(codigoRC, codigoSolicitud, idUsuario, rolPrincipal);
             
             //se debe buscar el provedor para enviarlo con la cotizacion
             ProveedorDAO proDao = new ProveedorDAO();
@@ -283,29 +291,28 @@ public class OrdenCompraServicio {
             
             for(Object[] ordCompra : listaOrdenCompra){
                 //se debe buscar el provedor para enviarlo con la cotizacion
-                Proveedor prov = proDao.buscarProveedorRuc(ordCompra[6].toString());
+                Proveedor prov = proDao.buscarProveedorRuc(ordCompra[7].toString());
                 
                 OrdenCompraDTO dto = new OrdenCompraDTO();
-                dto.setAutorizador(ordCompra[16].toString());
-                dto.setCodigoOrdenCompra(ordCompra[3].toString());
-                dto.setCodigoRC(ordCompra[2].toString());
-                dto.setDescuento(ordCompra[12]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[12].toString())) : BigDecimal.ZERO);
-                dto.setEstado(ordCompra[4].toString());
-                dto.setFechaModifica(ordCompra[15]!=null?(Date)ordCompra[15]:null);
-                dto.setFechaOrdenCompra(ordCompra[1]!=null?(Date)ordCompra[1]:null);
-//                dto.setFechaTexto(ordCompra);
-                dto.setFormaPago(ordCompra[13].toString());
+                
                 dto.setId((Long)ordCompra[0]);
-//                dto.setIdUsuario(ordCompra[]);
-                dto.setIva(ordCompra[10]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[10].toString())) : BigDecimal.ZERO);
-                dto.setObservacion(ordCompra[7]!=null?ordCompra[7].toString():null);
-//                dto.setRespuesta(ordCompra);
-                dto.setRucProveedor(ordCompra[6].toString());
-                dto.setSubtotal(ordCompra[8]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[8].toString())) : BigDecimal.ZERO);
-                dto.setSubtotalSinIva(ordCompra[9]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[9].toString())) : BigDecimal.ZERO);
-                dto.setTotal(ordCompra[11]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[11].toString())) : BigDecimal.ZERO);
-                dto.setUsuario(ordCompra[5].toString());
-                dto.setUsuarioModifica(ordCompra[14].toString());
+                dto.setFechaOrdenCompra(ordCompra[1]!=null?(Date)ordCompra[1]:null);
+                dto.setCodigoOrdenCompra(ordCompra[2].toString());
+                dto.setCodigoRC(ordCompra[3].toString());
+                dto.setCodigoSolicitud(ordCompra[4].toString());
+                dto.setEstado(ordCompra[5].toString());
+                dto.setUsuario(ordCompra[6].toString());
+                dto.setRucProveedor(ordCompra[7].toString());
+                dto.setObservacion(ordCompra[8]!=null?ordCompra[8].toString():null);
+                dto.setSubtotal(ordCompra[9]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[9].toString())) : BigDecimal.ZERO);
+                dto.setSubtotalSinIva(ordCompra[10]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[10].toString())) : BigDecimal.ZERO);
+                dto.setIva(ordCompra[11]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[11].toString())) : BigDecimal.ZERO);
+                dto.setTotal(ordCompra[12]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[12].toString())) : BigDecimal.ZERO);
+                dto.setDescuento(ordCompra[13]!=null ? BigDecimal.valueOf(Double.parseDouble(ordCompra[13].toString())) : BigDecimal.ZERO);
+                dto.setFormaPago(ordCompra[14].toString());
+                dto.setUsuarioModifica(ordCompra[15].toString());
+                dto.setFechaModifica(ordCompra[16]!=null?(Date)ordCompra[16]:null);
+                dto.setAutorizador(ordCompra[17].toString());
                 
                 
                 dto.setListaDetalles(new ArrayList<>());
@@ -327,6 +334,44 @@ public class OrdenCompraServicio {
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
+        }
+    }
+    
+    
+    private void enviarCorreoOCAutorizado(OrdenCompraDTO ordenCompraDTO){
+        try{
+            //buscar el proveedor
+            ProveedorDAO provDao = new ProveedorDAO();
+            Proveedor proveedor = provDao.buscarProveedorRuc(ordenCompraDTO.getRucProveedor());
+            
+            //buscar los parametros para el envio
+            //consultar los prametros del correo desde la base de datos.
+            ParametroDAO paramDao = new ParametroDAO();
+            List<Parametro> listaParams = paramDao.listarParametros();
+
+            List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
+            
+            Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
+            Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_OC_APR")).findAny().get();
+            Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_OC_APR")).findAny().get();
+            Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
+            
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_OC_APR")).findAny().get();
+
+            //generar el mensaje
+            String mensaje = paramMsm.getValor();
+            mensaje = mensaje.replace("[razonSocial]", proveedor.getRazonSocial());
+            mensaje = mensaje.replace("[codigoSolicitud]", ordenCompraDTO.getCodigoSolicitud());
+            mensaje = mensaje.replace("[codigoRC]", ordenCompraDTO.getCodigoRC());
+            
+            String correos = proveedor.getCorreo() + ";" + paramCorreos.getValor();
+            
+            
+            CorreoServicio srvCorreo = new CorreoServicio();
+            srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+        
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
         }
     }
 }

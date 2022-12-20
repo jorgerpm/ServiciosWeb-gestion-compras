@@ -120,16 +120,30 @@ public class ProveedorDAO  extends Persistencia {
             getEntityManager();
             em.getTransaction().begin();
             
-            if (Objects.nonNull(proveedor.getId()) && proveedor.getId() > 0) {
-                em.merge(proveedor); //update
-            } else {
+            //buscar si ya existe el proveedor con ese ruc
+            Query queryProv = em.createQuery("FROM Proveedor p WHERE p.ruc = :ruc");
+            queryProv.setParameter("ruc", proveedor.getRuc());
+            List<Proveedor> listaProvs = queryProv.getResultList();
+            LOGGER.log(Level.INFO, "la listaProvs: {0}", listaProvs.isEmpty());
+            if(listaProvs.isEmpty()){// si es vacio no existe el proveedor, se crea el nuevo proveedor
                 em.persist(proveedor); //insert
             }
+            else{//si ya existe se actualiza
+                proveedor.setId(listaProvs.get(0).getId());
+                em.merge(proveedor); //update
+            }
             
-            if (Objects.nonNull(usuario.getId()) && usuario.getId() > 0) {
-                em.merge(usuario); //update
-            } else {
+            //buscar el usuario para ver si ya existe y no volver a registrar el mismo usuario con ese proveedor
+            Query query = em.createQuery("FROM Usuario u WHERE u.usuario = :usuario");
+            query.setParameter("usuario", usuario.getUsuario());
+            List<Usuario> listaUser = query.getResultList();
+//            LOGGER.log(Level.INFO, "la lista: {0}", listaUser.isEmpty());
+            if(listaUser.isEmpty()){// si es vacio no existe el usuario, se crea el nuevo user
                 em.persist(usuario); //insert
+            }
+            else{//si ya existe se actualiza
+                usuario.setId(listaUser.get(0).getId());
+                em.merge(usuario); //update
             }
             
             em.flush(); //Confirmar el insert o update
@@ -141,6 +155,9 @@ public class ProveedorDAO  extends Persistencia {
             throw new Exception(exc);
         } catch (Exception exc) {
             rollbackTransaction();
+            //proveedor_ruc_key
+            if(exc.getMessage()!=null && exc.getMessage().contains("usuario_usuario_key"))
+                throw new Exception("YA EXISTE EL USUARIO CON EL RUC INGRESADO: ".concat(proveedor.getRuc()));
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {

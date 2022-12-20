@@ -46,15 +46,28 @@ public class AutorizacionOrdenCompraDAO extends Persistencia {
         }
     }
 
-    public void guardarAutorizadores(List<AutorizacionOrdenCompra> listaAuts, OrdenCompra ordenCompra) throws Exception {
+    public void guardarAutorizadores(List<AutorizacionOrdenCompra> listaAuts, OrdenCompra ordenCompra, List<Long> listaElimnar) throws Exception {
         try {
 
             getEntityManager();
 
             em.getTransaction().begin();
+            
+            //revisar si se tiene que eliminar autorizadores
+            listaElimnar.forEach(idElim ->{
+                AutorizacionOrdenCompra autElimn = em.find(AutorizacionOrdenCompra.class, idElim);
+                em.remove(autElimn);
+            });
 
             listaAuts.forEach(aut -> {
-                em.persist(aut);
+                //si ya xiste con el idusuario y el idordencompra que ya no le vuelva a persistir
+                Query query = em.createQuery("FROM AutorizacionOrdenCompra a WHERE a.idUsuario = :idUsuario AND a.idOrdenCompra = :idOrdenCompra");
+                query.setParameter("idUsuario", aut.getIdUsuario());
+                query.setParameter("idOrdenCompra", aut.getIdOrdenCompra());
+                List<AutorizacionOrdenCompra> listData = query.getResultList();
+                
+                if(listData.isEmpty())
+                    em.persist(aut);
             });
 
             //actualiza el estado de la oc a por_autorizar

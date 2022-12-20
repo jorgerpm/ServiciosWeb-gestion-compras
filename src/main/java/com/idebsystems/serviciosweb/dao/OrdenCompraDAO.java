@@ -224,11 +224,12 @@ public class OrdenCompraDAO extends Persistencia {
     }
     
     
-    public List<Object[]> listarOrdenesPorAutorizar(String codigoRC, Long idUsuario, boolean rolPrincipal) throws Exception {
+    public List<Object[]> listarOrdenesPorAutorizar(String codigoRC, String codigoSolicitud, Long idUsuario, boolean rolPrincipal) throws Exception {
         try {
             getEntityManager();
 
-            String sql = "select oc.*, u.nombre from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
+            String sql = "select oc.*, "
+                    + " u.nombre from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
                         " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id " +
                         " AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') AND aoc.estado IS NULL " ;
                         
@@ -238,6 +239,10 @@ public class OrdenCompraDAO extends Persistencia {
             if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
                 sql = sql.concat(" AND oc.codigo_rc = ?codigoRC ");
             }
+            if(Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()){
+                sql = sql.concat(" AND oc.codigo_solicitud = ?codigoSolicitud ");
+            }
+            
             if(!rolPrincipal){
                 sql = sql.concat(" and aoc.id_usuario = ?idUsuario ");
             }
@@ -247,8 +252,12 @@ public class OrdenCompraDAO extends Persistencia {
 //            query.setParameter("estado", "POR_AUTORIZAR");
             
             if(Objects.nonNull(codigoRC) && !codigoRC.isBlank()){
-                query.setParameter("codigoRC", codigoRC);
+                query.setParameter("codigoRC", codigoRC.toUpperCase());
             }
+            if(Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()){
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+            }
+            
             if(!rolPrincipal){
                 query.setParameter("idUsuario", idUsuario);
             }

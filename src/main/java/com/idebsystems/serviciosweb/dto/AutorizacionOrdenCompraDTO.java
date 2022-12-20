@@ -23,6 +23,7 @@ public class AutorizacionOrdenCompraDTO {
     private String usuarioModifica;
     //
     private String nombreUsuario;
+    private String usuariosEliminar;
 
     public long getId() {
         return id;
@@ -96,9 +97,17 @@ public class AutorizacionOrdenCompraDTO {
         this.nombreUsuario = nombreUsuario;
     }
 
+    public String getUsuariosEliminar() {
+        return usuariosEliminar;
+    }
+
+    public void setUsuariosEliminar(String usuariosEliminar) {
+        this.usuariosEliminar = usuariosEliminar;
+    }
+
     @Override
     public String toString() {
-        return "AutorizacionOrdenCompraDTO{" + "id=" + id + ", idOrdenCompra=" + idOrdenCompra + ", idUsuario=" + idUsuario + ", fechaAutoriza=" + fechaAutoriza + ", usuarioAutoriza=" + usuarioAutoriza + ", estado=" + estado + ", observacion=" + observacion + '}';
+        return "AutorizacionOrdenCompraDTO{" + "id=" + id + ", idOrdenCompra=" + idOrdenCompra + ", idUsuario=" + idUsuario + ", fechaAutoriza=" + fechaAutoriza + ", usuarioAutoriza=" + usuarioAutoriza + ", estado=" + estado + ", observacion=" + observacion + ", usuarioModifica=" + usuarioModifica + ", nombreUsuario=" + nombreUsuario + ", usuariosEliminar=" + usuariosEliminar + '}';
     }
 
 }

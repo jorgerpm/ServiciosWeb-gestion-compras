@@ -7,9 +7,11 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.CheckListRecepcionDAO;
+import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.PreguntaChecklistRecepcionDAO;
 import com.idebsystems.serviciosweb.dao.RolDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
+import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.CheckListRecepcionDTO;
 import com.idebsystems.serviciosweb.dto.CheckListRecepcionDetalleDTO;
 import com.idebsystems.serviciosweb.dto.RespuestaDTO;
@@ -17,9 +19,11 @@ import com.idebsystems.serviciosweb.dto.UsuarioDTO;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.entities.CheckListRecepcion;
 import com.idebsystems.serviciosweb.entities.CheckListRecepcionDetalle;
+import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.PreguntaChecklistRecepcion;
 import com.idebsystems.serviciosweb.entities.Rol;
 import com.idebsystems.serviciosweb.entities.Solicitud;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.CheckListRecepcionMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -69,7 +74,7 @@ public class CheckListRecepcionServicio {
             checkListRecepcion.setUsuario(checkListDto.getUsuario());
             checkListRecepcion.setUsuarioModifica(checkListDto.getUsuarioModifica());
 
-            List<CheckListRecepcionDetalle> listaAuts = new ArrayList();
+            List<CheckListRecepcionDetalle> listaReceptores = new ArrayList();
 
             //para buscar las preuntas por el rol
             UsuarioServicio usdao = new UsuarioServicio();
@@ -92,14 +97,18 @@ public class CheckListRecepcionServicio {
                     detalle.setIdRol(check.getIdRol());
                     detalle.setPregunta(preg.getPregunta());
 
-                    listaAuts.add(detalle);
+                    listaReceptores.add(detalle);
                 });
 
             }
 
-            checkListRecepcion.setListaDetalles(listaAuts);
+            checkListRecepcion.setListaDetalles(listaReceptores);
 
             dao.generarCheckList(checkListRecepcion, orden);
+            
+            //despues de generar el checklist se debe enviar por correo a los receptores
+            enviarCorreoReceptores(checkListDto.getListaDetalles(), orden);
+            
 
             return new RespuestaDTO("OK");
 
@@ -180,9 +189,13 @@ public class CheckListRecepcionServicio {
             checkListRecepcion.setFechaModifica(new Date());
             checkListRecepcion.setUsuarioModifica(checkListDto.getUsuarioModifica());
             checkListRecepcion.setEstado("PENDIENTE_RECEPCION");
-            checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
-            checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());
-            checkListRecepcion.setCodigoMaterial(checkListDto.getCodigoMaterial());
+            
+            //esto solo se actualiza cuando viene de bodega
+            if(checkListDto.getId() == 5L){
+                checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
+                checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());
+                checkListRecepcion.setCodigoMaterial(checkListDto.getCodigoMaterial());
+            }
             
             for(int i=0;i<checkListRecepcion.getListaDetalles().size();i++) {
 //                LOGGER.log(Level.INFO, "detaid: {0}", checkListRecepcion.getListaDetalles().get(i).getId());
@@ -222,6 +235,51 @@ public class CheckListRecepcionServicio {
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
+        }
+    }
+    
+    
+    private void enviarCorreoReceptores(List<CheckListRecepcionDetalleDTO> listaReceptores, OrdenCompra orden){
+        try{
+            //buscar los parametros para el envio
+            //consultar los prametros del correo desde la base de datos.
+            ParametroDAO paramDao = new ParametroDAO();
+            List<Parametro> listaParams = paramDao.listarParametros();
+
+            List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
+            
+            Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
+            Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_CHECKLIST_RECEPCION")).findAny().get();
+            Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_CHECKLIST_RECEPCION")).findAny().get();
+            Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
+            
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_APROBADORES")).findAny().get();
+            
+            //buscar los usuarios para obtener los correos de a quien se enviara
+//            StringBuilder correos = new StringBuilder();
+            CorreoServicio srvCorreo = new CorreoServicio();
+            UsuarioDAO usDao = new UsuarioDAO();
+            for(CheckListRecepcionDetalleDTO usAut : listaReceptores) {
+                Usuario usuario = usDao.buscarUsuarioPorId(usAut.getIdUsuario());
+                if(Objects.nonNull(usuario.getCorreo()) && !usuario.getCorreo().isBlank()){
+                    //generar el mensaje
+                    String mensaje = paramMsm.getValor();
+                    
+                    LOGGER.log(Level.INFO, "usuario: {0}", usuario.getNombre());
+//                    correos.append(usuario.getCorreo());
+//                    correos.append(";");
+                    
+                    mensaje = mensaje.replace("[nombreUsuario]", usuario.getNombre());
+                    mensaje = mensaje.replace("[codigoSolicitud]", orden.getCodigoSolicitud());
+                    mensaje = mensaje.replace("[codigoRC]", orden.getCodigoRC());
+
+                    
+                    srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+                }
+            }
+        
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
         }
     }
 }

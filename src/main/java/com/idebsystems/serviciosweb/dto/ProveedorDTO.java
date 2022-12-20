@@ -33,6 +33,7 @@ public class ProveedorDTO {
     //
     private Integer totalRegistros;
     private String archivoBase64;
+    private String respuesta;
 
     public Long getId() {
         return id;
@@ -194,6 +195,14 @@ public class ProveedorDTO {
 
     public void setTelefonoContabilidad(String telefonoContabilidad) {
         this.telefonoContabilidad = telefonoContabilidad;
+    }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
     }
 
     @Override

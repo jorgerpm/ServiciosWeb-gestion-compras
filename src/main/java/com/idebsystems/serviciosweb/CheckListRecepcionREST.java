@@ -79,6 +79,8 @@ public class CheckListRecepcionREST {
     public RespuestaDTO guardarCheckListRecepcion(CheckListRecepcionDTO checkListRecepcionDTO) throws Exception {
         try {
             LOGGER.log(Level.INFO, "getFechaRecepcionBodega: {0}", checkListRecepcionDTO.getFechaRecepcionBodega());
+            LOGGER.log(Level.INFO, "getCodigoMaterial: {0}", checkListRecepcionDTO.getCodigoMaterial());
+            LOGGER.log(Level.INFO, "getCantidadRecibida: {0}", checkListRecepcionDTO.getCantidadRecibida());
             //guardar en la bdd el rol
             return servicio.guardarCheckListRecepcion(checkListRecepcionDTO);
         } catch (Exception exc) {

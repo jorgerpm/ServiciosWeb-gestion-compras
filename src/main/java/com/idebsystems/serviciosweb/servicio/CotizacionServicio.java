@@ -90,7 +90,7 @@ public class CotizacionServicio {
             Cotizacion cot = dao.buscarCotizacionRucNumeroSol(cotizacion.getCodigoSolicitud(), cotizacion.getRucProveedor());
             if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("ANULADO")){
                 CotizacionDTO dot = new CotizacionDTO();
-                dot.setRespuesta("La cotización ya fue enviada. No se puede enviar nuevamente la misma cotización");
+                dot.setRespuesta("La cotización ya fue enviada. No se puede enviar nuevamente la misma cotización por el mismo proveedor.");
                 return dot;
             }
             if(Objects.nonNull(cot)){

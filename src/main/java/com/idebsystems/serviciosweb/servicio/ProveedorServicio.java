@@ -35,13 +35,7 @@ public class ProveedorServicio {
             Proveedor data = dao.buscarProveedorRuc(ruc);
             LOGGER.log(Level.INFO, "proveedor encontrado: {0}", data);
             if(Objects.nonNull(data)){
-                ProveedorDTO dto = new ProveedorDTO();
-                dto.setCodigoJD(data.getCodigoJD());
-                dto.setId(data.getId());
-                dto.setRuc(data.getRuc());
-                dto.setRazonSocial(data.getRazonSocial());
-                dto.setTelefono1(data.getTelefono1());
-                dto.setDireccion(data.getDireccion());
+                ProveedorDTO dto = ProveedorMapper.INSTANCE.entityToDto(data);
                 return dto;
             }
             return new ProveedorDTO();
@@ -102,6 +96,7 @@ public class ProveedorServicio {
             Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
             Proveedor proveedorRespuesta = dao.guardarProveedorUsuario(proveedor, usuario);
             proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
+            proveedorDto.setRespuesta("OK");
             return proveedorDto;
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);

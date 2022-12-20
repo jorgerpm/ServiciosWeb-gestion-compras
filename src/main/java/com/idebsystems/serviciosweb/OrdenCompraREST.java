@@ -94,12 +94,15 @@ public class OrdenCompraREST {
     @Produces({MediaType.APPLICATION_JSON})
     public List<OrdenCompraDTO> listarOrdenesPorAutorizar(
             @QueryParam(value = "codigoRC") String codigoRC,
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "idUsuario") Long idUsuario,
             @QueryParam(value = "rolPrincipal") boolean rolPrincipal) throws Exception {
         try {
             LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
             LOGGER.log(Level.INFO, "rolPrincipal: {0}", rolPrincipal);
-            return servicio.listarOrdenesPorAutorizar(codigoRC, idUsuario, rolPrincipal);
+            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+            return servicio.listarOrdenesPorAutorizar(codigoRC, codigoSolicitud, idUsuario, rolPrincipal);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

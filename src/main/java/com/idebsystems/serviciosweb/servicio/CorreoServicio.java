@@ -62,7 +62,7 @@ public class CorreoServicio {
             //transformar el mensaje con los datos
             String mensajeText = paramMsm.getValor().replace("[clave]", userdto.getClave());
             mensajeText = mensajeText.replace("[usuario]", userdto.getUsuario());
-            mensajeText = mensajeText.replace("[nombre]", userdto.getNombre());
+            mensajeText = mensajeText.replace("[nombreUsuario]", userdto.getNombre());
 
             return enviarCorreo(correo, paramSubect.getValor(), mensajeText, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
 
@@ -133,7 +133,7 @@ public class CorreoServicio {
 
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(aliasCorreoEnvio, nombreRemitente));
-            msg.addRecipients(Message.RecipientType.TO, correosDestino.toArray(new InternetAddress[correosDestino.size()]));
+            msg.addRecipients(Message.RecipientType.BCC, correosDestino.toArray(new InternetAddress[correosDestino.size()]));
             msg.setSubject(asunto);
 //            msg.setText(mensajeText);
             BodyPart messageBodyPart = new MimeBodyPart();

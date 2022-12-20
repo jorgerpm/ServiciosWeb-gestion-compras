@@ -5,8 +5,12 @@
  */
 package com.idebsystems.serviciosweb.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 /**
  *
@@ -23,11 +27,14 @@ public class SolicitudDTO {
     private String correos;
     private String observacion;
     private List<SolicitudDetalleDTO> listaDetalles;
-    //
-    private Integer totalRegistros;
     private String usuarioModifica;
     private Date fechaModifica;
     private String codigoSolicitud;
+    private BigDecimal montoAprobado;
+    private Date fechaAutorizaRC;
+    private String estadoRC;
+    //
+    private Integer totalRegistros;
 
     public long getId() {
         return id;
@@ -131,6 +138,30 @@ public class SolicitudDTO {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public BigDecimal getMontoAprobado() {
+        return montoAprobado;
+    }
+
+    public void setMontoAprobado(BigDecimal montoAprobado) {
+        this.montoAprobado = montoAprobado;
+    }
+
+    public Date getFechaAutorizaRC() {
+        return fechaAutorizaRC;
+    }
+
+    public void setFechaAutorizaRC(Date fechaAutorizaRC) {
+        this.fechaAutorizaRC = fechaAutorizaRC;
+    }
+
+    public String getEstadoRC() {
+        return estadoRC;
+    }
+
+    public void setEstadoRC(String estadoRC) {
+        this.estadoRC = estadoRC;
     }
 
     @Override

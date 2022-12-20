@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -54,6 +55,14 @@ public class Solicitud implements Serializable {
     private Date fechaModifica;
     @Column(name = "codigo_solicitud")
     private String codigoSolicitud;
+    
+    @Column(name = "monto_aprobado_rc")
+    private BigDecimal montoAprobado;
+    @Column(name = "fecha_autoriza_rc")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAutorizaRC;
+    @Column(name = "estado_rc")
+    private String estadoRC;
 
     public long getId() {
         return id;
@@ -141,6 +150,30 @@ public class Solicitud implements Serializable {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public BigDecimal getMontoAprobado() {
+        return montoAprobado;
+    }
+
+    public void setMontoAprobado(BigDecimal montoAprobado) {
+        this.montoAprobado = montoAprobado;
+    }
+
+    public Date getFechaAutorizaRC() {
+        return fechaAutorizaRC;
+    }
+
+    public void setFechaAutorizaRC(Date fechaAutorizaRC) {
+        this.fechaAutorizaRC = fechaAutorizaRC;
+    }
+
+    public String getEstadoRC() {
+        return estadoRC;
+    }
+
+    public void setEstadoRC(String estadoRC) {
+        this.estadoRC = estadoRC;
     }
 
 }
