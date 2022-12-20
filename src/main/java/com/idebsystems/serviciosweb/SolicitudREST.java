@@ -79,4 +79,17 @@ public class SolicitudREST {
             throw new Exception(exc);
         }
     }
+    
+    @GET
+    @Path("/getUltimoCodigoSolicitud")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public SolicitudDTO getUltimoCodigoSolicitud() throws Exception {
+        try{
+            return servicio.getUltimoCodigoSolicitud();
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

@@ -35,6 +35,7 @@ public class SolicitudDTO {
     private String estadoRC;
     //
     private Integer totalRegistros;
+    private String respuesta;
 
     public long getId() {
         return id;
@@ -162,6 +163,14 @@ public class SolicitudDTO {
 
     public void setEstadoRC(String estadoRC) {
         this.estadoRC = estadoRC;
+    }
+
+    public String getRespuesta() {
+        return respuesta;
+    }
+
+    public void setRespuesta(String respuesta) {
+        this.respuesta = respuesta;
     }
 
     @Override

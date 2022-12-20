@@ -90,13 +90,19 @@ public class SolicitudServicio {
             solicitud = dao.guardarSolicitud(solicitud);
             
             solicitudDto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
-            
+
             //una vez guardada correctamente se envia por correo
             enviarCorreoProveedores(solicitudDto);
+
+            solicitudDto.setRespuesta("OK");
             
             return solicitudDto;
             
         }catch(Exception exc){
+            if(exc.getMessage()!=null && exc.getMessage().contains("solicitud_codigo_sol_uk")){
+                solicitudDto.setRespuesta("YA EXISTE REGISTRADA UNA SOLICITUD CON EL CODIGO DE SOLICITUD: ".concat(solicitudDto.getCodigoSolicitud()));
+                return solicitudDto;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
@@ -160,6 +166,16 @@ public class SolicitudServicio {
         }
     }
     
+    public SolicitudDTO getUltimoCodigoSolicitud() throws Exception {
+        try{
+            SolicitudDTO dto = new SolicitudDTO();
+            dto.setCodigoSolicitud(dao.getUltimoCodigoSolicitud());
+            return dto;
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
     
     public String encriptar(String datos, String claveSecreta) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
         String hash = "hashidebsystems1";

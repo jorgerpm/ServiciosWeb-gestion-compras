@@ -77,8 +77,13 @@ public class ProveedorServicio {
             Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
             Proveedor proveedorRespuesta = dao.guardarProveedor(proveedor);
             proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
+            proveedorDto.setRespuesta("OK");
             return proveedorDto;
         } catch (Exception exc) {
+            if(exc.getMessage()!=null && exc.getMessage().contains("proveedor_ruc_key")){
+                proveedorDto.setRespuesta("YA EXISTE UN PROVEEDOR CON EL RUC: ".concat(proveedorDto.getRuc()));
+                return proveedorDto;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

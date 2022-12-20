@@ -5,6 +5,7 @@
  */
 package com.idebsystems.serviciosweb.dao;
 
+import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
@@ -115,8 +116,6 @@ public class SolicitudDAO extends Persistencia {
             throw new Exception(exc);
         } catch (Exception exc) {
             rollbackTransaction();
-            if(exc.getMessage()!=null && exc.getMessage().contains("solicitud_codigo_sol_uk"))
-                throw new Exception("YA EXISTE REGISTRADA UNA SOLICITUD CON EL CODIGO DE SOLICITUD: ".concat(solicitud.getCodigoSolicitud()));
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         } finally {
@@ -135,6 +134,48 @@ public class SolicitudDAO extends Persistencia {
             Solicitud solicitud = (Solicitud)query.getSingleResult();
             
             return solicitud;
+            
+        } catch (NoResultException exc) {
+            return null;
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }finally {
+            closeEntityManager();
+        }
+    }
+    
+    public String getUltimoCodigoSolicitud() throws Exception {
+        try{
+            getEntityManager();
+            
+//            Query query = em.createNativeQuery("Select max(id) FROM solicitud s");
+//            
+//            List<Long> lista = query.getResultList();
+//            if(lista.isEmpty()){
+//                return "1";
+//            }
+//            else{
+//                Long next = Long.parseLong(lista.get(0).toString()) + 1;
+//                return next.toString();
+//            }
+
+            Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
+            query.setParameter("nombre", "CODIGO_SOLICITUD");
+            
+            List<Parametro> listas = query.getResultList();
+            
+            if(!listas.isEmpty()){
+                Parametro param = listas.get(0);
+                Long next = Long.parseLong(param.getValor()) + 1;
+                
+                param.setValor(next.toString());
+                em.getTransaction().begin();
+                em.merge(param);
+                em.getTransaction().commit();
+                return next.toString();
+            }
+            return "1";
             
         } catch (NoResultException exc) {
             return null;
