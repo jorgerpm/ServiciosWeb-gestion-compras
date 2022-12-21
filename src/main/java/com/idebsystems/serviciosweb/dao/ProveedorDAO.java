@@ -165,16 +165,27 @@ public class ProveedorDAO  extends Persistencia {
         }
     }
     
-    public String cargaMasivaProveedores(Proveedor proveedor) throws Exception {
+    public String cargaMasivaProveedores(List<Proveedor> listaProveedor) throws Exception {
         try {
             getEntityManager();
             em.getTransaction().begin();
             
-            if (Objects.nonNull(proveedor.getId()) && proveedor.getId() > 0) {
-                em.merge(proveedor); //update
-            } else {
-                em.persist(proveedor); //insert
-            }
+            listaProveedor.forEach(proveedor -> {
+                
+                //buscar por ruc
+                Query queryProv = em.createQuery("FROM Proveedor p WHERE p.ruc = :ruc");
+                queryProv.setParameter("ruc", proveedor.getRuc());
+                List<Proveedor> listaProvs = queryProv.getResultList();
+//                LOGGER.log(Level.INFO, "la listaProvs: {0}", listaProvs.isEmpty());
+                if(listaProvs.isEmpty()){// si es vacio no existe el proveedor, se crea el nuevo proveedor
+                    em.persist(proveedor); //insert
+                }
+                else{//si ya existe se actualiza
+                    proveedor.setId(listaProvs.get(0).getId());
+                    em.merge(proveedor); //update
+                }
+            });
+            
             
             em.flush(); //Confirmar el insert o update
             em.getTransaction().commit();

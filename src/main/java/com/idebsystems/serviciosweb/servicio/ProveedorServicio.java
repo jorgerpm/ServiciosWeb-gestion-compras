@@ -111,35 +111,75 @@ public class ProveedorServicio {
     
     public String cargaMasivaProveedores(String archivoBase64) throws Exception {
         try{
+            String respuesta = "ok";
+            
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] fileBytes = decoder.decode(archivoBase64);
             InputStream targetStream = new ByteArrayInputStream(fileBytes);
             BufferedReader br = new BufferedReader(new InputStreamReader(targetStream));
             
             String content;
-            List<ProveedorDTO> listaProveedoresDto = new ArrayList<>();
-            ProveedorDTO proveedorDto = new ProveedorDTO();
+            List<Proveedor> listaProveedores = new ArrayList<>();
+            
             int i = 0;
             while ((content = br.readLine()) != null) {
                 if(i>0){
-                    String[] textoSeparado = content.split(";");
-                    proveedorDto.setCodigoJD(textoSeparado[0]);
-                    proveedorDto.setRuc(textoSeparado[1]);
-                    proveedorDto.setRazonSocial(textoSeparado[2]);
-                    proveedorDto.setNombreComercial(textoSeparado[3]);
-                    proveedorDto.setDireccion(textoSeparado[4]);
-                    proveedorDto.setCorreo(textoSeparado[5]);
-                    proveedorDto.setTelefono1(textoSeparado[6]);
-                    proveedorDto.setTelefono2(textoSeparado[7]);
-                    proveedorDto.setIdEstado(1);
-                    
-                    listaProveedoresDto.add(proveedorDto);
-                    Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
-                    dao.cargaMasivaProveedores(proveedor);
+                    try{
+//                        LOGGER.log(Level.INFO, "contenido: {0}", content);
+//String salt = System.getProperty("line.separator");
+//LOGGER.log(Level.INFO, "contiene salto?? {0}", content.contains(salt));
+
+                        content = content.replaceAll("\n", "");
+                        content = content.replaceAll("\"", "");
+                        
+                        String[] textoSeparado = content.split(";", 14); //el 14 es porque se debe leer 14 posiciones de la linea
+                        
+//                        LOGGER.log(Level.INFO, "cantidad linea: {0}", textoSeparado.length);
+
+                        ProveedorDTO proveedorDto = new ProveedorDTO();
+
+                        proveedorDto.setCodigoJD(textoSeparado[0]);
+                        proveedorDto.setRuc(textoSeparado[1]);
+
+                        proveedorDto.setNombreComercial(textoSeparado[2]);
+                        proveedorDto.setRazonSocial(textoSeparado[3]);
+
+                        proveedorDto.setCarpeta(textoSeparado[4]);
+                        proveedorDto.setServicioProducto(textoSeparado[5]);
+                        proveedorDto.setContacto(textoSeparado[6]);
+                        proveedorDto.setCorreo(textoSeparado[7]);
+                        proveedorDto.setTelefono1(textoSeparado[8]);
+                        proveedorDto.setCredito(textoSeparado[9]);
+
+                        proveedorDto.setDireccion(textoSeparado[10]);
+                        proveedorDto.setContabilidad(textoSeparado[11]);
+                        proveedorDto.setTelefonoContabilidad(textoSeparado[12]);
+                        proveedorDto.setCorreoContabilidad(textoSeparado[13]);
+
+    //                    proveedorDto.setTelefono2(Objects.nonNull(textoSeparado[14]) ? textoSeparado[14] : null);
+                        proveedorDto.setIdEstado(1);
+
+
+                        Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
+
+                        listaProveedores.add(proveedor);
+                        
+                    }catch(Exception exc){
+                        respuesta = respuesta.concat("Se produjo un error en la línea: " + (i+1) + ". ");
+                        LOGGER.log(Level.INFO, "se produjo un error en la linea: {0}", (i+1));
+                        LOGGER.log(Level.INFO, "Error: {0}", exc.getMessage());
+                    }
                 }
                 i++;
             }
-            return "ok";
+            
+            dao.cargaMasivaProveedores(listaProveedores);
+            
+            if(!respuesta.equalsIgnoreCase("ok")){
+                respuesta = respuesta.replace("ok", "No se pudo cargar las siguientes líneas del archivo: ");
+            }
+            
+            return respuesta;
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
@@ -164,4 +204,13 @@ public class ProveedorServicio {
             throw new Exception(exc);
         }
     }
+    
+//    public static void main(String[] args) {
+//        String g = ";N/A;ANDINAGRAPH;;NO CALIFICADO;MATERIALES IMPRESOS;DANIELA ARELLANO;andinagraph@gmail.com;998415786;N/A;;;;";
+//        String[] po = g.split(";", 14);
+//        System.out.println("po: " + po.length);
+//        for(String f:po){
+//            System.out.println(f);
+//        }
+//    }
 }

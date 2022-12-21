@@ -99,8 +99,8 @@ public class ProveedorREST {
     @Produces({MediaType.APPLICATION_JSON})
     public RespuestaDTO cargaMasivaProveedores(ProveedorDTO proveedorDto) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto);
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", proveedorDto.getArchivoBase64());
+            LOGGER.log(Level.INFO, "proveedorDto: {0}", proveedorDto);
+//            LOGGER.log(Level.INFO, "getArchivoBase64: {0}", proveedorDto.getArchivoBase64());
             //guardar en la bdd el rol
             String resp = service.cargaMasivaProveedores(proveedorDto.getArchivoBase64());
             return new RespuestaDTO(resp);
