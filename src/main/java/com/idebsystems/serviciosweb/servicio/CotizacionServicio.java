@@ -53,13 +53,20 @@ public class CotizacionServicio {
             //se debe buscar el provedor para enviarlo con la cotizacion
             ProveedorDAO proDao = new ProveedorDAO();
             
+            //se necesita enviar la observacion de la solciitud
+            SolicitudDAO soldao = new SolicitudDAO();
+            
             for(Cotizacion cotiz : listaCotizacion){
                 //se debe buscar el provedor para enviarlo con la cotizacion
                 Proveedor prov = proDao.buscarProveedorRuc(cotiz.getRucProveedor());
                 
+                //solicitud
+                Solicitud solicitud = soldao.buscarSolicitudPorNumero(cotiz.getCodigoSolicitud());
+                
                 CotizacionDTO dto = CotizacionMapper.INSTANCE.entityToDto(cotiz);
                 dto.setTotalRegistros(totalRegistros);
                 dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                dto.setSolicitudDto(SolicitudMapper.INSTANCE.entityToDto(solicitud));
                 
                 listaCotizacionDto.add(dto);
             }
