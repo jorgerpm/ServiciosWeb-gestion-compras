@@ -9,6 +9,7 @@ import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dto.CotizacionDTO;
+import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Solicitud;
@@ -197,6 +198,22 @@ public class CotizacionServicio {
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
+        }
+    }
+    
+    
+    
+    public RespuestaDTO rechazarTodasCotizaciones(CotizacionDTO cotizacionDTO) throws Exception {
+        try{
+            Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
+            String respuesta = dao.rechazarTodasCotizaciones(cotizacion);
+            
+            return new RespuestaDTO(respuesta);
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            return new RespuestaDTO(exc.getMessage().replaceAll("java.lang.Exception:", ""));
+//            throw new Exception(exc);
         }
     }
 }

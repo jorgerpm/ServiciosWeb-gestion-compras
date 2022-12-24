@@ -237,4 +237,48 @@ public class CotizacionDAO extends Persistencia {
         }
     }
     
+    
+    
+    public String rechazarTodasCotizaciones(Cotizacion cotizacion) throws Exception {
+        try {
+            getEntityManager();
+
+            em.getTransaction().begin();
+            
+            Query query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.observacion = :observacion, "
+                    + " c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
+                    + " WHERE c.codigoSolicitud = :codigoSolicitud AND c.codigoRC = :codigoRC");
+            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
+            query.setParameter("codigoRC", cotizacion.getCodigoRC());
+            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
+            query.setParameter("observacion", cotizacion.getObservacion());
+            query.executeUpdate();
+            
+            //cambiar el estado de la solicitud a cotizado
+            query = em.createQuery("UPDATE Solicitud s SET s.estado = 'RECHAZADO', s.observacion = :observacion, "
+                    + " s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoSolicitud = :codigoSolicitud AND s.codigoRC = :codigoRc");
+            query.setParameter("codigoRc", cotizacion.getCodigoRC());
+            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
+            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
+            query.setParameter("fechaModifica", new Date());
+            query.setParameter("observacion", cotizacion.getObservacion());
+            query.executeUpdate();
+            
+            em.flush(); //Confirmar el insert o update
+
+            em.getTransaction().commit();
+            
+            return "OK";
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
+    
 }

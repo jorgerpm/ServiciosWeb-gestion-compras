@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb;
 
 import com.idebsystems.serviciosweb.dto.CotizacionDTO;
+import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.servicio.CotizacionServicio;
 import java.util.List;
 import java.util.logging.Level;
@@ -104,12 +105,29 @@ public class CotizacionREST {
     @GET
     @Path("/getCotizacionesParaComparativo")
     @Consumes({MediaType.APPLICATION_JSON})
-    @Produces({MediaType.APPLICATION_JSON})    
+    @Produces({MediaType.APPLICATION_JSON})
     public List<CotizacionDTO> getCotizacionesParaComparativo(
         @QueryParam(value = "codigoSolicitud") String codigoSolicitud) throws Exception {
         try{
             LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
             return servicio.getCotizacionesParaComparativo(codigoSolicitud);
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    @POST
+    @Path("/rechazarTodasCotizaciones")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public RespuestaDTO rechazarTodasCotizaciones(CotizacionDTO cotizacionDto) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", cotizacionDto.getCodigoSolicitud());
+            LOGGER.log(Level.INFO, "codigoRC: {0}", cotizacionDto.getCodigoRC());
+            LOGGER.log(Level.INFO, "usuario: {0}", cotizacionDto.getUsuarioModifica());
+            return servicio.rechazarTodasCotizaciones(cotizacionDto);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
