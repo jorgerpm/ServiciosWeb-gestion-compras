@@ -11,6 +11,7 @@ import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.OrdenCompraDetalleDAO;
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
+import com.idebsystems.serviciosweb.dao.ReporteDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.AutorizacionOrdenCompraDTO;
@@ -32,6 +33,8 @@ import com.idebsystems.serviciosweb.mappers.OrdenCompraDetalleMapper;
 import com.idebsystems.serviciosweb.mappers.OrdenCompraMapper;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,6 +44,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
 
 /**
  *
@@ -367,8 +372,38 @@ public class OrdenCompraServicio {
             String correos = proveedor.getCorreo() + ";" + paramCorreos.getValor();
             
             
+            //aqui se debe enviar adjunto el pdf de la cotizacion y la OC
+            //buscar la cotizacion por codigocoti
+            CotizacionDAO cotdao = new CotizacionDAO();
+            Cotizacion cotizacion = cotdao.buscarCotizacionRucNumeroSol(ordenCompraDTO.getCodigoSolicitud(), proveedor.getRuc());
+            
+            //generar el reporte de la cotizacon
+            ReporteDAO repodao = new ReporteDAO();
+            JasperPrint jasperPrint = repodao.compilacionReporte("rp_cotizacion", cotizacion.getId());
+            
+            //generar el reporte de la OC, para enviar los dos documentos
+            JasperPrint jasperPrintOC = repodao.compilacionReporte("rp_orden_compra", ordenCompraDTO.getId());
+
+            byte[] flujo = JasperExportManager.exportReportToPdf(jasperPrint);
+            byte[] flujoOC = JasperExportManager.exportReportToPdf(jasperPrintOC);
+            
+            File fileCot = File.createTempFile("COTIZACION-"+cotizacion.getCodigoCotizacion(),".pdf");
+            FileOutputStream fis = new FileOutputStream(fileCot);
+            fis.write(flujo);
+            fis.close();
+            
+            File fileOC = File.createTempFile("ORDENCOMPRA-"+ordenCompraDTO.getCodigoRC()+"-"+ordenCompraDTO.getCodigoSolicitud(),".pdf");
+            FileOutputStream fisOC = new FileOutputStream(fileOC);
+            fisOC.write(flujoOC);
+            fisOC.close();
+            
+            List<File> archivosAdjuntos = new ArrayList<>();
+            archivosAdjuntos.add(fileCot);
+            archivosAdjuntos.add(fileOC);
+            
+            
             CorreoServicio srvCorreo = new CorreoServicio();
-            srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), archivosAdjuntos);
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

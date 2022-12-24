@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.servicio;
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dto.UsuarioDTO;
 import com.idebsystems.serviciosweb.entities.Parametro;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +18,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -64,7 +67,7 @@ public class CorreoServicio {
             mensajeText = mensajeText.replace("[usuario]", userdto.getUsuario());
             mensajeText = mensajeText.replace("[nombreUsuario]", userdto.getNombre());
 
-            return enviarCorreo(correo, paramSubect.getValor(), mensajeText, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            return enviarCorreo(correo, paramSubect.getValor(), mensajeText, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
 
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
@@ -73,7 +76,7 @@ public class CorreoServicio {
 
     }
 
-    public String enviarCorreo(String correo, String asunto, String mensajeCorreo, String aliasCorreoEnvio, String nombreRemitente) throws Exception {
+    public String enviarCorreo(String correo, String asunto, String mensajeCorreo, String aliasCorreoEnvio, String nombreRemitente, List<File> archivosAdjuntos) throws Exception {
         try {
 
             //consultar los prametros del correo desde la base de datos.
@@ -130,6 +133,7 @@ public class CorreoServicio {
                 InternetAddress addressEmail = new InternetAddress(correo);
                 correosDestino.add(addressEmail);
             }
+            
 
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(aliasCorreoEnvio, nombreRemitente));
@@ -141,6 +145,21 @@ public class CorreoServicio {
 
             MimeMultipart multipart = new MimeMultipart("related");
             multipart.addBodyPart(messageBodyPart);
+            
+            
+            //para cuando tenga un archivo adjunto
+            if(Objects.nonNull(archivosAdjuntos)){
+                for(File adjunto : archivosAdjuntos) {
+                    BodyPart adjuntoPdf = new MimeBodyPart();
+                    adjuntoPdf.setDataHandler(new DataHandler(new FileDataSource(adjunto)));
+                    adjuntoPdf.setFileName(adjunto.getName());
+                    
+                    //se adjunta
+                    multipart.addBodyPart(adjuntoPdf);
+                }
+            }
+            
+            
             msg.setContent(multipart);
 
             Transport.send(msg);

@@ -182,16 +182,17 @@ public class CheckListRecepcionServicio {
 
             CheckListRecepcion checkListRecepcion = dao.buscarCheckListPorID(checkListDto.getId());
 
-//            LOGGER.log(Level.INFO, "v: {0}", checkListRecepcion);
-//            LOGGER.log(Level.INFO, "detalles: {0}", checkListRecepcion.getListaDetalles());
-//            LOGGER.log(Level.INFO, "sise: {0}", checkListRecepcion.getListaDetalles().size());
+            //buscar el usuario modifica
+            UsuarioDAO udao = new UsuarioDAO();
+            Usuario usuario = udao.buscarUsuarioPorId(checkListDto.getUsuarioModifica());
             
             checkListRecepcion.setFechaModifica(new Date());
             checkListRecepcion.setUsuarioModifica(checkListDto.getUsuarioModifica());
             checkListRecepcion.setEstado("PENDIENTE_RECEPCION");
             
             //esto solo se actualiza cuando viene de bodega
-            if(checkListDto.getId() == 5L){
+            //o para el administrador tambien puede cambiar
+            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L){//para el idrol = 5
                 checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
                 checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());
                 checkListRecepcion.setCodigoMaterial(checkListDto.getCodigoMaterial());
@@ -245,6 +246,9 @@ public class CheckListRecepcionServicio {
             //consultar los prametros del correo desde la base de datos.
             ParametroDAO paramDao = new ParametroDAO();
             List<Parametro> listaParams = paramDao.listarParametros();
+            
+            //para obtener la ip del sistema para generar la url que se envia por correo
+            List<Parametro> paramsIP = listaParams.stream().filter(p -> p.getNombre().contains("IP_SISTEMA")).collect(Collectors.toList());
 
             List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
             
@@ -272,9 +276,10 @@ public class CheckListRecepcionServicio {
                     mensaje = mensaje.replace("[nombreUsuario]", usuario.getNombre());
                     mensaje = mensaje.replace("[codigoSolicitud]", orden.getCodigoSolicitud());
                     mensaje = mensaje.replace("[codigoRC]", orden.getCodigoRC());
+                    mensaje = mensaje.replace("[url]", paramsIP.get(0).getValor());
 
                     
-                    srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+                    srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
                 }
             }
         

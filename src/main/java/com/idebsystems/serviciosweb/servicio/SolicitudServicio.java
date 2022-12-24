@@ -159,7 +159,7 @@ public class SolicitudServicio {
             
             
             CorreoServicio srvCorreo = new CorreoServicio();
-            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+            srvCorreo.enviarCorreo(solicitudDto.getCorreos(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

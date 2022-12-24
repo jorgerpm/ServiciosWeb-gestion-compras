@@ -86,6 +86,9 @@ public class AutorizacionOrdenCompraServicio {
             //consultar los prametros del correo desde la base de datos.
             ParametroDAO paramDao = new ParametroDAO();
             List<Parametro> listaParams = paramDao.listarParametros();
+            
+            //para obtener la ip del sistema para generar la url que se envia por correo
+            List<Parametro> paramsIP = listaParams.stream().filter(p -> p.getNombre().contains("IP_SISTEMA")).collect(Collectors.toList());
 
             List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
             
@@ -94,7 +97,7 @@ public class AutorizacionOrdenCompraServicio {
             Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_APROBADORES")).findAny().get();
             Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
             
-//            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("CORREOS_APROBADORES")).findAny().get();
+//            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_APROBADORES")).findAny().get();
 
             //generar el mensaje
             String mensaje = paramMsm.getValor();
@@ -112,9 +115,10 @@ public class AutorizacionOrdenCompraServicio {
                     mensaje = mensaje.replace("[nombreUsuario]", usuario.getNombre());
                     mensaje = mensaje.replace("[codigoSolicitud]", orden.getCodigoSolicitud());
                     mensaje = mensaje.replace("[codigoRC]", orden.getCodigoRC());
+                    mensaje = mensaje.replace("[url]", paramsIP.get(0).getValor());
 
                     
-                    srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor());
+                    srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
                 }
             }
         
