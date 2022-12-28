@@ -257,7 +257,7 @@ public class CheckListRecepcionServicio {
             Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_CHECKLIST_RECEPCION")).findAny().get();
             Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
             
-            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_APROBADORES")).findAny().get();
+            //Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_APROBADORES")).findAny().orElse(new Parametro());
             
             //buscar los usuarios para obtener los correos de a quien se enviara
 //            StringBuilder correos = new StringBuilder();

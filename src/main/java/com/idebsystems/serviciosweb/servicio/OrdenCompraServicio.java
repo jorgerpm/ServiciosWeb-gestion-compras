@@ -361,7 +361,7 @@ public class OrdenCompraServicio {
             Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_OC_APR")).findAny().get();
             Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
             
-            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_OC_APR")).findAny().get();
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_OC_APR")).findAny().orElse(new Parametro());
 
             //generar el mensaje
             String mensaje = paramMsm.getValor();
@@ -369,7 +369,11 @@ public class OrdenCompraServicio {
             mensaje = mensaje.replace("[codigoSolicitud]", ordenCompraDTO.getCodigoSolicitud());
             mensaje = mensaje.replace("[codigoRC]", ordenCompraDTO.getCodigoRC());
             
-            String correos = proveedor.getCorreo() + ";" + paramCorreos.getValor();
+            String correos = proveedor.getCorreo();
+            
+            if(Objects.nonNull(paramCorreos.getValor()) && !paramCorreos.getValor().isBlank()){
+                correos = correos.concat(";").concat(paramCorreos.getValor());
+            }
             
             
             //aqui se debe enviar adjunto el pdf de la cotizacion y la OC

@@ -6,17 +6,22 @@
 package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.CotizacionDAO;
+import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.ProveedorDAO;
+import com.idebsystems.serviciosweb.dao.ReporteDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dto.CotizacionDTO;
 import com.idebsystems.serviciosweb.dto.RespuestaDTO;
 import com.idebsystems.serviciosweb.entities.Cotizacion;
+import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.mappers.CotizacionMapper;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import com.idebsystems.serviciosweb.mappers.SolicitudMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +30,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperPrint;
 
 /**
  *
@@ -113,6 +121,9 @@ public class CotizacionServicio {
             
             cotizacionDTO = CotizacionMapper.INSTANCE.entityToDto(cotizacion);
             cotizacionDTO.setRespuesta("OK");
+            
+            //enviar el correo de que se registro una nueva cotizacion
+            enviarCorreoNuevaCotizacion(cotizacion);
             
             return cotizacionDTO;
             
@@ -214,6 +225,65 @@ public class CotizacionServicio {
             LOGGER.log(Level.SEVERE, null, exc);
             return new RespuestaDTO(exc.getMessage().replaceAll("java.lang.Exception:", ""));
 //            throw new Exception(exc);
+        }
+    }
+    
+    
+    private void enviarCorreoNuevaCotizacion(Cotizacion cotizacion){
+        try{
+            //buscar el proveedor
+            ProveedorDAO provDao = new ProveedorDAO();
+            Proveedor proveedor = provDao.buscarProveedorRuc(cotizacion.getRucProveedor());
+            
+            //buscar los parametros para el envio
+            //consultar los prametros del correo desde la base de datos.
+            ParametroDAO paramDao = new ParametroDAO();
+            List<Parametro> listaParams = paramDao.listarParametros();
+
+            List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
+            
+            Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
+            Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_NUEVA_COT")).findAny().get();
+            Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_NUEVA_COT")).findAny().get();
+            Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
+            
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("EMAILS_COTIZACION_REG")).findAny().orElse(new Parametro());
+
+            //generar el mensaje
+            String mensaje = paramMsm.getValor();
+            mensaje = mensaje.replace("[razonSocial]", proveedor.getRazonSocial());
+            mensaje = mensaje.replace("[codigoSolicitud]", cotizacion.getCodigoSolicitud());
+            mensaje = mensaje.replace("[codigoRC]", cotizacion.getCodigoRC());
+            
+            String correos = null;
+            
+            if(Objects.nonNull(paramCorreos.getValor()) && !paramCorreos.getValor().isBlank()){
+                correos = paramCorreos.getValor();
+            }
+            
+            
+            //aqui se debe enviar adjunto el pdf de la cotizacion y la OC            
+            //generar el reporte de la cotizacon
+            ReporteDAO repodao = new ReporteDAO();
+            JasperPrint jasperPrint = repodao.compilacionReporte("rp_cotizacion", cotizacion.getId());
+
+            byte[] flujo = JasperExportManager.exportReportToPdf(jasperPrint);
+            
+            File fileCot = File.createTempFile("COTIZACION-"+cotizacion.getCodigoCotizacion(),".pdf");
+            FileOutputStream fis = new FileOutputStream(fileCot);
+            fis.write(flujo);
+            fis.close();
+            
+            List<File> archivosAdjuntos = new ArrayList<>();
+            archivosAdjuntos.add(fileCot);
+            
+            if(Objects.nonNull(correos)){
+                CorreoServicio srvCorreo = new CorreoServicio();
+                srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), archivosAdjuntos);
+            }
+        
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
         }
     }
 }
