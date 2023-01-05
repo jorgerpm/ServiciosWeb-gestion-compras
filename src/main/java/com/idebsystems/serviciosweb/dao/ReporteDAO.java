@@ -10,6 +10,7 @@ import com.idebsystems.serviciosweb.util.Persistencia;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class ReporteDAO extends Persistencia {
         }
     }
 
-    public JasperPrint compilacionReporte(String report, long id) throws Exception {
+    public JasperPrint compilacionReportePdf(String report, long id) throws Exception {
         JasperPrint jasperPrint = null;
         Connection con = null;
         try {
@@ -56,6 +57,44 @@ public class ReporteDAO extends Persistencia {
 
             Map<String, Object> parameters = new HashMap<>();
             parameters.put("id", id);
+            parameters.put("SUBREPORT_DIR", urlReportes);
+
+            File sourceFile = new File(urlReportes + report + ".jasper");
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(sourceFile);
+
+            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, con);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception(e);
+        } finally {
+            try {
+                closeEntityManager();
+                if (con != null) {
+                    LOGGER.log(Level.INFO, "REPORTE EJECUTADO");
+                    con.close();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return jasperPrint;
+    }
+    
+    public JasperPrint compilacionReporteCsv(String report, Timestamp fechaIni, Timestamp fechaFin) throws Exception {
+        JasperPrint jasperPrint = null;
+        Connection con = null;
+        try {
+            con = getConn();
+
+            String urlReportes = getPathReportes();
+
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("p_fechaIni", fechaIni);
+            parameters.put("p_fechaFin", fechaFin);
             parameters.put("SUBREPORT_DIR", urlReportes);
 
             File sourceFile = new File(urlReportes + report + ".jasper");

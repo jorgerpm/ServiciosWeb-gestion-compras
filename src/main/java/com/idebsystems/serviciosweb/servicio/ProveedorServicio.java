@@ -78,14 +78,37 @@ public class ProveedorServicio {
 
     public ProveedorDTO guardarProveedor(ProveedorDTO proveedorDto) throws Exception {
         try {
+            Proveedor proveedorRespuesta;
+            
             Proveedor proveedor = ProveedorMapper.INSTANCE.dtoToEntity(proveedorDto);
-            Proveedor proveedorRespuesta = dao.guardarProveedor(proveedor);
+            
+            //en la gestoin proveedores cuando se registra un nuevo proveedor se debe guardar el usuario
+            if(Objects.isNull(proveedorDto.getId()) || proveedorDto.getId() == 0){//solo cuando es nuevo proveedor
+                Usuario usuario = new Usuario();
+                usuario.setNombre(proveedorDto.getRazonSocial());
+                usuario.setUsuario(proveedorDto.getRuc());
+                usuario.setClave(proveedorDto.getRuc());//la clave en este caso es el mismo ruc
+                usuario.setCorreo(proveedorDto.getCorreo());
+                usuario.setIdEstado(proveedorDto.getIdEstado());
+                usuario.setIdRol(2);
+                proveedorRespuesta = dao.guardarProveedorUsuario(proveedor, usuario);
+            }
+            else{
+                proveedorRespuesta = dao.guardarProveedor(proveedor);
+            }
+
             proveedorDto = ProveedorMapper.INSTANCE.entityToDto(proveedorRespuesta);
             proveedorDto.setRespuesta("OK");
             return proveedorDto;
+            
         } catch (Exception exc) {
             if (exc.getMessage() != null && exc.getMessage().contains("proveedor_ruc_key")) {
                 proveedorDto.setRespuesta("YA EXISTE UN PROVEEDOR CON EL RUC: ".concat(proveedorDto.getRuc()));
+                return proveedorDto;
+            }
+            if (exc.getMessage() != null && exc.getMessage().contains("usuario_correo_key")) {
+                proveedorDto.setRespuesta("YA EXISTE UN USUARIO CON EL CORREO ELECTRONICO: ".concat(proveedorDto.getCorreo())
+                        .concat(" INGRESE UN CORREO DIFERENTE PARA EL USUARIO DEL PROVEEDOR."));
                 return proveedorDto;
             }
             LOGGER.log(Level.SEVERE, null, exc);
@@ -112,14 +135,23 @@ public class ProveedorServicio {
 
             return proveedorDto;
         } catch (Exception exc) {
+            if (exc.getMessage() != null && exc.getMessage().contains("proveedor_ruc_key")) {
+                proveedorDto.setRespuesta("YA EXISTE UN PROVEEDOR CON EL RUC: ".concat(proveedorDto.getRuc()));
+                return proveedorDto;
+            }
+            if (exc.getMessage() != null && exc.getMessage().contains("usuario_correo_key")) {
+                proveedorDto.setRespuesta("YA EXISTE UN USUARIO CON EL CORREO ELECTRONICO: ".concat(proveedorDto.getCorreo())
+                        .concat(" INGRESE UN CORREO DIFERENTE PARA EL USUARIO DEL PROVEEDOR."));
+                return proveedorDto;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
     }
 
     public String cargaMasivaProveedores(String archivoBase64) throws Exception {
+        String respuesta = "ok";
         try {
-            String respuesta = "ok";
 
             Base64.Decoder decoder = Base64.getDecoder();
             byte[] fileBytes = decoder.decode(archivoBase64);
@@ -141,6 +173,19 @@ public class ProveedorServicio {
                         content = content.replaceAll("\"", "");
 
                         String[] textoSeparado = content.split(";", 14); //el 14 es porque se debe leer 14 posiciones de la linea
+                        
+                        if(Objects.isNull(textoSeparado[3]) || textoSeparado[3].isBlank()){
+                            throw new Exception("LA RAZON SOCIAL NO PUEDE ESTAR VACIA.");
+                        }
+                        if(Objects.isNull(textoSeparado[1]) || textoSeparado[1].isBlank()){
+                            throw new Exception("EL RUC NO PUEDE ESTAR VACIO.");
+                        }
+//                        if(textoSeparado[1].length() != 13){
+//                            throw new Exception("EL RUC DEBE CONTENER 13 DIGITOS.");
+//                        }
+                        if(Objects.isNull(textoSeparado[7]) || textoSeparado[7].isBlank()){
+                            throw new Exception("EL CORREO NO PUEDE ESTAR VACIO.");
+                        }
 
 //                        LOGGER.log(Level.INFO, "cantidad linea: {0}", textoSeparado.length);
                         ProveedorDTO proveedorDto = new ProveedorDTO();
@@ -187,6 +232,14 @@ public class ProveedorServicio {
 
             return respuesta;
         } catch (Exception exc) {
+            if (exc.getMessage() != null && exc.getMessage().contains("usuario_correo_key")) {
+                respuesta = "YA EXISTE UN USUARIO CON EL CORREO ELECTRONICO: "
+                        .concat(
+                        exc.getMessage().substring(exc.getMessage().indexOf("correo)=(")+9, exc.getMessage().indexOf(") already exists"))
+                )
+                        .concat(" INGRESE UN CORREO DIFERENTE PARA EL USUARIO DEL PROVEEDOR.");
+                return respuesta;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

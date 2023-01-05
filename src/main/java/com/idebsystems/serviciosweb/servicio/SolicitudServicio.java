@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import javax.crypto.BadPaddingException;
@@ -86,6 +87,10 @@ public class SolicitudServicio {
             LOGGER.log(Level.INFO, "fecha soli: {0}", solicitudDto.getFechaSolicitud());
             
             Solicitud solicitud = SolicitudMapper.INSTANCE.dtoToEntity(solicitudDto);
+            
+            if (Objects.isNull(solicitud.getId()) || solicitud.getId() == 0) {//es cuando es nuevo, solo ahi se pone el ultimo codigo solicitud
+                solicitud.setCodigoSolicitud(dao.getUltimoCodigoSolicitud());
+            }
             
             solicitud = dao.guardarSolicitud(solicitud);
             

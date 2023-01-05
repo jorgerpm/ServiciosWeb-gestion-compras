@@ -265,7 +265,7 @@ public class CotizacionServicio {
             //aqui se debe enviar adjunto el pdf de la cotizacion y la OC            
             //generar el reporte de la cotizacon
             ReporteDAO repodao = new ReporteDAO();
-            JasperPrint jasperPrint = repodao.compilacionReporte("rp_cotizacion", cotizacion.getId());
+            JasperPrint jasperPrint = repodao.compilacionReportePdf("rp_cotizacion", cotizacion.getId());
 
             byte[] flujo = JasperExportManager.exportReportToPdf(jasperPrint);
             

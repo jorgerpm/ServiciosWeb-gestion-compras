@@ -7,6 +7,9 @@ package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.ReporteDAO;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -36,21 +39,60 @@ public class ReporteServicio extends HttpServlet {
         try {
             String reporte = request.getParameter("reporte");
             String tipo = request.getParameter("tipo");
-            long id = Long.parseLong(request.getParameter("id"));
-
+            
             JasperPrint jasperPrint = null;
 
-            if (reporte.equalsIgnoreCase("RECEPCION")) {
-                jasperPrint = dao.compilacionReporte("rp_recepcion", id);
+            if(tipo.equalsIgnoreCase("pdf")){
+                
+                long id = Long.parseLong(request.getParameter("id"));
+
+                if (reporte.equalsIgnoreCase("RECEPCION")) {
+                    jasperPrint = dao.compilacionReportePdf("rp_recepcion", id);
+                }
+                if (reporte.equalsIgnoreCase("ORDEN_COMPRA")) {
+                    jasperPrint = dao.compilacionReportePdf("rp_orden_compra", id);
+                }
+                if (reporte.equalsIgnoreCase("COTIZACION")) {
+                    jasperPrint = dao.compilacionReportePdf("rp_cotizacion", id);
+                }
+                if (reporte.equalsIgnoreCase("COMPARATIVO")) {
+                    jasperPrint = dao.compilacionReportePdf("rp_comparativo", id);
+                }
             }
-            if (reporte.equalsIgnoreCase("ORDEN_COMPRA")) {
-                jasperPrint = dao.compilacionReporte("rp_orden_compra", id);
-            }
-            if (reporte.equalsIgnoreCase("COTIZACION")) {
-                jasperPrint = dao.compilacionReporte("rp_cotizacion", id);
-            }
-            if (reporte.equalsIgnoreCase("COMPARATIVO")) {
-                jasperPrint = dao.compilacionReporte("rp_comparativo", id);
+            else{
+                String fechaIni = request.getParameter("fechaIni");
+                String fechaFin = request.getParameter("fechaFin");
+                
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                
+                Calendar cini = Calendar.getInstance();
+                cini.setTime(sdf.parse(fechaIni));
+                cini.set(Calendar.HOUR_OF_DAY, 0);
+                cini.set(Calendar.MINUTE, 0);
+                cini.set(Calendar.SECOND, 0);
+                
+                Calendar cfin = Calendar.getInstance();
+                cfin.setTime(sdf.parse(fechaFin));
+                cfin.set(Calendar.HOUR_OF_DAY, 23);
+                cfin.set(Calendar.MINUTE, 59);
+                cfin.set(Calendar.SECOND, 59);
+
+                if (reporte.equalsIgnoreCase("XLSSOLICITUD")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_solicitud", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
+                if (reporte.equalsIgnoreCase("XLSCOTIZACION")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_cotizacion", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
+                if (reporte.equalsIgnoreCase("XLSORDENCOMPRA")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_orden_compra", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
+                if (reporte.equalsIgnoreCase("XLSCOMPARATIVO")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_comparativo", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
+                if (reporte.equalsIgnoreCase("XLSCHECKLISTRECEPCION")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_recepcion", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
+                
             }
             
             

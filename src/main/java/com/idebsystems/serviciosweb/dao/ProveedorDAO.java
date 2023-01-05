@@ -179,6 +179,16 @@ public class ProveedorDAO  extends Persistencia {
 //                LOGGER.log(Level.INFO, "la listaProvs: {0}", listaProvs.isEmpty());
                 if(listaProvs.isEmpty()){// si es vacio no existe el proveedor, se crea el nuevo proveedor
                     em.persist(proveedor); //insert
+                    
+                    //para los nuevos proveedores se debe crear el usuario
+                    Usuario usuario = new Usuario();
+                    usuario.setNombre(proveedor.getRazonSocial());
+                    usuario.setUsuario(proveedor.getRuc());
+                    usuario.setClave(proveedor.getRuc());//la clave en este caso es el mismo ruc
+                    usuario.setCorreo(proveedor.getCorreo());
+                    usuario.setIdEstado(proveedor.getIdEstado());
+                    usuario.setIdRol(2);
+                    em.persist(usuario);
                 }
                 else{//si ya existe se actualiza
                     proveedor.setId(listaProvs.get(0).getId());

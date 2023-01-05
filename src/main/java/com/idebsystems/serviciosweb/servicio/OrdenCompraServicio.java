@@ -383,10 +383,10 @@ public class OrdenCompraServicio {
             
             //generar el reporte de la cotizacon
             ReporteDAO repodao = new ReporteDAO();
-            JasperPrint jasperPrint = repodao.compilacionReporte("rp_cotizacion", cotizacion.getId());
+            JasperPrint jasperPrint = repodao.compilacionReportePdf("rp_cotizacion", cotizacion.getId());
             
             //generar el reporte de la OC, para enviar los dos documentos
-            JasperPrint jasperPrintOC = repodao.compilacionReporte("rp_orden_compra", ordenCompraDTO.getId());
+            JasperPrint jasperPrintOC = repodao.compilacionReportePdf("rp_orden_compra", ordenCompraDTO.getId());
 
             byte[] flujo = JasperExportManager.exportReportToPdf(jasperPrint);
             byte[] flujoOC = JasperExportManager.exportReportToPdf(jasperPrintOC);
