@@ -92,6 +92,9 @@ public class ReporteServicio extends HttpServlet {
                 if (reporte.equalsIgnoreCase("XLSCHECKLISTRECEPCION")) {
                     jasperPrint = dao.compilacionReporteCsv("rp_csv_recepcion", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
                 }
+                if (reporte.equalsIgnoreCase("XLSBITACORA")) {
+                    jasperPrint = dao.compilacionReporteCsv("rp_csv_bitacora", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+                }
                 
             }
             

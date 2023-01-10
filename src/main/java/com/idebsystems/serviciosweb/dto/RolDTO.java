@@ -15,6 +15,7 @@ public class RolDTO {
     private boolean principal;
     private long idEstado;
     private boolean cheklistRecepcion;
+    private boolean autorizador;
 
     public long getId() {
         return id;
@@ -54,6 +55,14 @@ public class RolDTO {
 
     public void setCheklistRecepcion(boolean cheklistRecepcion) {
         this.cheklistRecepcion = cheklistRecepcion;
+    }
+
+    public boolean isAutorizador() {
+        return autorizador;
+    }
+
+    public void setAutorizador(boolean autorizador) {
+        this.autorizador = autorizador;
     }
 
     

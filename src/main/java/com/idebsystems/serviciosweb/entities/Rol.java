@@ -29,6 +29,7 @@ public class Rol implements Serializable {
     private long idEstado;
     @Column(name = "cheklist_recepcion")
     private boolean cheklistRecepcion;
+    private boolean autorizador;
 
     public long getId() {
         return id;
@@ -68,6 +69,14 @@ public class Rol implements Serializable {
 
     public void setCheklistRecepcion(boolean cheklistRecepcion) {
         this.cheklistRecepcion = cheklistRecepcion;
+    }
+
+    public boolean isAutorizador() {
+        return autorizador;
+    }
+
+    public void setAutorizador(boolean autorizador) {
+        this.autorizador = autorizador;
     }
     
     

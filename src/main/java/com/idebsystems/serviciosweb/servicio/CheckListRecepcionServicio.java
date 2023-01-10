@@ -9,6 +9,7 @@ import com.idebsystems.serviciosweb.dao.OrdenCompraDAO;
 import com.idebsystems.serviciosweb.dao.CheckListRecepcionDAO;
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.PreguntaChecklistRecepcionDAO;
+import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dao.RolDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
@@ -21,10 +22,12 @@ import com.idebsystems.serviciosweb.entities.CheckListRecepcion;
 import com.idebsystems.serviciosweb.entities.CheckListRecepcionDetalle;
 import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.PreguntaChecklistRecepcion;
+import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Rol;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.CheckListRecepcionMapper;
+import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -137,11 +140,22 @@ public class CheckListRecepcionServicio {
             RolDAO roldao = new RolDAO();
             List<Rol> listaRoles = roldao.listarRoles();
             
+            //Proveedor
+            ProveedorDAO pdao = new ProveedorDAO();
+            
             //buscar el usuario para
             listaCheckListRecepcion.stream().map((comp) -> CheckListRecepcionMapper.INSTANCE.entityToDto(comp)).map((dto) -> {
                 dto.setTotalRegistros(totalRegistros);
                 return dto;                
             }).forEachOrdered((dto) -> {
+                
+                //buscar y agregar el proveedor al dto
+                try{
+                    Proveedor prov = pdao.buscarProveedorRuc(dto.getOrdenCompra().getRucProveedor());
+                    dto.getOrdenCompra().setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
+                }catch(Exception exc){
+                    
+                }
                 
                 boolean agregar = rolPrincipal;
                 

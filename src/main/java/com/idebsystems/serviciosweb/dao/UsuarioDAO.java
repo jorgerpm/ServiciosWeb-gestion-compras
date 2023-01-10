@@ -180,4 +180,26 @@ public class UsuarioDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    
+    public List<Usuario> listarUsuariosActivador() throws Exception {
+        try {
+            getEntityManager();
+
+            Query query = em.createQuery("FROM Usuario u WHERE u.idEstado = 1 AND u.idRol IN (SELECT r.id FROM Rol r WHERE r.autorizador = true)");
+            
+            List<Usuario> listaUsuariosAutorizadores = query.getResultList();
+
+            return listaUsuariosAutorizadores;
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }

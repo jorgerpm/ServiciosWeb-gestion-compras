@@ -119,4 +119,20 @@ public class UsuarioREST {
             throw new Exception(exc);
         }
     }
+    
+    ;
+    @GET
+    @Path("/listarUsuariosActivador")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public List<UsuarioDTO> listarUsuariosActivador() throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}");
+            //buscar en la bdd los roles
+            return service.listarUsuariosActivador();
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }
