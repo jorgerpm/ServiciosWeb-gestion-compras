@@ -99,14 +99,16 @@ public class AutorizacionOrdenCompraServicio {
             
 //            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_APROBADORES")).findAny().get();
 
-            //generar el mensaje
-            String mensaje = paramMsm.getValor();
+            
             
             //buscar los usuarios para obtener los correos de a quien se enviara
 //            StringBuilder correos = new StringBuilder();
             CorreoServicio srvCorreo = new CorreoServicio();
             UsuarioDAO usDao = new UsuarioDAO();
             for(AutorizacionOrdenCompra usAut : listaAuts) {
+                //generar el mensaje
+                String mensaje = paramMsm.getValor();
+                
                 Usuario usuario = usDao.buscarUsuarioPorId(usAut.getIdUsuario());
                 if(Objects.nonNull(usuario.getCorreo()) && !usuario.getCorreo().isBlank()){
 //                    correos.append(usuario.getCorreo());

@@ -45,14 +45,14 @@ public class CotizacionServicio {
     private final CotizacionDAO dao = new CotizacionDAO();
 
     public List<CotizacionDTO> listarCotizaciones(String fechaInicial, String fechaFinal, String codigoSolicitud, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            Integer desde, Integer hasta, Integer idRol, String rucProveedor) throws Exception {
         try {
             List<CotizacionDTO> listaCotizacionDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             List<Object> respuesta = dao.listarCotizaciones(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
-                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
+                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta, idRol, rucProveedor);
 
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);

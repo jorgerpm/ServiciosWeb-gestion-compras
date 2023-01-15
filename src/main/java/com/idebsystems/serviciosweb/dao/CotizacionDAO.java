@@ -27,7 +27,7 @@ public class CotizacionDAO extends Persistencia {
     private static final Logger LOGGER = Logger.getLogger(CotizacionDAO.class.getName());
 
     public List<Object> listarCotizaciones(Date fechaInicial, Date fechaFinal, String codigoSolicitud, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            Integer desde, Integer hasta, Integer idRol, String rucProveedor) throws Exception {
         try {
             List<Object> respuesta = new ArrayList<>();
             getEntityManager();
@@ -43,6 +43,10 @@ public class CotizacionDAO extends Persistencia {
             else{
                 sql = sql.concat(" WHERE c.fechaCotizacion BETWEEN :fechaInicial AND :fechaFinal ");
             }
+            
+            if(Objects.nonNull(idRol) && idRol == 2){ //es para proveedores y sacan solo lo del proveedor que ingreso al sistema
+                sql = sql.concat(" AND c.rucProveedor = :rucProveedor ");
+            }
 
             sql = sql.concat(" order by c.fechaCotizacion");
 
@@ -57,6 +61,10 @@ public class CotizacionDAO extends Persistencia {
             else{
                 query.setParameter("fechaInicial", fechaInicial);
                 query.setParameter("fechaFinal", fechaFinal);
+            }
+            
+            if(Objects.nonNull(idRol) && idRol == 2){ //es para proveedores y sacan solo lo del proveedor que ingreso al sistema
+                query.setParameter("rucProveedor", rucProveedor);
             }
 
             //para obtener el total de los registros a buscar

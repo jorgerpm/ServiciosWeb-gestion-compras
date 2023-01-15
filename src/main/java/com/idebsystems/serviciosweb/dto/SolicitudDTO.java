@@ -33,6 +33,7 @@ public class SolicitudDTO {
     private BigDecimal montoAprobado;
     private Date fechaAutorizaRC;
     private String estadoRC;
+    private String unidadNegocioRC;
     //
     private Integer totalRegistros;
     private String respuesta;
@@ -173,11 +174,18 @@ public class SolicitudDTO {
         this.respuesta = respuesta;
     }
 
-    @Override
-    public String toString() {
-        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", totalRegistros=" + totalRegistros + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + '}';
+    public String getUnidadNegocioRC() {
+        return unidadNegocioRC;
     }
 
+    public void setUnidadNegocioRC(String unidadNegocioRC) {
+        this.unidadNegocioRC = unidadNegocioRC;
+    }
 
+    @Override
+    public String toString() {
+        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + ", montoAprobado=" + montoAprobado + ", fechaAutorizaRC=" + fechaAutorizaRC + ", estadoRC=" + estadoRC + ", unidadNegocioRC=" + unidadNegocioRC + ", totalRegistros=" + totalRegistros + ", respuesta=" + respuesta + '}';
+    }
 
+    
 }

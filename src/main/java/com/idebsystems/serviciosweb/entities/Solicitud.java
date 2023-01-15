@@ -63,6 +63,9 @@ public class Solicitud implements Serializable {
     private Date fechaAutorizaRC;
     @Column(name = "estado_rc")
     private String estadoRC;
+    
+    @Column(name = "unidad_negocio_rc")
+    private String unidadNegocioRC;
 
     public long getId() {
         return id;
@@ -174,6 +177,14 @@ public class Solicitud implements Serializable {
 
     public void setEstadoRC(String estadoRC) {
         this.estadoRC = estadoRC;
+    }
+
+    public String getUnidadNegocioRC() {
+        return unidadNegocioRC;
+    }
+
+    public void setUnidadNegocioRC(String unidadNegocioRC) {
+        this.unidadNegocioRC = unidadNegocioRC;
     }
 
 }

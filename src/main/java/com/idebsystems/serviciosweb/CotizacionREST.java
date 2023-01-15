@@ -40,12 +40,16 @@ public class CotizacionREST {
             @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "codigoRC") String codigoRC,
             @QueryParam(value = "desde") Integer desde,
-            @QueryParam(value = "hasta") Integer hasta) throws Exception {
+            @QueryParam(value = "hasta") Integer hasta,
+            @QueryParam(value = "idRol") Integer idRol,
+            @QueryParam(value = "rucProveedor") String rucProveedor) throws Exception {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
             LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta);
+            LOGGER.log(Level.INFO, "idRol: {0}", idRol);
+            LOGGER.log(Level.INFO, "rucProveedor: {0}", rucProveedor);
+            return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta, idRol, rucProveedor);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
