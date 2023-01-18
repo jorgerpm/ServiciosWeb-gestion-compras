@@ -41,6 +41,7 @@ public class OrdenCompraDTO {
     private String autorizador;
     private List<AutorizacionOrdenCompraDTO> listaAutorizaciones;
     private String codigoSolicitud;
+    private String unidadNegocioRC;
     
 
     public long getId() {
@@ -243,11 +244,18 @@ public class OrdenCompraDTO {
         this.codigoSolicitud = codigoSolicitud;
     }
 
-    @Override
-    public String toString() {
-        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", idUsuario=" + idUsuario + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", respuesta=" + respuesta + ", autorizador=" + autorizador + ", codigoSolicitud=" + codigoSolicitud + '}';
+    public String getUnidadNegocioRC() {
+        return unidadNegocioRC;
     }
 
-    
+    public void setUnidadNegocioRC(String unidadNegocioRC) {
+        this.unidadNegocioRC = unidadNegocioRC;
+    }
+
+    @Override
+    public String toString() {
+        return "OrdenCompraDTO{" + "id=" + id + ", fechaOrdenCompra=" + fechaOrdenCompra + ", codigoRC=" + codigoRC + ", codigoOrdenCompra=" + codigoOrdenCompra + ", estado=" + estado + ", usuario=" + usuario + ", rucProveedor=" + rucProveedor + ", subtotal=" + subtotal + ", subtotalSinIva=" + subtotalSinIva + ", iva=" + iva + ", total=" + total + ", descuento=" + descuento + ", observacion=" + observacion + ", formaPago=" + formaPago + ", totalRegistros=" + totalRegistros + ", fechaTexto=" + fechaTexto + ", idUsuario=" + idUsuario + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", respuesta=" + respuesta + ", autorizador=" + autorizador + ", codigoSolicitud=" + codigoSolicitud + ", unidadNegocioRC=" + unidadNegocioRC + '}';
+    }
+
     
 }

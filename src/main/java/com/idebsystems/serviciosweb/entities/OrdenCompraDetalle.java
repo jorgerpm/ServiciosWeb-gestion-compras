@@ -38,6 +38,8 @@ public class OrdenCompraDetalle implements Serializable {
     @Column(name = "tiene_iva")
     private Boolean tieneIva;
     private String observacion;
+    @Column(name = "codigo_producto")
+    private String codigoProducto;
     
     @ManyToOne
     @JoinColumn(name = "id_orden_compra", referencedColumnName = "id")
@@ -106,7 +108,14 @@ public class OrdenCompraDetalle implements Serializable {
     public void setOrdenCompra(OrdenCompra ordenCompra) {
         this.ordenCompra = ordenCompra;
     }
-    
+
+    public String getCodigoProducto() {
+        return codigoProducto;
+    }
+
+    public void setCodigoProducto(String codigoProducto) {
+        this.codigoProducto = codigoProducto;
+    }
     
     
 }

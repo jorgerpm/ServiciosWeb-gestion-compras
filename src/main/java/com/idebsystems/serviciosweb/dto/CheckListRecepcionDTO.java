@@ -5,6 +5,7 @@
  */
 package com.idebsystems.serviciosweb.dto;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -27,6 +28,7 @@ public class CheckListRecepcionDTO {
     private int cantidadRecibida;
     private Long usuarioModifica;
     private Date fechaModifica;
+    private BigDecimal montoTotalFactura;
     private List<CheckListRecepcionDetalleDTO> listaDetalles;
     //
     private int totalRegistros;
@@ -144,10 +146,19 @@ public class CheckListRecepcionDTO {
         this.cantidadRecibida = cantidadRecibida;
     }
 
-    @Override
-    public String toString() {
-        return "CheckListRecepcionDTO{" + "id=" + id + ", codigoSolicitud=" + codigoSolicitud + ", fechaRecepcion=" + fechaRecepcion + ", estado=" + estado + ", usuario=" + usuario + ", fechaRecepcionBodega=" + fechaRecepcionBodega + ", codigoMaterial=" + codigoMaterial + ", cantidadRecibida=" + cantidadRecibida + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", totalRegistros=" + totalRegistros + '}';
+    public BigDecimal getMontoTotalFactura() {
+        return montoTotalFactura;
     }
 
+    public void setMontoTotalFactura(BigDecimal montoTotalFactura) {
+        this.montoTotalFactura = montoTotalFactura;
+    }
+
+    @Override
+    public String toString() {
+        return "CheckListRecepcionDTO{" + "id=" + id + ", codigoSolicitud=" + codigoSolicitud + ", fechaRecepcion=" + fechaRecepcion + ", estado=" + estado + ", usuario=" + usuario + ", fechaRecepcionBodega=" + fechaRecepcionBodega + ", codigoMaterial=" + codigoMaterial + ", cantidadRecibida=" + cantidadRecibida + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", montoTotalFactura=" + montoTotalFactura + ", totalRegistros=" + totalRegistros + '}';
+    }
+
+    
     
 }

@@ -69,6 +69,8 @@ public class OrdenCompra implements Serializable {
     private Date fechaModifica;
     @Column(name = "codigo_solicitud")
     private String codigoSolicitud;
+    @Column(name = "unidad_negocio_rc")
+    private String unidadNegocioRC;
 
     public long getId() {
         return id;
@@ -212,6 +214,14 @@ public class OrdenCompra implements Serializable {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public String getUnidadNegocioRC() {
+        return unidadNegocioRC;
+    }
+
+    public void setUnidadNegocioRC(String unidadNegocioRC) {
+        this.unidadNegocioRC = unidadNegocioRC;
     }
 
 }

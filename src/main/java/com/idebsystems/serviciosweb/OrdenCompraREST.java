@@ -36,6 +36,7 @@ public class OrdenCompraREST {
     public OrdenCompraDTO generarOrdenCompra(OrdenCompraDTO ordenCompraDTO) throws Exception {
         try {
             LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
+            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
             //guardar en la bdd el rol
             return servicio.generarOrdenCompra(ordenCompraDTO);
         } catch (Exception exc) {
@@ -52,13 +53,15 @@ public class OrdenCompraREST {
             @QueryParam(value = "fechaInicial") String fechaInicial,
             @QueryParam(value = "fechaFinal") String fechaFinal,
             @QueryParam(value = "codigoRC") String codigoRC,
+            @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
             LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            return servicio.listarOrdenesCompras(fechaInicial, fechaFinal, codigoRC, desde, hasta);
+            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+            return servicio.listarOrdenesCompras(fechaInicial, fechaFinal, codigoRC, codigoSolicitud, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

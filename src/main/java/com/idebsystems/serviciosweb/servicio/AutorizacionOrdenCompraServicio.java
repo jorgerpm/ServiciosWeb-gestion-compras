@@ -47,11 +47,21 @@ public class AutorizacionOrdenCompraServicio {
             OrdenCompraDAO ordenDao = new OrdenCompraDAO();
             OrdenCompra orden = ordenDao.buscarOrdenCompraID(listaAutsDto.get(0).getIdOrdenCompra());
             
-            if(orden.getEstado().equalsIgnoreCase("POR_AUTORIZAR")){
-                return new RespuestaDTO("ESTA ORDEN DE COMPRA YA TIENE ASIGNADO AUTORIZADORES.");
+//            if(orden.getEstado().equalsIgnoreCase("POR_AUTORIZAR")){
+//                return new RespuestaDTO("ESTA ORDEN DE COMPRA YA TIENE ASIGNADO AUTORIZADORES.");
+//            }
+
+            if(orden.getEstado().equalsIgnoreCase("AUTORIZADO") || orden.getEstado().equalsIgnoreCase("COMPLETO")
+                    || orden.getEstado().equalsIgnoreCase("PENDIENTE_RECEPCION") ){
+                return new RespuestaDTO("ORDEN DE COMPRA EN ESTADO " + orden.getEstado() + ", NO SE PUEDE MODIFICAR.");
+            }
+
+            orden.setEstado("POR_AUTORIZAR");
+
+            if(orden.getEstado().equalsIgnoreCase("AUTORIZADO_TEMP")){
+                orden.setEstado("AUTORIZADO_TEMP");
             }
             
-            orden.setEstado("POR_AUTORIZAR");
             orden.setUsuarioModifica(listaAutsDto.get(0).getUsuarioModifica());
             orden.setFechaModifica(new Date());
             

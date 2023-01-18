@@ -40,6 +40,8 @@ public class CheckListRecepcionDetalle implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
     private String observacion;
+    @Column(name = "campos_bodega")
+    private String camposBodega;
 
     @ManyToOne
     @JoinColumn(name = "id_check_list_recepcion", referencedColumnName = "id")
@@ -107,6 +109,14 @@ public class CheckListRecepcionDetalle implements Serializable {
 
     public void setIdRol(Long idRol) {
         this.idRol = idRol;
+    }
+
+    public String getCamposBodega() {
+        return camposBodega;
+    }
+
+    public void setCamposBodega(String camposBodega) {
+        this.camposBodega = camposBodega;
     }
 
 }

@@ -20,6 +20,7 @@ public class CheckListRecepcionDetalleDTO {
     private String respuesta;
     private Date fecha;
     private String observacion;
+    private String camposBodega;
     //
     private String nombreRol;
     
@@ -86,6 +87,14 @@ public class CheckListRecepcionDetalleDTO {
 
     public void setIdRol(Long idRol) {
         this.idRol = idRol;
+    }
+
+    public String getCamposBodega() {
+        return camposBodega;
+    }
+
+    public void setCamposBodega(String camposBodega) {
+        this.camposBodega = camposBodega;
     }
     
 }

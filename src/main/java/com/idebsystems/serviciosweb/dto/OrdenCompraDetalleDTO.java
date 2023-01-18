@@ -20,6 +20,7 @@ public class OrdenCompraDetalleDTO {
     private BigDecimal valorTotal;
     private Boolean tieneIva;
     private String observacion;
+    private String codigoProducto;
 
     public long getId() {
         return id;
@@ -77,10 +78,18 @@ public class OrdenCompraDetalleDTO {
         this.observacion = observacion;
     }
 
+    public String getCodigoProducto() {
+        return codigoProducto;
+    }
+
+    public void setCodigoProducto(String codigoProducto) {
+        this.codigoProducto = codigoProducto;
+    }
+
     @Override
     public String toString() {
-        return "OrdenCompraDetalleDTO{" + "id=" + id + ", cantidad=" + cantidad + ", detalle=" + detalle + ", valorUnitario=" + valorUnitario + ", valorTotal=" + valorTotal + ", tieneIva=" + tieneIva + ", observacion=" + observacion + '}';
+        return "OrdenCompraDetalleDTO{" + "id=" + id + ", cantidad=" + cantidad + ", detalle=" + detalle + ", valorUnitario=" + valorUnitario + ", valorTotal=" + valorTotal + ", tieneIva=" + tieneIva + ", observacion=" + observacion + ", codigoProducto=" + codigoProducto + '}';
     }
-    
+
     
 }

@@ -110,16 +110,26 @@ public class OrdenCompraServicio {
             ordenCompraDTO.setSubtotalSinIva(cotizacion.getSubtotalSinIva());
             ordenCompraDTO.setTotal(cotizacion.getTotal());
             ordenCompraDTO.setCodigoSolicitud(cotizacion.getCodigoSolicitud());
+            ordenCompraDTO.setUnidadNegocioRC(solic.getUnidadNegocioRC());
             
             final List<OrdenCompraDetalleDTO> listaDetalles = new ArrayList<>();
             for(CotizacionDetalle det : cotizacion.getListaDetalles()) {
+                
                 OrdenCompraDetalleDTO ordenCompraDet = new OrdenCompraDetalleDTO();
                 ordenCompraDet.setCantidad(det.getCantidad());
-                ordenCompraDet.setDetalle(det.getDetalle());
                 ordenCompraDet.setObservacion(det.getObservacion());
                 ordenCompraDet.setTieneIva(det.getTieneIva());
                 ordenCompraDet.setValorTotal(det.getValorTotal());
                 ordenCompraDet.setValorUnitario(det.getValorUnitario());
+                
+                //para colocar el codigoproducto y el nuevo nombre que ingresa el usuario
+                ordenCompraDTO.getListaDetalles().forEach(ddd -> {
+                    if(ddd.getId() == det.getId()){
+                        ordenCompraDet.setDetalle(ddd.getDetalle());
+                        ordenCompraDet.setCodigoProducto(ddd.getCodigoProducto());
+                    }
+                });
+
                 
                 listaDetalles.add(ordenCompraDet);
             }
@@ -146,14 +156,14 @@ public class OrdenCompraServicio {
     }
     
     public List<OrdenCompraDTO> listarOrdenesCompras(String fechaInicial, String fechaFinal, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            String codigoSolicitud, Integer desde, Integer hasta) throws Exception {
         try {
             List<OrdenCompraDTO> listaOrdenCompraDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             List<Object> respuesta = dao.listarOrdenesCompras(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), FechaUtil.fechaFinal(sdf.parse(fechaFinal)),
-                    codigoRC, desde, hasta);
+                    codigoRC, codigoSolicitud, desde, hasta);
 
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);
@@ -242,7 +252,7 @@ public class OrdenCompraServicio {
             //se debe buscar la orden de compra con el id, 
             OrdenCompra ordenCompra = dao.buscarOrdenCompraID(ordenDto.getId());
             if(ordenCompra.getEstado().equalsIgnoreCase("AUTORIZADO")){
-                ordenDto.setRespuesta("ESTA ORDEN DE COMPRA YA ESTA AUTORIZADA");
+                ordenDto.setRespuesta("ESTA ORDEN DE COMPRA YA ESTÁ AUTORIZADA");
                 return ordenDto;
             }
             //actualizar el estado de la orden de compra
@@ -286,7 +296,10 @@ public class OrdenCompraServicio {
         try {
             List<OrdenCompraDTO> listaOrdenCompraDto = new ArrayList<>();
 
-            List<Object[]> listaOrdenCompra = dao.listarOrdenesPorAutorizar(codigoRC, codigoSolicitud, idUsuario, rolPrincipal);
+            UsuarioDAO userdao = new UsuarioDAO();
+            Usuario userSesion = userdao.buscarUsuarioPorId(idUsuario);
+            
+            List<Object[]> listaOrdenCompra = dao.listarOrdenesPorAutorizar(codigoRC, codigoSolicitud, userSesion, rolPrincipal);
             
             //se debe buscar el provedor para enviarlo con la cotizacion
             ProveedorDAO proDao = new ProveedorDAO();
@@ -318,6 +331,7 @@ public class OrdenCompraServicio {
                 dto.setUsuarioModifica(ordCompra[15].toString());
                 dto.setFechaModifica(ordCompra[16]!=null?(Date)ordCompra[16]:null);
                 dto.setAutorizador(ordCompra[17].toString());
+                dto.setUnidadNegocioRC(Objects.nonNull(ordCompra[18]) ? ordCompra[18].toString() : null);
                 
                 
                 dto.setListaDetalles(new ArrayList<>());

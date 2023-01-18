@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
 import com.idebsystems.serviciosweb.entities.Comparativo;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class OrdenCompraDAO extends Persistencia {
     }
     
     public List<Object> listarOrdenesCompras(Date fechaInicial, Date fechaFinal, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            String codigoSolicitud, Integer desde, Integer hasta) throws Exception {
         try {
             List<Object> respuesta = new ArrayList<>();
             getEntityManager();
@@ -109,6 +110,9 @@ public class OrdenCompraDAO extends Persistencia {
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 sql = sql.concat(" WHERE UPPER(oc.codigoRC) = :codigoRC ");
+            }
+            else if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                sql = sql.concat(" WHERE UPPER(oc.codigoSolicitud) = :codigoSolicitud ");
             }
             else{
                 sql = sql.concat(" WHERE oc.fechaOrdenCompra BETWEEN :fechaInicial AND :fechaFinal ");
@@ -120,6 +124,9 @@ public class OrdenCompraDAO extends Persistencia {
 
             if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
                 query.setParameter("codigoRC", codigoRC.toUpperCase());
+            }
+            else if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
             }
             else{
                 query.setParameter("fechaInicial", fechaInicial);
@@ -224,12 +231,27 @@ public class OrdenCompraDAO extends Persistencia {
     }
     
     
-    public List<Object[]> listarOrdenesPorAutorizar(String codigoRC, String codigoSolicitud, Long idUsuario, boolean rolPrincipal) throws Exception {
+    public List<Object[]> listarOrdenesPorAutorizar(String codigoRC, String codigoSolicitud, Usuario userSesion, boolean rolPrincipal) throws Exception {
         try {
             getEntityManager();
 
-            String sql = "select oc.*, "
-                    + " u.nombre from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
+            String sql = "select oc.id, oc.fecha_orden_compra, oc.codigo_orden_compra, " +
+"	oc.codigo_rc, " +
+"	oc.codigo_solicitud, " +
+"	oc.estado, " +
+"	oc.usuario, " +
+"	oc.ruc_proveedor, " +
+"	oc.observacion, " +
+"	oc.subtotal, " +
+"	oc.subtotal_sin_iva, " +
+"	oc.iva, " +
+"	oc.total, " +
+"	oc.descuento, " +
+"	oc.forma_pago, " +
+"	oc.usuario_modifica, " +
+"	oc.fecha_modifica, "
+                    + " u.nombre, oc.unidad_negocio_rc "
+                    + " from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
                         " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id " +
                         " AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') AND aoc.estado IS NULL " ;
                         
@@ -243,9 +265,12 @@ public class OrdenCompraDAO extends Persistencia {
                 sql = sql.concat(" AND oc.codigo_solicitud = ?codigoSolicitud ");
             }
             
-            if(!rolPrincipal){
-                sql = sql.concat(" and aoc.id_usuario = ?idUsuario ");
+            if(userSesion.getIdRol() != 1){ //si es un rol diferente al administrador
+                if(!rolPrincipal){
+                    sql = sql.concat(" and aoc.id_usuario = ?idUsuario ");
+                }
             }
+            
             sql = sql.concat(" order by oc.fecha_orden_compra");
 
             Query query = em.createNativeQuery(sql);
@@ -258,8 +283,10 @@ public class OrdenCompraDAO extends Persistencia {
                 query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
             }
             
-            if(!rolPrincipal){
-                query.setParameter("idUsuario", idUsuario);
+            if(userSesion.getIdRol() != 1){ //si es un rol diferente al administrador
+                if(!rolPrincipal){
+                    query.setParameter("idUsuario", userSesion.getId());
+                }
             }
             
             List<Object[]> listaOrdenCompra = query.getResultList();

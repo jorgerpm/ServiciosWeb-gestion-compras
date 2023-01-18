@@ -99,6 +99,7 @@ public class CheckListRecepcionServicio {
                     detalle.setIdUsuario(check.getIdUsuario());
                     detalle.setIdRol(check.getIdRol());
                     detalle.setPregunta(preg.getPregunta());
+                    detalle.setCamposBodega(check.getCamposBodega());
 
                     listaReceptores.add(detalle);
                 });
@@ -127,6 +128,9 @@ public class CheckListRecepcionServicio {
             List<CheckListRecepcionDTO> listaDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            
+            UsuarioDAO usdao = new UsuarioDAO();
+            Usuario userSesion = usdao.buscarUsuarioPorId(idUsuario);
             
             List<Object> respuesta = dao.listarCheckList(FechaUtil.fechaInicial(sdf.parse(fechaInicial)),
                     FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
@@ -157,7 +161,9 @@ public class CheckListRecepcionServicio {
                     
                 }
                 
-                boolean agregar = rolPrincipal;
+                boolean agregar = false;
+                if(rolPrincipal || userSesion.getIdRol() == 1)
+                    agregar = true;
                 
                 List<CheckListRecepcionDetalleDTO> detallesDto = new ArrayList();
                 
@@ -166,15 +172,15 @@ public class CheckListRecepcionServicio {
                                     listaRoles.stream().filter(search-> search.getId() == deta.getIdRol()).findFirst().orElse(new Rol()).getNombre()
                             );
                     
-                    if(!rolPrincipal){
-                        if(idUsuario == deta.getIdUsuario() && Objects.isNull(deta.getRespuesta())){
+                    if(!rolPrincipal && userSesion.getIdRol() != 1){
+                        if(idUsuario == deta.getIdUsuario() /*&& Objects.isNull(deta.getRespuesta())*/){//esto hace que se muestre por cada user, ya que si la respusta era vacia le smostraba, pero si ya se llena la respuesta ya no les muestra al mismo user
                             agregar = true;        
                             detallesDto.add(deta);
                         }
                     }
                 }
                 if (agregar) {
-                    if(!rolPrincipal){
+                    if(!rolPrincipal && userSesion.getIdRol() != 1){
                         dto.setListaDetalles(detallesDto);
                     }
                     listaDto.add(dto);
@@ -206,10 +212,18 @@ public class CheckListRecepcionServicio {
             
             //esto solo se actualiza cuando viene de bodega
             //o para el administrador tambien puede cambiar
-            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L){//para el idrol = 5
+            String tieneCamposBodega = "NO";
+            for(CheckListRecepcionDetalle ff : checkListRecepcion.getListaDetalles()){
+                if(ff.getIdUsuario() == usuario.getId())
+                    tieneCamposBodega = ff.getCamposBodega();
+            }
+            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L || tieneCamposBodega.equalsIgnoreCase("SI")){//para el idrol = 5
                 checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
                 checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());
                 checkListRecepcion.setCodigoMaterial(checkListDto.getCodigoMaterial());
+            }
+            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 7 || usuario.getIdRol() == 8){//para el idrol de asistente compras y para el de coordinador compras
+                checkListRecepcion.setMontoTotalFactura(checkListDto.getMontoTotalFactura());
             }
             
             for(int i=0;i<checkListRecepcion.getListaDetalles().size();i++) {

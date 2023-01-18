@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Column;
@@ -65,6 +66,10 @@ public class CheckListRecepcion implements Serializable {
     @Column(name = "fecha_modifica")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModifica;
+    
+    
+    @Column(name = "monto_total_factura")
+    private BigDecimal montoTotalFactura;
     
     @OneToMany(mappedBy = "checkListRecepcion", fetch = FetchType.LAZY)
     private List<CheckListRecepcionDetalle> listaDetalles;
@@ -172,6 +177,14 @@ public class CheckListRecepcion implements Serializable {
 
     public void setCantidadRecibida(int cantidadRecibida) {
         this.cantidadRecibida = cantidadRecibida;
+    }
+
+    public BigDecimal getMontoTotalFactura() {
+        return montoTotalFactura;
+    }
+
+    public void setMontoTotalFactura(BigDecimal montoTotalFactura) {
+        this.montoTotalFactura = montoTotalFactura;
     }
     
 
