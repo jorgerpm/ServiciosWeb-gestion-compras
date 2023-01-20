@@ -69,11 +69,13 @@ public class SolicitudREST {
     @Path("/buscarSolicitudPorNumero")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public SolicitudDTO buscarSolicitudPorNumero(@QueryParam(value = "numeroSolicitud") String numeroSolicitud) throws Exception {
+    public SolicitudDTO buscarSolicitudPorNumero(
+            @QueryParam(value = "numeroSolicitud") String numeroSolicitud,
+            @QueryParam(value = "idUsuario") Long idUsuario) throws Exception {
         try{
             LOGGER.log(Level.INFO, "numeroSolicitud: {0}", numeroSolicitud);
             
-            return servicio.buscarSolicitudPorNumero(numeroSolicitud);
+            return servicio.buscarSolicitudPorNumero(numeroSolicitud, idUsuario);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

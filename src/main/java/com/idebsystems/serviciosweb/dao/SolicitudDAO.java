@@ -199,4 +199,27 @@ public class SolicitudDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    public Solicitud buscarSolicitudPorNumeroYCorreo(String numeroSolicitud, String correo) throws Exception {
+        try{
+            getEntityManager();
+            
+            Query query = em.createQuery("FROM Solicitud s WHERE s.codigoSolicitud = :numeroSolicitud AND s.correos LIKE :correo");
+            query.setParameter("numeroSolicitud", numeroSolicitud);
+            query.setParameter("correo", "%".concat(correo).concat("%"));
+            
+            Solicitud solicitud = (Solicitud)query.getSingleResult();
+            
+            return solicitud;
+            
+        } catch (NoResultException exc) {
+            return null;
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }finally {
+            closeEntityManager();
+        }
+    }
 }

@@ -8,10 +8,12 @@ package com.idebsystems.serviciosweb.servicio;
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudEnvioDAO;
+import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.SolicitudDTO;
 import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.entities.SolicitudEnvio;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.FechaUtil;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -114,11 +116,22 @@ public class SolicitudServicio {
     }
     
     
-    public SolicitudDTO buscarSolicitudPorNumero(String numeroSolicitud) throws Exception {
+    public SolicitudDTO buscarSolicitudPorNumero(String numeroSolicitud, Long idUsuario) throws Exception {
         try{
-            Solicitud solicitud = dao.buscarSolicitudPorNumero(numeroSolicitud);
-            SolicitudDTO dto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
-            return dto;
+            UsuarioDAO userDao = new UsuarioDAO();
+            Usuario userProv = userDao.buscarUsuarioPorId(idUsuario);
+            
+            if(userProv.getIdRol() == 2){//si es un proveedor busca solo la solicitud enviada a el,en base al correo
+                Solicitud solicitud = dao.buscarSolicitudPorNumeroYCorreo(numeroSolicitud, userProv.getCorreo());
+                SolicitudDTO dto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
+                return dto;
+            }
+            else{
+                Solicitud solicitud = dao.buscarSolicitudPorNumero(numeroSolicitud);
+                SolicitudDTO dto = SolicitudMapper.INSTANCE.entityToDto(solicitud);
+                return dto;
+            }
+            
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
