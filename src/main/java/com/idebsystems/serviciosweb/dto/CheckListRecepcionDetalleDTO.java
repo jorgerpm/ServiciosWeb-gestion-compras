@@ -21,6 +21,7 @@ public class CheckListRecepcionDetalleDTO {
     private Date fecha;
     private String observacion;
     private String camposBodega;
+    private String fechaAprobacionArtes;
     //
     private String nombreRol;
     
@@ -95,6 +96,14 @@ public class CheckListRecepcionDetalleDTO {
 
     public void setCamposBodega(String camposBodega) {
         this.camposBodega = camposBodega;
+    }
+
+    public String getFechaAprobacionArtes() {
+        return fechaAprobacionArtes;
+    }
+
+    public void setFechaAprobacionArtes(String fechaAprobacionArtes) {
+        this.fechaAprobacionArtes = fechaAprobacionArtes;
     }
     
 }

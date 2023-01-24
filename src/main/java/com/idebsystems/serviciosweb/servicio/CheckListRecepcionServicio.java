@@ -100,6 +100,8 @@ public class CheckListRecepcionServicio {
                     detalle.setIdRol(check.getIdRol());
                     detalle.setPregunta(preg.getPregunta());
                     detalle.setCamposBodega(check.getCamposBodega());
+                    detalle.setFechaAprobacionArtes(check.getFechaAprobacionArtes());
+                    
 
                     listaReceptores.add(detalle);
                 });
@@ -210,13 +212,21 @@ public class CheckListRecepcionServicio {
             checkListRecepcion.setUsuarioModifica(checkListDto.getUsuarioModifica());
             checkListRecepcion.setEstado("PENDIENTE_RECEPCION");
             
+            //para saber si debe actualizar los campos de bodega, segun el detalle que tenga en si
+            String tieneCamposBodega = "NO";
+            String tieneFechaAprob = "NO";
+            for(CheckListRecepcionDetalle ff : checkListRecepcion.getListaDetalles()){
+                if(ff.getIdUsuario() == usuario.getId()){
+                    tieneCamposBodega = ff.getCamposBodega();
+                    tieneFechaAprob = ff.getFechaAprobacionArtes();
+                }
+            }
+            if(tieneFechaAprob.equalsIgnoreCase("SI")){
+                checkListRecepcion.setFechaAprobacionArtes(checkListDto.getFechaAprobacionArtes());
+            }
+            
             //esto solo se actualiza cuando viene de bodega
             //o para el administrador tambien puede cambiar
-            String tieneCamposBodega = "NO";
-            for(CheckListRecepcionDetalle ff : checkListRecepcion.getListaDetalles()){
-                if(ff.getIdUsuario() == usuario.getId())
-                    tieneCamposBodega = ff.getCamposBodega();
-            }
             if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L || tieneCamposBodega.equalsIgnoreCase("SI")){//para el idrol = 5
                 checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
                 checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());

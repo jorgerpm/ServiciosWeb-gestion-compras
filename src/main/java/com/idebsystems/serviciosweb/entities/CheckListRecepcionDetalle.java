@@ -42,6 +42,9 @@ public class CheckListRecepcionDetalle implements Serializable {
     private String observacion;
     @Column(name = "campos_bodega")
     private String camposBodega;
+    @Column(name = "fecha_aprobacion_artes")
+    private String fechaAprobacionArtes;
+    
 
     @ManyToOne
     @JoinColumn(name = "id_check_list_recepcion", referencedColumnName = "id")
@@ -117,6 +120,14 @@ public class CheckListRecepcionDetalle implements Serializable {
 
     public void setCamposBodega(String camposBodega) {
         this.camposBodega = camposBodega;
+    }
+
+    public String getFechaAprobacionArtes() {
+        return fechaAprobacionArtes;
+    }
+
+    public void setFechaAprobacionArtes(String fechaAprobacionArtes) {
+        this.fechaAprobacionArtes = fechaAprobacionArtes;
     }
 
 }

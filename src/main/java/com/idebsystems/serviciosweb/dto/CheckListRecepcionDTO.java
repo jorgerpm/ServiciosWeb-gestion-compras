@@ -8,7 +8,6 @@ package com.idebsystems.serviciosweb.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
 
 /**
  *
@@ -29,6 +28,7 @@ public class CheckListRecepcionDTO {
     private Long usuarioModifica;
     private Date fechaModifica;
     private BigDecimal montoTotalFactura;
+    private Date fechaAprobacionArtes;
     private List<CheckListRecepcionDetalleDTO> listaDetalles;
     //
     private int totalRegistros;
@@ -152,6 +152,14 @@ public class CheckListRecepcionDTO {
 
     public void setMontoTotalFactura(BigDecimal montoTotalFactura) {
         this.montoTotalFactura = montoTotalFactura;
+    }
+
+    public Date getFechaAprobacionArtes() {
+        return fechaAprobacionArtes;
+    }
+
+    public void setFechaAprobacionArtes(Date fechaAprobacionArtes) {
+        this.fechaAprobacionArtes = fechaAprobacionArtes;
     }
 
     @Override

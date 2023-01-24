@@ -70,6 +70,10 @@ public class CheckListRecepcion implements Serializable {
     
     @Column(name = "monto_total_factura")
     private BigDecimal montoTotalFactura;
+    @Column(name = "fecha_aprobacion_artes")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaAprobacionArtes;
+    
     
     @OneToMany(mappedBy = "checkListRecepcion", fetch = FetchType.LAZY)
     private List<CheckListRecepcionDetalle> listaDetalles;
@@ -186,6 +190,14 @@ public class CheckListRecepcion implements Serializable {
     public void setMontoTotalFactura(BigDecimal montoTotalFactura) {
         this.montoTotalFactura = montoTotalFactura;
     }
-    
 
+    public Date getFechaAprobacionArtes() {
+        return fechaAprobacionArtes;
+    }
+
+    public void setFechaAprobacionArtes(Date fechaAprobacionArtes) {
+        this.fechaAprobacionArtes = fechaAprobacionArtes;
+    }
+
+   
 }

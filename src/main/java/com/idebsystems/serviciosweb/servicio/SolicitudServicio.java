@@ -162,6 +162,8 @@ public class SolicitudServicio {
             //generar el mensaje
             String mensaje = paramMsm.getValor();
             mensaje = mensaje.replace("[url]", url);
+            mensaje = mensaje.replace("[codigoSolicitud]", solicitudDto.getCodigoSolicitud());
+            mensaje = mensaje.replace("[codigoRC]", solicitudDto.getCodigoRC());
             
             LOGGER.log(Level.INFO, "la url: {0}", url);
             //guardar quien envia la solicitud a los proveedores para tener un registro de que cada vez se envia
