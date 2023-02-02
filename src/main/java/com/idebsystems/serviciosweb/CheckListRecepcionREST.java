@@ -58,12 +58,15 @@ public class CheckListRecepcionREST {
             @QueryParam(value = "idUsuario") Long idUsuario,
             @QueryParam(value = "rolPrincipal") boolean rolPrincipal,
             @QueryParam(value = "desde") Integer desde,
-            @QueryParam(value = "hasta") Integer hasta) throws Exception {
+            @QueryParam(value = "hasta") Integer hasta,
+            @QueryParam(value = "buscarTodo") boolean buscarTodo) throws Exception {
+        
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "rolPrincipal: {0}", rolPrincipal);
             LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
-            return servicio.listarCheckList(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, idUsuario, rolPrincipal, desde, hasta);
+            LOGGER.log(Level.INFO, "buscarTodo: {0}", buscarTodo);
+            return servicio.listarCheckList(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, idUsuario, rolPrincipal, desde, hasta, buscarTodo);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);

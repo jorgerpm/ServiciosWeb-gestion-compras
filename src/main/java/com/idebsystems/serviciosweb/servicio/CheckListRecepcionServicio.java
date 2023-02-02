@@ -125,7 +125,7 @@ public class CheckListRecepcionServicio {
     }
 
     public List<CheckListRecepcionDTO> listarCheckList(String fechaInicial, String fechaFinal, String codigoSolicitud, String codigoRC,
-            long idUsuario, boolean rolPrincipal, Integer desde, Integer hasta) throws Exception {
+            long idUsuario, boolean rolPrincipal, Integer desde, Integer hasta, boolean buscarTodo) throws Exception {
         try {
             List<CheckListRecepcionDTO> listaDto = new ArrayList<>();
 
@@ -135,7 +135,7 @@ public class CheckListRecepcionServicio {
             Usuario userSesion = usdao.buscarUsuarioPorId(idUsuario);
             
             List<Object> respuesta = dao.listarCheckList(FechaUtil.fechaInicial(sdf.parse(fechaInicial)),
-                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
+                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta, userSesion, rolPrincipal, buscarTodo);
             
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);
@@ -164,7 +164,7 @@ public class CheckListRecepcionServicio {
                 }
                 
                 boolean agregar = false;
-                if(rolPrincipal || userSesion.getIdRol() == 1)
+                if(buscarTodo || rolPrincipal || userSesion.getIdRol() == 1)
                     agregar = true;
                 
                 List<CheckListRecepcionDetalleDTO> detallesDto = new ArrayList();
@@ -174,7 +174,7 @@ public class CheckListRecepcionServicio {
                                     listaRoles.stream().filter(search-> search.getId() == deta.getIdRol()).findFirst().orElse(new Rol()).getNombre()
                             );
                     
-                    if(!rolPrincipal && userSesion.getIdRol() != 1){
+                    if(!buscarTodo && !rolPrincipal && userSesion.getIdRol() != 1){
                         if(idUsuario == deta.getIdUsuario() /*&& Objects.isNull(deta.getRespuesta())*/){//esto hace que se muestre por cada user, ya que si la respusta era vacia le smostraba, pero si ya se llena la respuesta ya no les muestra al mismo user
                             agregar = true;        
                             detallesDto.add(deta);
@@ -182,13 +182,15 @@ public class CheckListRecepcionServicio {
                     }
                 }
                 if (agregar) {
-                    if(!rolPrincipal && userSesion.getIdRol() != 1){
+                    if(!buscarTodo && !rolPrincipal && userSesion.getIdRol() != 1){
                         dto.setListaDetalles(detallesDto);
                     }
                     listaDto.add(dto);
                 }
             });
 
+//            listaDto.get(0).setTotalRegistros(listaDto.size());
+            
             return listaDto;
 
         } catch (Exception exc) {

@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
 import com.idebsystems.serviciosweb.entities.CheckListRecepcion;
 import com.idebsystems.serviciosweb.entities.CheckListRecepcionDetalle;
+import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -81,24 +82,30 @@ public class CheckListRecepcionDAO extends Persistencia {
     }
     
     public List<Object> listarCheckList(Date fechaInicial, Date fechaFinal, String codigoSolicitud, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            Integer desde, Integer hasta, Usuario userSesion, boolean rolPrincipal, boolean buscarTodo) throws Exception {
         try {
             List<Object> respuesta = new ArrayList<>();
             getEntityManager();
 
-            String sql = "FROM CheckListRecepcion c ";
+            String sql = "Select distinct d.checkListRecepcion FROM CheckListRecepcionDetalle d ";
 
             if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
-                sql = sql.concat(" WHERE UPPER(c.solicitud.codigoSolicitud) = :codigoSolicitud ");
+                sql = sql.concat(" WHERE UPPER(d.checkListRecepcion.solicitud.codigoSolicitud) = :codigoSolicitud ");
             }
             else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
-                sql = sql.concat(" WHERE UPPER(c.solicitud.codigoRC) = :codigoRC ");
+                sql = sql.concat(" WHERE UPPER(d.checkListRecepcion.solicitud.codigoRC) = :codigoRC ");
             }
             else{
-                sql = sql.concat(" WHERE c.fechaRecepcion BETWEEN :fechaInicial AND :fechaFinal ");
+                sql = sql.concat(" WHERE d.checkListRecepcion.fechaRecepcion BETWEEN :fechaInicial AND :fechaFinal ");
+            }
+            
+            if(!buscarTodo){
+                if(!rolPrincipal && userSesion.getIdRol() != 1){
+                    sql = sql.concat(" AND d.idUsuario = :idUsuario ");
+                }
             }
 
-            sql = sql.concat(" order by c.fechaRecepcion");
+            sql = sql.concat(" order by d.checkListRecepcion.fechaRecepcion");
 
             Query query = em.createQuery(sql);
 
@@ -111,6 +118,12 @@ public class CheckListRecepcionDAO extends Persistencia {
             else{
                 query.setParameter("fechaInicial", fechaInicial);
                 query.setParameter("fechaFinal", fechaFinal);
+            }
+            
+            if(!buscarTodo){
+                if(!rolPrincipal && userSesion.getIdRol() != 1){
+                    query.setParameter("idUsuario", userSesion.getId());
+                }
             }
 
             //para obtener el total de los registros a buscar
