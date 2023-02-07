@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dao;
 
 import com.idebsystems.serviciosweb.entities.Parametro;
+import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
@@ -209,9 +210,12 @@ public class SolicitudDAO extends Persistencia {
             query.setParameter("numeroSolicitud", numeroSolicitud);
             query.setParameter("correo", "%".concat(correo).concat("%"));
             
-            Solicitud solicitud = (Solicitud)query.getSingleResult();
+            List<Solicitud> lista = query.getResultList();
             
-            return solicitud;
+            if(lista.isEmpty())
+                return null;
+            else
+                return lista.get(0);
             
         } catch (NoResultException exc) {
             return null;
@@ -219,6 +223,75 @@ public class SolicitudDAO extends Persistencia {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }finally {
+            closeEntityManager();
+        }
+    }
+    
+    
+    public List<Object> listarSolicitudesProveedor(Date fechaInicial, Date fechaFinal, String codigoSolicitud, String codigoRC,
+            Integer desde, Integer hasta, Proveedor proveedor) throws Exception {
+        try {
+            List<Object> respuesta = new ArrayList<>();
+            getEntityManager();
+
+            String sql = "SELECT s FROM Solicitud s "
+                    + " left outer join Cotizacion c on c.rucProveedor = :rucProveedor and s.codigoSolicitud = c.codigoSolicitud "
+                    + " where c.id is null "
+                    + " and s.estado in ('ENVIADO','COTIZADO') ";
+
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                sql = sql.concat(" and UPPER(s.codigoSolicitud) = :codigoSolicitud ");
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+                sql = sql.concat(" and UPPER(s.codigoRC) = :codigoRC ");
+            }
+            else{
+                sql = sql.concat(" and s.fechaSolicitud BETWEEN :fechaInicial AND :fechaFinal ");
+            }
+            
+            if(Objects.nonNull(proveedor)){
+                sql = sql.concat(" AND (s.correos like :correoProveedor OR s.correos like :correoProveedorContab)");
+            }
+
+            sql = sql.concat(" order by s.fechaSolicitud");
+
+            Query query = em.createQuery(sql);
+            query.setParameter("rucProveedor", proveedor.getRuc());
+
+            if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
+                query.setParameter("codigoSolicitud", codigoSolicitud.toUpperCase());
+            }
+            else if (Objects.nonNull(codigoRC) && !codigoRC.isBlank()) {
+                query.setParameter("codigoRC", codigoRC.toUpperCase());
+            }
+            else{
+                query.setParameter("fechaInicial", fechaInicial);
+                query.setParameter("fechaFinal", fechaFinal);
+            }
+            
+            if(Objects.nonNull(proveedor)){
+                query.setParameter("correoProveedor", "%".concat(proveedor.getCorreo()).concat("%"));
+                query.setParameter("correoProveedorContab", "%".concat(proveedor.getCorreoContabilidad()).concat("%"));
+            }
+
+            //para obtener el total de los registros a buscar
+            Integer totalRegistros = query.getResultList().size();
+            respuesta.add(totalRegistros);
+
+            //para la paginacion
+            query.setFirstResult(desde).setMaxResults(hasta);
+
+            List<Solicitud> listaSols = query.getResultList();
+            respuesta.add(listaSols);
+
+            return respuesta;
+
+        } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
             closeEntityManager();
         }
     }

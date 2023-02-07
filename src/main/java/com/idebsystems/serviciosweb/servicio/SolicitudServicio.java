@@ -6,11 +6,13 @@
 package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.ParametroDAO;
+import com.idebsystems.serviciosweb.dao.ProveedorDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudDAO;
 import com.idebsystems.serviciosweb.dao.SolicitudEnvioDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.SolicitudDTO;
 import com.idebsystems.serviciosweb.entities.Parametro;
+import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Solicitud;
 import com.idebsystems.serviciosweb.entities.SolicitudEnvio;
 import com.idebsystems.serviciosweb.entities.Usuario;
@@ -46,14 +48,31 @@ public class SolicitudServicio {
     private final SolicitudDAO dao = new SolicitudDAO();
 
     public List<SolicitudDTO> listarSolicitudes(String fechaInicial, String fechaFinal, String codigoSolicitud, String codigoRC,
-            Integer desde, Integer hasta) throws Exception {
+            Integer desde, Integer hasta, Long idUsuario) throws Exception {
         try {
             List<SolicitudDTO> listaSolicitudDto = new ArrayList<>();
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-            List<Object> respuesta = dao.listarSolicitudes(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
+            
+            UsuarioDAO userDao = new UsuarioDAO();
+            Usuario userSesion = userDao.buscarUsuarioPorId(idUsuario);
+            
+            List<Object> respuesta;
+                    
+            if(userSesion.getIdRol() == 2) {//es cuando un proveedor buscar la solicitud
+                ProveedorDAO prvdao = new ProveedorDAO();
+                Proveedor proveedor = prvdao.buscarProveedorRuc(userSesion.getUsuario());
+                
+                respuesta = dao.listarSolicitudesProveedor(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
+                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta, proveedor);
+            }
+            else{
+                respuesta = dao.listarSolicitudes(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
                     FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta);
+            }
+
+//            List<Object> respuesta = dao.listarSolicitudes(FechaUtil.fechaInicial(sdf.parse(fechaInicial)), 
+//                    FechaUtil.fechaFinal(sdf.parse(fechaFinal)), codigoSolicitud, codigoRC, desde, hasta, proveedor);
 
             //sacar los resultados retornados
             Integer totalRegistros = (Integer) respuesta.get(0);

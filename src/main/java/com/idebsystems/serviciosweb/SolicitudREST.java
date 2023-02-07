@@ -39,11 +39,13 @@ public class SolicitudREST {
             @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "codigoRC") String codigoRC,
             @QueryParam(value = "desde") Integer desde,
-            @QueryParam(value = "hasta") Integer hasta) throws Exception {
+            @QueryParam(value = "hasta") Integer hasta,
+            @QueryParam(value = "idUsuario") Long idUsuario) throws Exception {
         try {
             LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
             LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta);
+            LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
+            return servicio.listarSolicitudes(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta, idUsuario);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
