@@ -170,8 +170,13 @@ public class SolicitudDAO extends Persistencia {
                 return "1";
             }
             else{
-                Long next = lista.get(0) + 1;
-                return next.toString();
+                if(Objects.nonNull(lista.get(0))){
+                    Long next = lista.get(0) + 1;
+                    return next.toString();
+                }
+                else{
+                    return "1";
+                }
             }
 
 //            Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");

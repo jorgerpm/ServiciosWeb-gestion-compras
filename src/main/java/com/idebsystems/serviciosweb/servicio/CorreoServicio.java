@@ -76,7 +76,8 @@ public class CorreoServicio {
 
     }
 
-    public String enviarCorreo(String correo, String asunto, String mensajeCorreo, String aliasCorreoEnvio, String nombreRemitente, List<File> archivosAdjuntos) throws Exception {
+    public String enviarCorreo(String correo, String asunto, String mensajeCorreo, String aliasCorreoEnvio, String nombreRemitente, List<File> archivosAdjuntos) throws Exception 
+    {
         try {
 
             //consultar los prametros del correo desde la base de datos.
@@ -171,7 +172,8 @@ public class CorreoServicio {
             throw new Exception(exc);
         } catch (MessagingException exc) {
             LOGGER.log(Level.SEVERE, null, exc);
-            throw new Exception(exc);
+//            throw new Exception(exc);
+            return exc.getMessage();
         } catch (UnsupportedEncodingException exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
