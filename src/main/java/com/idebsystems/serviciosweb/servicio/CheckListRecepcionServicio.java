@@ -238,6 +238,18 @@ public class CheckListRecepcionServicio {
                 checkListRecepcion.setMontoTotalFactura(checkListDto.getMontoTotalFactura());
             }
             
+            //aqui verificar si el usuario tiene camposbodega, y si el checklist esta asignado al rol bodega, 
+            //se verifica que bodega ya haya contestado preguntas, si todavia no las contesta no puede
+            //guardar este usuario actual.
+            if(tieneCamposBodega.equalsIgnoreCase("SI") && usuario.getIdRol() != 5L && usuario.getIdRol() != 1){
+                for(CheckListRecepcionDetalle ff : checkListRecepcion.getListaDetalles()){
+                    //si el rol es bodega(5) y si todavia no contesta las preguntas, no debe dejar guardar
+                    if(ff.getIdRol() == 5 && Objects.isNull(ff.getRespuesta())){
+                        return new RespuestaDTO("PRIMERO DEBE GUARDAR EL ROL DE BODEGA");
+                    }
+                }
+            }
+            
             for(int i=0;i<checkListRecepcion.getListaDetalles().size();i++) {
 //                LOGGER.log(Level.INFO, "detaid: {0}", checkListRecepcion.getListaDetalles().get(i).getId());
                 for(CheckListRecepcionDetalleDTO detaDto : checkListDto.getListaDetalles()) {
