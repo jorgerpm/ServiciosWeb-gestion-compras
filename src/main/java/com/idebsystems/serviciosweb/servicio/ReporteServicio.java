@@ -6,9 +6,12 @@
 package com.idebsystems.serviciosweb.servicio;
 
 import com.idebsystems.serviciosweb.dao.ReporteDAO;
+import com.idebsystems.serviciosweb.dto.ReporteDTO;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -157,4 +160,121 @@ public class ReporteServicio extends HttpServlet {
 		}
 		
 	}
+    
+    
+    public ReporteDTO generarReportePdf(String reporte, Long id) throws Exception {
+        try{
+            JasperPrint jasperPrint = null;
+            
+            if (reporte.equalsIgnoreCase("RECEPCION")) {
+                jasperPrint = dao.compilacionReportePdf("rp_recepcion", id);
+            }
+            if (reporte.equalsIgnoreCase("ORDEN_COMPRA")) {
+                jasperPrint = dao.compilacionReportePdf("rp_orden_compra", id);
+            }
+            if (reporte.equalsIgnoreCase("COTIZACION")) {
+                jasperPrint = dao.compilacionReportePdf("rp_cotizacion", id);
+            }
+            if (reporte.equalsIgnoreCase("COMPARATIVO")) {
+                jasperPrint = dao.compilacionReportePdf("rp_comparativo", id);
+            }
+            
+            
+            if (jasperPrint != null) {
+                byte[] flujo = JasperExportManager.exportReportToPdf(jasperPrint);
+                
+                Base64.Encoder encode = Base64.getEncoder();
+                
+                String repobase64 = encode.encodeToString(flujo);
+                
+                ReporteDTO rpdto = new ReporteDTO();
+                rpdto.setReporteBase64(repobase64);
+                rpdto.setRespuesta("OK");
+                
+                return rpdto;
+                
+            }
+            return new ReporteDTO();
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    
+    public ReporteDTO generarReporteXls(String reporte, String fechaIni, String fechaFin) throws Exception {
+        try{
+            JasperPrint jasperPrint = null;
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+            Calendar cini = Calendar.getInstance();
+            cini.setTime(sdf.parse(fechaIni));
+            cini.set(Calendar.HOUR_OF_DAY, 0);
+            cini.set(Calendar.MINUTE, 0);
+            cini.set(Calendar.SECOND, 0);
+
+            Calendar cfin = Calendar.getInstance();
+            cfin.setTime(sdf.parse(fechaFin));
+            cfin.set(Calendar.HOUR_OF_DAY, 23);
+            cfin.set(Calendar.MINUTE, 59);
+            cfin.set(Calendar.SECOND, 59);
+
+            if (reporte.equalsIgnoreCase("XLSSOLICITUD")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_solicitud", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            if (reporte.equalsIgnoreCase("XLSCOTIZACION")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_cotizacion", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            if (reporte.equalsIgnoreCase("XLSORDENCOMPRA")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_orden_compra", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            if (reporte.equalsIgnoreCase("XLSCOMPARATIVO")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_comparativo", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            if (reporte.equalsIgnoreCase("XLSCHECKLISTRECEPCION")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_recepcion", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            if (reporte.equalsIgnoreCase("XLSBITACORA")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_bitacora", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            
+            
+            if (jasperPrint != null) {
+                
+                ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+                
+                JRXlsExporter exporterXLS = new JRXlsExporter();
+                exporterXLS.setExporterInput(new SimpleExporterInput(jasperPrint));
+                exporterXLS.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+                SimpleXlsReportConfiguration configuration = new SimpleXlsReportConfiguration();
+                configuration.setDetectCellType(Boolean.TRUE);
+                configuration.setWhitePageBackground(Boolean.FALSE);
+                configuration.setRemoveEmptySpaceBetweenRows(Boolean.TRUE);
+                //con este se quita lo que la primera columna se expande cuando no hay nada.vacio
+                configuration.setRemoveEmptySpaceBetweenColumns(Boolean.TRUE);
+                exporterXLS.setConfiguration(configuration);
+                exporterXLS.exportReport();
+                
+                byte[] flujo = baos.toByteArray();
+                
+                Base64.Encoder encode = Base64.getEncoder();
+                
+                String repobase64 = encode.encodeToString(flujo);
+                
+                ReporteDTO rpdto = new ReporteDTO();
+                rpdto.setReporteBase64(repobase64);
+                rpdto.setRespuesta("OK");
+                
+                return rpdto;
+                
+            }
+            return new ReporteDTO();
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

@@ -14,6 +14,7 @@ public class SolicitudDetalleDTO {
     private long id;
     private Integer cantidad;
     private String detalle;
+    private String pathArchivo;
 
     public long getId() {
         return id;
@@ -39,9 +40,17 @@ public class SolicitudDetalleDTO {
         this.detalle = detalle;
     }
 
+    public String getPathArchivo() {
+        return pathArchivo;
+    }
+
+    public void setPathArchivo(String pathArchivo) {
+        this.pathArchivo = pathArchivo;
+    }
+
     @Override
     public String toString() {
-        return "SolicitudDetalleDTO{" + "id=" + id + ", cantidad=" + cantidad + ", detalle=" + detalle + '}';
+        return "SolicitudDetalleDTO{" + "id=" + id + ", cantidad=" + cantidad + ", detalle=" + detalle + ", pathArchivo=" + pathArchivo + '}';
     }
     
     

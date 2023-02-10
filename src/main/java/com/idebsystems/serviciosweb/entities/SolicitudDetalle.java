@@ -29,6 +29,8 @@ public class SolicitudDetalle implements Serializable {
     private long id;
     private Integer cantidad;
     private String detalle;
+    @Column(name = "path_archivo")
+    private String pathArchivo;
     
     @ManyToOne
     @JoinColumn(name = "id_solicitud", referencedColumnName = "id")
@@ -64,6 +66,14 @@ public class SolicitudDetalle implements Serializable {
 
     public void setSolicitud(Solicitud solicitud) {
         this.solicitud = solicitud;
+    }
+
+    public String getPathArchivo() {
+        return pathArchivo;
+    }
+
+    public void setPathArchivo(String pathArchivo) {
+        this.pathArchivo = pathArchivo;
     }
     
     

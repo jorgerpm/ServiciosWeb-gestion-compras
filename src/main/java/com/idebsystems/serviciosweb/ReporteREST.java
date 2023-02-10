@@ -32,14 +32,35 @@ public class ReporteREST {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public ReporteDTO generarReportePdf(
-            @QueryParam(value = "tipo") String tipo,
+            @QueryParam(value = "reporte") String reporte,
             @QueryParam(value = "id") Long id
     ) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "tipo: {0}", tipo);
+            LOGGER.log(Level.INFO, "reporte: {0}", reporte);
             LOGGER.log(Level.INFO, "id: {0}", id);
             //buscar en la bdd los roles
-            return null; //service.generarReportePdf(tipo, id);
+            return service.generarReportePdf(reporte, id);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
+    
+    @GET
+    @Path("/generarReporteXls")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public ReporteDTO generarReporteXls(
+            @QueryParam(value = "reporte") String reporte,
+            @QueryParam(value = "fechaIni") String fechaIni,
+            @QueryParam(value = "fechaFin") String fechaFin
+    ) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "reporte: {0}", reporte);
+            LOGGER.log(Level.INFO, "fechaIni: {0}", fechaIni);
+            LOGGER.log(Level.INFO, "fechaFin: {0}", fechaFin);
+            //buscar en la bdd los roles
+            return service.generarReporteXls(reporte, fechaIni, fechaFin);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
