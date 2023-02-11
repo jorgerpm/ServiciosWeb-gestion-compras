@@ -12,6 +12,8 @@ import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.ProveedorMapper;
+import com.idebsystems.serviciosweb.util.MyMD5;
+import static com.idebsystems.serviciosweb.util.MyMD5.getInstance;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -87,7 +89,8 @@ public class ProveedorServicio {
                 Usuario usuario = new Usuario();
                 usuario.setNombre(proveedorDto.getRazonSocial());
                 usuario.setUsuario(proveedorDto.getRuc());
-                usuario.setClave(proveedorDto.getRuc());//la clave en este caso es el mismo ruc
+                MyMD5 md = getInstance();
+                usuario.setClave(md.hashData(proveedorDto.getRuc().getBytes()));//la clave en este caso es el mismo ruc
                 usuario.setCorreo(proveedorDto.getCorreo());
                 usuario.setIdEstado(proveedorDto.getIdEstado());
                 usuario.setIdRol(2);

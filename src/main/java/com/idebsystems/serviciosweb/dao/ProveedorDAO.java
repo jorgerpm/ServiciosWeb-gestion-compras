@@ -7,7 +7,10 @@ package com.idebsystems.serviciosweb.dao;
 
 import com.idebsystems.serviciosweb.entities.Proveedor;
 import com.idebsystems.serviciosweb.entities.Usuario;
+import com.idebsystems.serviciosweb.util.MyMD5;
+import static com.idebsystems.serviciosweb.util.MyMD5.getInstance;
 import com.idebsystems.serviciosweb.util.Persistencia;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -177,18 +180,24 @@ public class ProveedorDAO  extends Persistencia {
                 queryProv.setParameter("ruc", proveedor.getRuc());
                 List<Proveedor> listaProvs = queryProv.getResultList();
 //                LOGGER.log(Level.INFO, "la listaProvs: {0}", listaProvs.isEmpty());
-                if(listaProvs.isEmpty()){// si es vacio no existe el proveedor, se crea el nuevo proveedor
-                    em.persist(proveedor); //insert
-                    
-                    //para los nuevos proveedores se debe crear el usuario
-                    Usuario usuario = new Usuario();
-                    usuario.setNombre(proveedor.getRazonSocial());
-                    usuario.setUsuario(proveedor.getRuc());
-                    usuario.setClave(proveedor.getRuc());//la clave en este caso es el mismo ruc
-                    usuario.setCorreo(proveedor.getCorreo());
-                    usuario.setIdEstado(proveedor.getIdEstado());
-                    usuario.setIdRol(2);
-                    em.persist(usuario);
+                if(listaProvs.isEmpty()){
+                    try {
+                        // si es vacio no existe el proveedor, se crea el nuevo proveedor
+                        em.persist(proveedor); //insert
+
+                        //para los nuevos proveedores se debe crear el usuario
+                        Usuario usuario = new Usuario();
+                        usuario.setNombre(proveedor.getRazonSocial());
+                        usuario.setUsuario(proveedor.getRuc());
+                        MyMD5 md = getInstance();
+                        usuario.setClave(md.hashData(proveedor.getRuc().getBytes()));//la clave en este caso es el mismo ruc
+                        usuario.setCorreo(proveedor.getCorreo());
+                        usuario.setIdEstado(proveedor.getIdEstado());
+                        usuario.setIdRol(2);
+                        em.persist(usuario);
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(ProveedorDAO.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
                 else{//si ya existe se actualiza
                     proveedor.setId(listaProvs.get(0).getId());
