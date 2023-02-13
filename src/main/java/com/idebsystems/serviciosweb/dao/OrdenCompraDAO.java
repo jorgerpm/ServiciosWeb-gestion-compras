@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
 import com.idebsystems.serviciosweb.entities.Comparativo;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
+import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
 import java.sql.SQLException;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -34,6 +36,11 @@ public class OrdenCompraDAO extends Persistencia {
 
             em.getTransaction().begin();
 
+            //aqui generar el secuencial para el codigo_oc
+            String seqCodOC = getUltimoCodigoOC(em);
+            ordenCompra.setCodigoOrdenCompra(seqCodOC);
+            
+            
             if (Objects.nonNull(ordenCompra.getId()) && ordenCompra.getId() > 0) {
                 em.merge(ordenCompra); //update
             } else {
@@ -303,4 +310,72 @@ public class OrdenCompraDAO extends Persistencia {
         }
     }
     
+    
+    public String getUltimoCodigoOC(EntityManager em) throws Exception {
+        try{
+            String numSql = "select MAX(replace (CODIGO_ORDEN_COMPRA, 'OC-', '')) from orden_compra";
+            Query queryNumSql = em.createNativeQuery(numSql);
+            
+            List<String> lista = queryNumSql.getResultList();
+            if(lista.isEmpty()){
+                //buscar en los parametros y tomar ese numero del parametro
+                Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
+                query.setParameter("nombre", "CODIGO_ORDEN_COMPRA");
+
+                List<Parametro> listas = query.getResultList();
+
+                if(!listas.isEmpty()){
+                    return "OC-" + listas.get(0).getValor();
+                }
+                else{
+                    return "OC-1";
+                }
+            }
+            else{
+                if(Objects.nonNull(lista.get(0))){
+                    Long next = Long.parseLong(lista.get(0)) + 1;
+                    return "OC-" + next;
+                }
+                else{
+                    //buscar en los parametros y tomar ese numero del parametro
+                    Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
+                    query.setParameter("nombre", "CODIGO_ORDEN_COMPRA");
+
+                    List<Parametro> listas = query.getResultList();
+
+                    if(!listas.isEmpty()){
+                        return "OC-" + listas.get(0).getValor();
+                    }
+                    else{
+                        return "OC-1";
+                    }
+                }
+            }
+
+//            Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
+//            query.setParameter("nombre", "CODIGO_SOLICITUD");
+//            
+//            List<Parametro> listas = query.getResultList();
+//            
+//            if(!listas.isEmpty()){
+//                Parametro param = listas.get(0);
+//                Long next = Long.parseLong(param.getValor()) + 1;
+//                
+//                param.setValor(next.toString());
+//                em.getTransaction().begin();
+//                em.merge(param);
+//                em.getTransaction().commit();
+//                return next.toString();
+//            }
+//            return "1";
+            
+        } catch (NoResultException exc) {
+            return null;
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }finally {
+            //closeEntityManager(); aqui no se debe cerrar
+        }
+    }
 }
