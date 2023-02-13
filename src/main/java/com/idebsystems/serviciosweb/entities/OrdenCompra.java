@@ -71,6 +71,8 @@ public class OrdenCompra implements Serializable {
     private String codigoSolicitud;
     @Column(name = "unidad_negocio_rc")
     private String unidadNegocioRC;
+    @Column(name = "detalle_final")
+    private String detalleFinal;
 
     public long getId() {
         return id;
@@ -222,6 +224,14 @@ public class OrdenCompra implements Serializable {
 
     public void setUnidadNegocioRC(String unidadNegocioRC) {
         this.unidadNegocioRC = unidadNegocioRC;
+    }
+
+    public String getDetalleFinal() {
+        return detalleFinal;
+    }
+
+    public void setDetalleFinal(String detalleFinal) {
+        this.detalleFinal = detalleFinal;
     }
 
 }

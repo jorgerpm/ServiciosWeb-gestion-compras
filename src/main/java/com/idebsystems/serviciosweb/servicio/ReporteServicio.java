@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -210,16 +211,20 @@ public class ReporteServicio extends HttpServlet {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
             Calendar cini = Calendar.getInstance();
-            cini.setTime(sdf.parse(fechaIni));
-            cini.set(Calendar.HOUR_OF_DAY, 0);
-            cini.set(Calendar.MINUTE, 0);
-            cini.set(Calendar.SECOND, 0);
+            if(Objects.nonNull(fechaIni) && !fechaIni.isBlank()){
+                cini.setTime(sdf.parse(fechaIni));
+                cini.set(Calendar.HOUR_OF_DAY, 0);
+                cini.set(Calendar.MINUTE, 0);
+                cini.set(Calendar.SECOND, 0);
+            }
 
             Calendar cfin = Calendar.getInstance();
-            cfin.setTime(sdf.parse(fechaFin));
-            cfin.set(Calendar.HOUR_OF_DAY, 23);
-            cfin.set(Calendar.MINUTE, 59);
-            cfin.set(Calendar.SECOND, 59);
+            if(Objects.nonNull(fechaFin) && !fechaFin.isBlank()){
+                cfin.setTime(sdf.parse(fechaFin));
+                cfin.set(Calendar.HOUR_OF_DAY, 23);
+                cfin.set(Calendar.MINUTE, 59);
+                cfin.set(Calendar.SECOND, 59);
+            }
 
             if (reporte.equalsIgnoreCase("XLSSOLICITUD")) {
                 jasperPrint = dao.compilacionReporteCsv("rp_csv_solicitud", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
@@ -239,6 +244,10 @@ public class ReporteServicio extends HttpServlet {
             if (reporte.equalsIgnoreCase("XLSBITACORA")) {
                 jasperPrint = dao.compilacionReporteCsv("rp_csv_bitacora", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
             }
+            if (reporte.equalsIgnoreCase("XLSPROVEEDORES")) {
+                jasperPrint = dao.compilacionReporteCsv("rp_csv_proveedores", new Timestamp(cini.getTimeInMillis()), new Timestamp(cfin.getTimeInMillis()));
+            }
+            
             
             
             if (jasperPrint != null) {

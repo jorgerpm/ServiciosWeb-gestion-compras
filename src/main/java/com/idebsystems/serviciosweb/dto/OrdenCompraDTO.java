@@ -28,6 +28,7 @@ public class OrdenCompraDTO {
     private BigDecimal total;
     private BigDecimal descuento = BigDecimal.ZERO;
     private String observacion;
+    private String detalleFinal;
     private String formaPago;
     private List<OrdenCompraDetalleDTO> listaDetalles;
     //
@@ -42,6 +43,7 @@ public class OrdenCompraDTO {
     private List<AutorizacionOrdenCompraDTO> listaAutorizaciones;
     private String codigoSolicitud;
     private String unidadNegocioRC;
+    private String observacionComparativo;
     
 
     public long getId() {
@@ -242,6 +244,22 @@ public class OrdenCompraDTO {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public String getDetalleFinal() {
+        return detalleFinal;
+    }
+
+    public void setDetalleFinal(String detalleFinal) {
+        this.detalleFinal = detalleFinal;
+    }
+
+    public String getObservacionComparativo() {
+        return observacionComparativo;
+    }
+
+    public void setObservacionComparativo(String observacionComparativo) {
+        this.observacionComparativo = observacionComparativo;
     }
 
     public String getUnidadNegocioRC() {

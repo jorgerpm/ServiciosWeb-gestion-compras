@@ -68,7 +68,7 @@ public class OrdenCompraServicio {
             Solicitud solic = soldao.buscarSolicitudPorNumero(ordenCompraDTO.getCodigoSolicitud());
             
             Comparativo comparativo = new Comparativo();
-            comparativo.setObservacion(ordenCompraDTO.getObservacion());
+            comparativo.setObservacion(ordenCompraDTO.getObservacionComparativo());
             comparativo.setCodigoComparativo(solic.getCodigoSolicitud());
             comparativo.setCodigoSolicitud(solic.getCodigoSolicitud());
             comparativo.setEstado("GENERADO");
@@ -104,7 +104,8 @@ public class OrdenCompraServicio {
             ordenCompraDTO.setDescuento(cotizacion.getDescuento());
             ordenCompraDTO.setFormaPago(cotizacion.getFormaPago());
             ordenCompraDTO.setIva(cotizacion.getIva());
-            ordenCompraDTO.setObservacion(cotizacion.getObservacion());
+            ordenCompraDTO.setObservacion(ordenCompraDTO.getObservacion());
+            ordenCompraDTO.setDetalleFinal(ordenCompraDTO.getDetalleFinal());
             ordenCompraDTO.setRucProveedor(cotizacion.getRucProveedor());
             ordenCompraDTO.setSubtotal(cotizacion.getSubtotal());
             ordenCompraDTO.setSubtotalSinIva(cotizacion.getSubtotalSinIva());
