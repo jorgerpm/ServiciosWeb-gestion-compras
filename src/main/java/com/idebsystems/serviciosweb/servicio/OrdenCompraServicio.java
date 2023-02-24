@@ -283,6 +283,9 @@ public class OrdenCompraServicio {
             if(ordenCompra.getEstado().equalsIgnoreCase("AUTORIZADO")){
                 enviarCorreoOCAutorizado(ordenDto);
             }
+            if(ordenCompra.getEstado().equalsIgnoreCase("RECHAZADO")){
+                enviarCorreoOCRechazo(ordenDto);
+            }
             
             return ordenDto;
             
@@ -381,6 +384,7 @@ public class OrdenCompraServicio {
             //generar el mensaje
             String mensaje = paramMsm.getValor();
             mensaje = mensaje.replace("[razonSocial]", proveedor.getRazonSocial());
+            mensaje = mensaje.replace("[codigoOC]", ordenCompraDTO.getCodigoOrdenCompra());
             mensaje = mensaje.replace("[codigoSolicitud]", ordenCompraDTO.getCodigoSolicitud());
             mensaje = mensaje.replace("[codigoRC]", ordenCompraDTO.getCodigoRC());
             
@@ -423,6 +427,64 @@ public class OrdenCompraServicio {
             
             CorreoServicio srvCorreo = new CorreoServicio();
             srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), archivosAdjuntos);
+        
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+        }
+    }
+    
+    
+    private void enviarCorreoOCRechazo(OrdenCompraDTO ordenCompraDTO){
+        try{
+            //buscar el usuario para saber quien rechaza
+            UsuarioDAO userDao = new UsuarioDAO();
+            Usuario usuario = userDao.buscarUsuarioPorId(Long.parseLong(ordenCompraDTO.getUsuarioModifica()));
+            //buscar los parametros para el envio
+            //consultar los prametros del correo desde la base de datos.
+            ParametroDAO paramDao = new ParametroDAO();
+            List<Parametro> listaParams = paramDao.listarParametros();
+
+            List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
+            
+            Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
+            Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_OC_RECHAZO")).findAny().get();
+            Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_OC_RECHAZO")).findAny().get();
+            Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
+            
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_OC_RECHAZO")).findAny().orElse(new Parametro());
+
+            //generar el mensaje
+            String mensaje = paramMsm.getValor();
+            mensaje = mensaje.replace("[codigoOC]", ordenCompraDTO.getCodigoOrdenCompra());
+            mensaje = mensaje.replace("[codigoSolicitud]", ordenCompraDTO.getCodigoSolicitud());
+            mensaje = mensaje.replace("[codigoRC]", ordenCompraDTO.getCodigoRC());
+            mensaje = mensaje.replace("[usuario]", usuario.getNombre());
+            
+            String correos = null;
+            
+            if(Objects.nonNull(paramCorreos.getValor()) && !paramCorreos.getValor().isBlank()){
+                correos = paramCorreos.getValor();
+            }
+            
+            //generar el reporte de la OC, para enviar los dos documentos
+            ReporteDAO repodao = new ReporteDAO();
+            JasperPrint jasperPrintOC = repodao.compilacionReportePdf("rp_orden_compra", ordenCompraDTO.getId());
+
+            byte[] flujoOC = JasperExportManager.exportReportToPdf(jasperPrintOC);
+                        
+            File fileOC = File.createTempFile("ORDENCOMPRA-"+ordenCompraDTO.getCodigoRC()+"-"+ordenCompraDTO.getCodigoSolicitud(),".pdf");
+            FileOutputStream fisOC = new FileOutputStream(fileOC);
+            fisOC.write(flujoOC);
+            fisOC.close();
+            
+            List<File> archivosAdjuntos = new ArrayList<>();
+            //no adjuntar por el momento.
+//            archivosAdjuntos.add(fileOC);
+            
+            if(Objects.nonNull(correos)){
+                CorreoServicio srvCorreo = new CorreoServicio();
+                srvCorreo.enviarCorreo(correos, paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), archivosAdjuntos);
+            }
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);

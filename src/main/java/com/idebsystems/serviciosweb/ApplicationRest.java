@@ -15,4 +15,15 @@ import javax.ws.rs.core.Application;
 @ApplicationPath("ideb")
 public class ApplicationRest extends Application {
     
+//    public Set<Class<?>> getClasses() {
+//        
+//    }
+//
+//    public Set<Object> getSingletons() {
+//        
+//    }
+//
+//    public Map<String, Object> getProperties() {
+//        
+//    }
 }
