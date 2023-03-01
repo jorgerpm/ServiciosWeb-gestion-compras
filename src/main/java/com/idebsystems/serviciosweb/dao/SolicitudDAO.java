@@ -92,16 +92,20 @@ public class SolicitudDAO extends Persistencia {
                 em.merge(solicitud); //update
                 
                 //buscar los detalles de la sol pra eliminarlos y volver a ingresar los nuevos
-                Query query = em.createQuery("DELETE FROM SolicitudDetalle d WHERE d.solicitud.id = " + solicitud.getId());
-                int tantos = query.executeUpdate();
+//                Query query = em.createQuery("DELETE FROM SolicitudDetalle d WHERE d.solicitud.id = " + solicitud.getId());
+//                int tantos = query.executeUpdate();
             } else {
                 em.persist(solicitud); //insert
+               
+                //solo se inserta cuando son nueva solicitud, cuando se modifica no se cambia nada de los detalles, 
+                //porque se borra el path del archivo.
+                solicitud.getListaDetalles().forEach(detalle -> {
+                    detalle.setSolicitud(solicitud);
+                    em.persist(detalle);
+                });
             }
             
-            solicitud.getListaDetalles().forEach(detalle -> {
-                detalle.setSolicitud(solicitud);
-                em.persist(detalle);
-            });
+            
             
             
             //para actualizar el parametro con el codigo de colicitud
