@@ -215,7 +215,8 @@ public class SolicitudDAO extends Persistencia {
         try{
             getEntityManager();
             
-            Query query = em.createQuery("FROM Solicitud s WHERE s.codigoSolicitud = :numeroSolicitud AND s.correos LIKE :correo");
+            //Query query = em.createQuery("FROM Solicitud s WHERE s.codigoSolicitud = :numeroSolicitud AND s.correos LIKE :correo");
+            Query query = em.createQuery("Select s FROM Solicitud s, SolicitudEnvio e WHERE s.id = e.idSolicitud AND s.codigoSolicitud = :numeroSolicitud AND e.correosEnvia LIKE :correo");
             query.setParameter("numeroSolicitud", numeroSolicitud);
             query.setParameter("correo", "%".concat(correo).concat("%"));
             
@@ -259,7 +260,8 @@ public class SolicitudDAO extends Persistencia {
             }
             
             if(Objects.nonNull(proveedor)){
-                sql = sql.concat(" AND (s.correos like :correoProveedor OR s.correos like :correoProveedorContab)");
+//                sql = sql.concat(" AND (s.correos like :correoProveedor OR s.correos like :correoProveedorContab)");
+                sql = sql.concat(" AND s.id in (Select e.idSolicitud FROM SolicitudEnvio e WHERE e.correosEnvia like :correoProveedor OR e.correosEnvia like :correoProveedorContab)");
             }
 
             sql = sql.concat(" order by s.fechaSolicitud");
