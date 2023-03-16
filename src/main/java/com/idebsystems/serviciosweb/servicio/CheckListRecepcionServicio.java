@@ -61,6 +61,11 @@ public class CheckListRecepcionServicio {
             orden.setEstado("PENDIENTE_RECEPCION");
             orden.setUsuarioModifica(checkListDto.getUsuarioModifica() + "");
             orden.setFechaModifica(new Date());
+            
+            if(Objects.nonNull(orden.getObservacion()))
+                    orden.setObservacion(orden.getObservacion().replaceAll("'", ""));
+            if(Objects.nonNull(orden.getDetalleFinal()))
+                orden.setDetalleFinal(orden.getDetalleFinal().replaceAll("'", ""));
 
             //buscar la solciitud por el id
             SolicitudDAO soldao = new SolicitudDAO();

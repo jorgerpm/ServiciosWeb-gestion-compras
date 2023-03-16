@@ -257,7 +257,7 @@ public class OrdenCompraDAO extends Persistencia {
 "	oc.forma_pago, " +
 "	oc.usuario_modifica, " +
 "	oc.fecha_modifica, "
-                    + " u.nombre, oc.unidad_negocio_rc "
+                    + " u.nombre, oc.unidad_negocio_rc, oc.detalle_final "
                     + " from orden_compra oc, autorizacion_orden_compra aoc, usuario u " +
                         " where oc.id = aoc.id_orden_compra AND aoc.id_usuario = u.id " +
                         " AND oc.estado IN ('POR_AUTORIZAR', 'AUTORIZADO_TEMP') AND aoc.estado IS NULL " ;

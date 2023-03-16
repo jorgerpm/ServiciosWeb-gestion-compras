@@ -100,14 +100,21 @@ public class CotizacionDAO extends Persistencia {
 
             if (Objects.nonNull(cotizacion.getId()) && cotizacion.getId() > 0) {
                 em.merge(cotizacion); //update
+                
+                //buscar los detalles para eliminarlos y volver a ingresar los nuevos
+                Query query = em.createQuery("DELETE FROM CotizacionDetalle d WHERE d.cotizacion.id = " + cotizacion.getId());
+                int tantos = query.executeUpdate();
             } else {
                 em.persist(cotizacion); //insert
             }
             
+            //realiza nuevamente el guardado porque fueron eliminados
             cotizacion.getListaDetalles().forEach(detalle -> {
                 detalle.setCotizacion(cotizacion);
                 em.persist(detalle);
             });
+            
+            
             
             //cambiar el estado de la solicitud a cotizado
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'COTIZADO', s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoRC = :codigoRc");

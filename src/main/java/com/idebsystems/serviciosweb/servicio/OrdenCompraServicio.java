@@ -189,6 +189,11 @@ public class OrdenCompraServicio {
                 dto.setTotalRegistros(totalRegistros);
                 dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
                 
+                if(Objects.nonNull(dto.getObservacion()))
+                    dto.setObservacion(dto.getObservacion().replaceAll("'", ""));
+                if(Objects.nonNull(dto.getDetalleFinal()))
+                    dto.setDetalleFinal(dto.getDetalleFinal().replaceAll("'", ""));
+                
                 dto.setListaAutorizaciones(new ArrayList<>());
                 List<AutorizacionOrdenCompra> listAuts = autDao.getAutorizacionesIDOrdenCompra(ordCompra.getId());
                 listAuts.forEach(aut -> {
@@ -336,7 +341,12 @@ public class OrdenCompraServicio {
                 dto.setFechaModifica(ordCompra[16]!=null?(Date)ordCompra[16]:null);
                 dto.setAutorizador(ordCompra[17].toString());
                 dto.setUnidadNegocioRC(Objects.nonNull(ordCompra[18]) ? ordCompra[18].toString() : null);
+                dto.setDetalleFinal(Objects.nonNull(ordCompra[19]) ? ordCompra[19].toString() : null);
                 
+                if(Objects.nonNull(dto.getObservacion()))
+                    dto.setObservacion(dto.getObservacion().replaceAll("'", ""));
+                if(Objects.nonNull(dto.getDetalleFinal()))
+                    dto.setDetalleFinal(dto.getDetalleFinal().replaceAll("'", ""));
                 
                 dto.setListaDetalles(new ArrayList<>());
                 List<OrdenCompraDetalle> listaDetalles = detDao.buscarDetallesOC(dto.getId());

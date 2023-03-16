@@ -72,6 +72,9 @@ public class CotizacionServicio {
                 //solicitud
                 Solicitud solicitud = soldao.buscarSolicitudPorNumero(cotiz.getCodigoSolicitud());
                 
+                if(Objects.nonNull(solicitud.getObservacion()))
+                    solicitud.setObservacion(solicitud.getObservacion().replaceAll("'", ""));
+                
                 CotizacionDTO dto = CotizacionMapper.INSTANCE.entityToDto(cotiz);
                 dto.setTotalRegistros(totalRegistros);
                 dto.setProveedorDto(ProveedorMapper.INSTANCE.entityToDto(prov));
@@ -104,7 +107,8 @@ public class CotizacionServicio {
             
             //buscar la cotizacion del mismo proveedor para que no se vuelva a enviar si ya la envio y debe estar RECHAZADO
             Cotizacion cot = dao.buscarCotizacionRucNumeroSol(cotizacion.getCodigoSolicitud(), cotizacion.getRucProveedor());
-            if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && !cot.getEstado().equalsIgnoreCase("ANULADO")){
+            if(Objects.nonNull(cot) && Objects.nonNull(cot.getEstado()) && 
+                    !cot.getEstado().equalsIgnoreCase("ANULADO") && !cot.getEstado().equalsIgnoreCase("RECHAZADO")){
                 CotizacionDTO dot = new CotizacionDTO();
                 dot.setRespuesta("La cotización ya fue enviada. No se puede enviar nuevamente la misma cotización por el mismo proveedor.");
                 return dot;
@@ -186,6 +190,9 @@ public class CotizacionServicio {
             //buscar la solicitud para enviar junto con la cotizacion
             SolicitudDAO soldao = new SolicitudDAO();
             Solicitud sol = soldao.buscarSolicitudPorNumero(codigoSolicitud);
+            
+            if(Objects.nonNull(sol.getObservacion()))
+                    sol.setObservacion(sol.getObservacion().replaceAll("'", ""));
             
             //se debe buscar el provedor para enviarlo con la cotizacion
             ProveedorDAO proDao = new ProveedorDAO();

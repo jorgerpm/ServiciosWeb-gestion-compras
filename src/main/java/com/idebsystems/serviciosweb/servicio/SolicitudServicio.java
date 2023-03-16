@@ -82,6 +82,10 @@ public class SolicitudServicio {
             listaSolicitud.forEach(sol -> {
                 SolicitudDTO dto = SolicitudMapper.INSTANCE.entityToDto(sol);
                 dto.setTotalRegistros(totalRegistros);
+                
+                if(Objects.nonNull(dto.getObservacion()))
+                    dto.setObservacion(dto.getObservacion().replaceAll("'", ""));
+                
                 listaSolicitudDto.add(dto);
             });
 
