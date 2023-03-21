@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -143,10 +144,14 @@ public class OrdenCompraDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 
@@ -247,18 +252,26 @@ public class OrdenCompraDTO {
     }
 
     public String getDetalleFinal() {
+        if(Objects.nonNull(detalleFinal)) 
+            detalleFinal = detalleFinal.replaceAll("'", "");
         return detalleFinal;
     }
 
     public void setDetalleFinal(String detalleFinal) {
+        if(Objects.nonNull(detalleFinal)) 
+            detalleFinal = detalleFinal.replaceAll("'", "");
         this.detalleFinal = detalleFinal;
     }
 
     public String getObservacionComparativo() {
+        if(Objects.nonNull(observacionComparativo)) 
+            observacionComparativo = observacionComparativo.replaceAll("'", "");
         return observacionComparativo;
     }
 
     public void setObservacionComparativo(String observacionComparativo) {
+        if(Objects.nonNull(observacionComparativo)) 
+            observacionComparativo = observacionComparativo.replaceAll("'", "");
         this.observacionComparativo = observacionComparativo;
     }
 

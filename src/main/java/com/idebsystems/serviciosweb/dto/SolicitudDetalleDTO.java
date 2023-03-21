@@ -5,6 +5,8 @@
  */
 package com.idebsystems.serviciosweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author jorge
@@ -33,10 +35,14 @@ public class SolicitudDetalleDTO {
     }
 
     public String getDetalle() {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         return detalle;
     }
 
     public void setDetalle(String detalle) {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         this.detalle = detalle;
     }
 

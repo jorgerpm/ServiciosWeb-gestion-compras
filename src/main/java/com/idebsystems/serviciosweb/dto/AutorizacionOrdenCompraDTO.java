@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -74,10 +75,14 @@ public class AutorizacionOrdenCompraDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 

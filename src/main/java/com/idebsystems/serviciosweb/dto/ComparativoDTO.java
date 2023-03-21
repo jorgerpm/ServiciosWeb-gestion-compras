@@ -7,6 +7,7 @@ package com.idebsystems.serviciosweb.dto;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -86,10 +87,14 @@ public class ComparativoDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 

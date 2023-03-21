@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -131,10 +132,14 @@ public class CheckListRecepcionDTO {
     }
 
     public String getCodigoMaterial() {
+        if(Objects.nonNull(codigoMaterial)) 
+            codigoMaterial = codigoMaterial.replaceAll("'", "");
         return codigoMaterial;
     }
 
     public void setCodigoMaterial(String codigoMaterial) {
+        if(Objects.nonNull(codigoMaterial)) 
+            codigoMaterial = codigoMaterial.replaceAll("'", "");
         this.codigoMaterial = codigoMaterial;
     }
 

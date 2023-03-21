@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dto;
 
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -43,10 +44,14 @@ public class CheckListRecepcionDetalleDTO {
     }
 
     public String getPregunta() {
+        if(Objects.nonNull(pregunta)) 
+            pregunta = pregunta.replaceAll("'", "");
         return pregunta;
     }
 
     public void setPregunta(String pregunta) {
+        if(Objects.nonNull(pregunta)) 
+            pregunta = pregunta.replaceAll("'", "");
         this.pregunta = pregunta;
     }
 
@@ -67,10 +72,14 @@ public class CheckListRecepcionDetalleDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 

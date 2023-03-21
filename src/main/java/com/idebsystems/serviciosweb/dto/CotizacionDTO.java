@@ -9,6 +9,7 @@ import com.idebsystems.serviciosweb.entities.Solicitud;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  *
@@ -141,6 +142,8 @@ public class CotizacionDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
@@ -161,6 +164,8 @@ public class CotizacionDTO {
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 
@@ -173,10 +178,14 @@ public class CotizacionDTO {
     }
 
     public String getValidezCotizacion() {
+        if(Objects.nonNull(validezCotizacion)) 
+            validezCotizacion = validezCotizacion.replaceAll("'", "");
         return validezCotizacion;
     }
 
     public void setValidezCotizacion(String validezCotizacion) {
+        if(Objects.nonNull(validezCotizacion)) 
+            validezCotizacion = validezCotizacion.replaceAll("'", "");
         this.validezCotizacion = validezCotizacion;
     }
 
@@ -189,10 +198,14 @@ public class CotizacionDTO {
     }
 
     public String getAdicionales() {
+        if(Objects.nonNull(adicionales)) 
+            adicionales = adicionales.replaceAll("'", "");
         return adicionales;
     }
 
     public void setAdicionales(String adicionales) {
+        if(Objects.nonNull(adicionales)) 
+            adicionales = adicionales.replaceAll("'", "");
         this.adicionales = adicionales;
     }
 

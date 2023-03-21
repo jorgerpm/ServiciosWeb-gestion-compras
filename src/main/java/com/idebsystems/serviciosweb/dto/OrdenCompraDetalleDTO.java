@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  *
@@ -39,10 +40,14 @@ public class OrdenCompraDetalleDTO {
     }
 
     public String getDetalle() {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         return detalle;
     }
 
     public void setDetalle(String detalle) {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         this.detalle = detalle;
     }
 
@@ -71,18 +76,26 @@ public class OrdenCompraDetalleDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 
     public String getCodigoProducto() {
+        if(Objects.nonNull(codigoProducto)) 
+            codigoProducto = codigoProducto.replaceAll("'", "");
         return codigoProducto;
     }
 
     public void setCodigoProducto(String codigoProducto) {
+        if(Objects.nonNull(codigoProducto)) 
+            codigoProducto = codigoProducto.replaceAll("'", "");
         this.codigoProducto = codigoProducto;
     }
 

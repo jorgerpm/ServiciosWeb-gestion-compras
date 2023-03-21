@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb.dto;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 /**
  *
@@ -38,10 +39,14 @@ public class CotizacionDetalleDTO {
     }
 
     public String getDetalle() {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         return detalle;
     }
 
     public void setDetalle(String detalle) {
+        if(Objects.nonNull(detalle)) 
+            detalle = detalle.replaceAll("'", "");
         this.detalle = detalle;
     }
 
@@ -70,10 +75,14 @@ public class CotizacionDetalleDTO {
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 

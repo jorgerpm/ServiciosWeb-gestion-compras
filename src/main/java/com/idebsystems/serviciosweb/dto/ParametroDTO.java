@@ -4,6 +4,8 @@
  */
 package com.idebsystems.serviciosweb.dto;
 
+import java.util.Objects;
+
 /**
  *
  * @author israe
@@ -31,10 +33,14 @@ public class ParametroDTO {
     }
 
     public String getValor() {
+        if(Objects.nonNull(valor)) 
+            valor = valor.replaceAll("'", "");
         return valor;
     }
 
     public void setValor(String valor) {
+        if(Objects.nonNull(valor)) 
+            valor = valor.replaceAll("'", "");
         this.valor = valor;
     }
 

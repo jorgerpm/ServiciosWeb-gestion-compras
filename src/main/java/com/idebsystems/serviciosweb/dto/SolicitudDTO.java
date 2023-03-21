@@ -8,9 +8,7 @@ package com.idebsystems.serviciosweb.dto;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.Objects;
 
 /**
  *
@@ -55,10 +53,14 @@ public class SolicitudDTO {
     }
 
     public String getCodigoRC() {
+        if(Objects.nonNull(codigoRC)) 
+            codigoRC = codigoRC.replaceAll("'", "");
         return codigoRC;
     }
 
     public void setCodigoRC(String codigoRC) {
+        if(Objects.nonNull(codigoRC)) 
+            codigoRC = codigoRC.replaceAll("'", "");
         this.codigoRC = codigoRC;
     }
 
@@ -79,18 +81,26 @@ public class SolicitudDTO {
     }
 
     public String getCorreos() {
+        if(Objects.nonNull(correos)) 
+            correos = correos.replaceAll("'", "");
         return correos;
     }
 
     public void setCorreos(String correos) {
+        if(Objects.nonNull(correos)) 
+            correos = correos.replaceAll("'", "");
         this.correos = correos;
     }
 
     public String getObservacion() {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         return observacion;
     }
 
     public void setObservacion(String observacion) {
+        if(Objects.nonNull(observacion)) 
+            observacion = observacion.replaceAll("'", "");
         this.observacion = observacion;
     }
 
@@ -135,10 +145,14 @@ public class SolicitudDTO {
     }
 
     public String getCodigoSolicitud() {
+        if(Objects.nonNull(codigoSolicitud)) 
+            codigoSolicitud = codigoSolicitud.replaceAll("'", "");
         return codigoSolicitud;
     }
 
     public void setCodigoSolicitud(String codigoSolicitud) {
+        if(Objects.nonNull(codigoSolicitud)) 
+            codigoSolicitud = codigoSolicitud.replaceAll("'", "");
         this.codigoSolicitud = codigoSolicitud;
     }
 
@@ -159,10 +173,14 @@ public class SolicitudDTO {
     }
 
     public String getEstadoRC() {
+        if(Objects.nonNull(estadoRC)) 
+            estadoRC = estadoRC.replaceAll("'", "");
         return estadoRC;
     }
 
     public void setEstadoRC(String estadoRC) {
+        if(Objects.nonNull(estadoRC)) 
+            estadoRC = estadoRC.replaceAll("'", "");
         this.estadoRC = estadoRC;
     }
 
@@ -175,10 +193,14 @@ public class SolicitudDTO {
     }
 
     public String getUnidadNegocioRC() {
+        if(Objects.nonNull(unidadNegocioRC)) 
+            unidadNegocioRC = unidadNegocioRC.replaceAll("'", "");
         return unidadNegocioRC;
     }
 
     public void setUnidadNegocioRC(String unidadNegocioRC) {
+        if(Objects.nonNull(unidadNegocioRC)) 
+            unidadNegocioRC = unidadNegocioRC.replaceAll("'", "");
         this.unidadNegocioRC = unidadNegocioRC;
     }
 

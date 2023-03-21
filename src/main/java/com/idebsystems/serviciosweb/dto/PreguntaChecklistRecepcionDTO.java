@@ -7,6 +7,7 @@ package com.idebsystems.serviciosweb.dto;
 
 import com.idebsystems.serviciosweb.entities.Rol;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  *
@@ -40,10 +41,14 @@ public class PreguntaChecklistRecepcionDTO {
     }
 
     public String getPregunta() {
+        if(Objects.nonNull(pregunta)) 
+            pregunta = pregunta.replaceAll("'", "");
         return pregunta;
     }
 
     public void setPregunta(String pregunta) {
+        if(Objects.nonNull(pregunta)) 
+            pregunta = pregunta.replaceAll("'", "");
         this.pregunta = pregunta;
     }
 
