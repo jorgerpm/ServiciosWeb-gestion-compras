@@ -111,4 +111,21 @@ public class OrdenCompraREST {
             throw new Exception(exc);
         }
     }
+    
+    
+    @POST
+    @Path("/actualizarOrdenCompra")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public OrdenCompraDTO actualizarOrdenCompra(OrdenCompraDTO ordenCompraDTO) throws Exception {
+        try {
+            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
+            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
+            //guardar en la bdd el rol
+            return servicio.actualizarOrdenCompra(ordenCompraDTO);
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        }
+    }
 }

@@ -8,6 +8,7 @@ package com.idebsystems.serviciosweb.dao;
 import com.idebsystems.serviciosweb.entities.AutorizacionOrdenCompra;
 import com.idebsystems.serviciosweb.entities.Comparativo;
 import com.idebsystems.serviciosweb.entities.OrdenCompra;
+import com.idebsystems.serviciosweb.entities.OrdenCompraDetalle;
 import com.idebsystems.serviciosweb.entities.Parametro;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.util.Persistencia;
@@ -376,6 +377,45 @@ public class OrdenCompraDAO extends Persistencia {
             throw new Exception(exc);
         }finally {
             //closeEntityManager(); aqui no se debe cerrar
+        }
+    }
+    
+    
+    
+    
+    public OrdenCompra actualizarOrdenCompra(OrdenCompra ordenCompra) throws Exception {
+        try{
+            getEntityManager();
+
+            em.getTransaction().begin();
+            
+            em.merge(ordenCompra); //update
+            
+            for(OrdenCompraDetalle detalle : ordenCompra.getListaDetalles()) {
+                LOGGER.log(Level.INFO,"lod etalles en el dao");
+                detalle.setOrdenCompra(ordenCompra);
+                em.merge(detalle);
+                LOGGER.log(Level.INFO,"si actualizo");
+            }
+            
+            em.flush(); //Confirmar el insert o update
+
+            em.getTransaction().commit();
+
+            return ordenCompra;
+            
+        } catch (SQLException exc) {
+            rollbackTransaction();
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } catch (Exception exc) {
+            rollbackTransaction();
+            if(exc.getMessage() != null && exc.getMessage().contains("orden_compra_codigo_orden_compra_uk"))
+                throw new Exception("YA EXISTE EL CODIGO DE ORDEN DE COMPRA");
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
         }
     }
 }

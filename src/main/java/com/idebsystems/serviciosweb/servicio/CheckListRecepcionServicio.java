@@ -228,13 +228,13 @@ public class CheckListRecepcionServicio {
                     tieneFechaAprob = ff.getFechaAprobacionArtes();
                 }
             }
-            if(tieneFechaAprob.equalsIgnoreCase("SI")){
+            if(Objects.nonNull(tieneFechaAprob) && tieneFechaAprob.equalsIgnoreCase("SI")){
                 checkListRecepcion.setFechaAprobacionArtes(checkListDto.getFechaAprobacionArtes());
             }
             
             //esto solo se actualiza cuando viene de bodega
             //o para el administrador tambien puede cambiar
-            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L || tieneCamposBodega.equalsIgnoreCase("SI")){//para el idrol = 5
+            if(usuario.getIdRol() == 1 || usuario.getIdRol() == 5L || (Objects.nonNull(tieneCamposBodega) && tieneCamposBodega.equalsIgnoreCase("SI"))){//para el idrol = 5
                 checkListRecepcion.setFechaRecepcionBodega(checkListDto.getFechaRecepcionBodega());
                 checkListRecepcion.setCantidadRecibida(checkListDto.getCantidadRecibida());
                 checkListRecepcion.setCodigoMaterial(checkListDto.getCodigoMaterial());
@@ -246,7 +246,7 @@ public class CheckListRecepcionServicio {
             //aqui verificar si el usuario tiene camposbodega, y si el checklist esta asignado al rol bodega, 
             //se verifica que bodega ya haya contestado preguntas, si todavia no las contesta no puede
             //guardar este usuario actual.
-            if(tieneCamposBodega.equalsIgnoreCase("SI") && usuario.getIdRol() != 5L && usuario.getIdRol() != 1){
+            if(Objects.nonNull(tieneCamposBodega) && tieneCamposBodega.equalsIgnoreCase("SI") && usuario.getIdRol() != 5L && usuario.getIdRol() != 1){
                 for(CheckListRecepcionDetalle ff : checkListRecepcion.getListaDetalles()){
                     //si el rol es bodega(5) y si todavia no contesta las preguntas, no debe dejar guardar
                     if(ff.getIdRol() == 5 && Objects.isNull(ff.getRespuesta())){
@@ -287,6 +287,9 @@ public class CheckListRecepcionServicio {
                 checkListRecepcion.setEstado("COMPLETO");
                 dao.guardarCheckListRecepcion(checkListRecepcion);
             }
+            
+            //aqui eneviar el correo cuando se lleno los checklist.
+            enviarCorreoLlenaCkecklist(checkListRecepcion, usuario);
 
             return new RespuestaDTO("OK");
 
@@ -339,6 +342,57 @@ public class CheckListRecepcionServicio {
                     srvCorreo.enviarCorreo(usuario.getCorreo(), paramSubect.getValor(), mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
                 }
             }
+        
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+        }
+    }
+    
+    
+    
+    private void enviarCorreoLlenaCkecklist(CheckListRecepcion checkListRecepcion, Usuario usuario){
+        try{
+            //buscar los parametros para el envio
+            //consultar los prametros del correo desde la base de datos.
+            ParametroDAO paramDao = new ParametroDAO();
+            List<Parametro> listaParams = paramDao.listarParametros();
+            
+            //para obtener la ip del sistema para generar la url que se envia por correo
+            List<Parametro> paramsIP = listaParams.stream().filter(p -> p.getNombre().contains("IP_SISTEMA")).collect(Collectors.toList());
+
+            List<Parametro> paramsMail = listaParams.stream().filter(p -> p.getNombre().contains("MAIL")).collect(Collectors.toList());
+            
+            Parametro paramNomRemit = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("NOMBREREMITENTEMAIL")).findAny().get();
+            Parametro paramSubect = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ASUNTOMAIL_CHECKLIST_COMPLETO")).findAny().get();
+            Parametro paramMsm = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MENSAJEMAIL_CHECKLIST_COMPLETO")).findAny().get();
+            Parametro aliasCorreoEnvio = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("ALIASMAIL")).findAny().get();
+            
+            Parametro paramCorreos = paramsMail.stream().filter(p -> p.getNombre().equalsIgnoreCase("MAILS_CHECKLIST_COMPLETO")).findAny().orElse(new Parametro());
+            
+                    
+            LOGGER.log(Level.INFO, "usuario: {0}", usuario.getNombre());
+
+            String mensaje = paramMsm.getValor();
+
+            mensaje = mensaje.replace("[nombreUsuario]", usuario.getNombre());
+            mensaje = mensaje.replace("[codigoSolicitud]", checkListRecepcion.getCodigoSolicitud());
+            mensaje = mensaje.replace("[codigoRC]", checkListRecepcion.getSolicitud().getCodigoRC());
+            mensaje = mensaje.replace("[url]", paramsIP.get(0).getValor());
+            mensaje = mensaje.replace("[estado]", checkListRecepcion.getEstado());
+            
+            String correos = "";
+                    
+            if(Objects.nonNull(paramCorreos)){
+                correos = paramCorreos.getValor();
+            }
+
+            String asunto = paramSubect.getValor();
+            asunto = asunto.replace("[estado]", checkListRecepcion.getEstado());
+
+            CorreoServicio srvCorreo = new CorreoServicio();
+            srvCorreo.enviarCorreo(correos, asunto, mensaje, aliasCorreoEnvio.getValor(), paramNomRemit.getValor(), null);
+                
+            
         
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
