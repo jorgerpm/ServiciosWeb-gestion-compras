@@ -66,6 +66,10 @@ public class Solicitud implements Serializable {
     
     @Column(name = "unidad_negocio_rc")
     private String unidadNegocioRC;
+    @Column(name = "autorizado_por_rc")
+    private String autorizadoPorRC;
+    @Column(name = "solicitado_por_rc")
+    private String solicitadoPorRC;
 
     public long getId() {
         return id;
@@ -185,6 +189,22 @@ public class Solicitud implements Serializable {
 
     public void setUnidadNegocioRC(String unidadNegocioRC) {
         this.unidadNegocioRC = unidadNegocioRC;
+    }
+
+    public String getAutorizadoPorRC() {
+        return autorizadoPorRC;
+    }
+
+    public void setAutorizadoPorRC(String autorizadoPorRC) {
+        this.autorizadoPorRC = autorizadoPorRC;
+    }
+
+    public String getSolicitadoPorRC() {
+        return solicitadoPorRC;
+    }
+
+    public void setSolicitadoPorRC(String solicitadoPorRC) {
+        this.solicitadoPorRC = solicitadoPorRC;
     }
 
 }

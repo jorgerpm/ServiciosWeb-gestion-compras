@@ -106,7 +106,13 @@ public class SolicitudServicio {
             c.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
             c.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
             
-            solicitudDto.setFechaSolicitud(c.getTime());
+            if(Objects.nonNull(solicitudDto.getId()) && solicitudDto.getId() > 0){
+                Date fechaSS = dao.buscarSolicitudPorNumero(solicitudDto.getCodigoSolicitud()).getFechaSolicitud();
+                solicitudDto.setFechaSolicitud(fechaSS);
+            }
+            else{
+                solicitudDto.setFechaSolicitud(c.getTime());
+            }
             solicitudDto.setFechaModifica(new Date());
             
             LOGGER.log(Level.INFO, "fecha soli: {0}", solicitudDto.getFechaSolicitud());

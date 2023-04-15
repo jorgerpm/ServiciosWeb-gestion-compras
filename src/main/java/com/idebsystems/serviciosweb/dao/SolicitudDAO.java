@@ -87,35 +87,47 @@ public class SolicitudDAO extends Persistencia {
             getEntityManager();
 
             em.getTransaction().begin();
+            
+            boolean actualizarParam = false;
 
             if (Objects.nonNull(solicitud.getId()) && solicitud.getId() > 0) {
+                solicitud.getListaDetalles().forEach(s -> {
+                    s.setSolicitud(solicitud);
+                });
                 em.merge(solicitud); //update
-                
                 //buscar los detalles de la sol pra eliminarlos y volver a ingresar los nuevos
-//                Query query = em.createQuery("DELETE FROM SolicitudDetalle d WHERE d.solicitud.id = " + solicitud.getId());
-//                int tantos = query.executeUpdate();
+                Query query = em.createQuery("DELETE FROM SolicitudDetalle d WHERE d.solicitud.id = " + solicitud.getId());
+                int tantos = query.executeUpdate();
             } else {
+                actualizarParam = true;
                 em.persist(solicitud); //insert
                
                 //solo se inserta cuando son nueva solicitud, cuando se modifica no se cambia nada de los detalles, 
                 //porque se borra el path del archivo.
-                solicitud.getListaDetalles().forEach(detalle -> {
-                    detalle.setSolicitud(solicitud);
-                    em.persist(detalle);
-                });
+//                solicitud.getListaDetalles().forEach(detalle -> {
+//                    detalle.setSolicitud(solicitud);
+//                    em.persist(detalle);
+//                });
             }
             
+            //insertar los detalles
+            solicitud.getListaDetalles().forEach(detalle -> {
+                detalle.setSolicitud(solicitud);
+                em.persist(detalle);
+            });
             
             
             
             //para actualizar el parametro con el codigo de colicitud
-            Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
-            query.setParameter("nombre", "CODIGO_SOLICITUD");
-            List<Parametro> listas = query.getResultList();
-            if(!listas.isEmpty()){
-                Parametro param = listas.get(0);
-                param.setValor(solicitud.getCodigoSolicitud());
-                em.merge(param);
+            if (actualizarParam) {
+                Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
+                query.setParameter("nombre", "CODIGO_SOLICITUD");
+                List<Parametro> listas = query.getResultList();
+                if(!listas.isEmpty()){
+                    Parametro param = listas.get(0);
+                    param.setValor(solicitud.getCodigoSolicitud());
+                    em.merge(param);
+                }
             }
             //hasta aca//para actualizar el parametro con el codigo de colicitud
             

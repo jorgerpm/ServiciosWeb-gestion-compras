@@ -58,7 +58,7 @@ public class SolicitudREST {
     @Produces({MediaType.APPLICATION_JSON})
     public SolicitudDTO guardarSolicitud(SolicitudDTO solicitudDto) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "solicitud: {0}", solicitudDto);
+            LOGGER.log(Level.INFO, "solicitud1: {0}", solicitudDto);
             LOGGER.log(Level.INFO, "detalles: {0}", solicitudDto.getListaDetalles());
             return servicio.guardarSolicitud(solicitudDto);
         }catch(Exception exc){

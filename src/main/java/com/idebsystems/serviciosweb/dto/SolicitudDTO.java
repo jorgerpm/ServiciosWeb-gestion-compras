@@ -32,6 +32,8 @@ public class SolicitudDTO {
     private Date fechaAutorizaRC;
     private String estadoRC;
     private String unidadNegocioRC;
+    private String autorizadoPorRC;
+    private String solicitadoPorRC;
     //
     private Integer totalRegistros;
     private String respuesta;
@@ -204,9 +206,25 @@ public class SolicitudDTO {
         this.unidadNegocioRC = unidadNegocioRC;
     }
 
+    public String getAutorizadoPorRC() {
+        return autorizadoPorRC;
+    }
+
+    public void setAutorizadoPorRC(String autorizadoPorRC) {
+        this.autorizadoPorRC = autorizadoPorRC;
+    }
+
+    public String getSolicitadoPorRC() {
+        return solicitadoPorRC;
+    }
+
+    public void setSolicitadoPorRC(String solicitadoPorRC) {
+        this.solicitadoPorRC = solicitadoPorRC;
+    }
+
     @Override
     public String toString() {
-        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + ", montoAprobado=" + montoAprobado + ", fechaAutorizaRC=" + fechaAutorizaRC + ", estadoRC=" + estadoRC + ", unidadNegocioRC=" + unidadNegocioRC + ", totalRegistros=" + totalRegistros + ", respuesta=" + respuesta + '}';
+        return "SolicitudDTO{" + "id=" + id + ", fechaSolicitud=" + fechaSolicitud + ", fechaTexto=" + fechaTexto + ", codigoRC=" + codigoRC + ", estado=" + estado + ", usuario=" + usuario + ", correos=" + correos + ", observacion=" + observacion + ", usuarioModifica=" + usuarioModifica + ", fechaModifica=" + fechaModifica + ", codigoSolicitud=" + codigoSolicitud + ", montoAprobado=" + montoAprobado + ", fechaAutorizaRC=" + fechaAutorizaRC + ", estadoRC=" + estadoRC + ", unidadNegocioRC=" + unidadNegocioRC + ", autorizadoPorRC=" + autorizadoPorRC + ", solicitadoPorRC=" + solicitadoPorRC + ", totalRegistros=" + totalRegistros + ", respuesta=" + respuesta + '}';
     }
 
     
