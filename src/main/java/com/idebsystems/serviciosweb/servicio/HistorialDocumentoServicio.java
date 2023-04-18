@@ -5,9 +5,11 @@
  */
 package com.idebsystems.serviciosweb.servicio;
 
+import com.idebsystems.serviciosweb.dao.CotizacionDAO;
 import com.idebsystems.serviciosweb.dao.HistorialDocumentoDAO;
 import com.idebsystems.serviciosweb.dao.UsuarioDAO;
 import com.idebsystems.serviciosweb.dto.HistorialDocumentoDTO;
+import com.idebsystems.serviciosweb.entities.Cotizacion;
 import com.idebsystems.serviciosweb.entities.HistorialDocumento;
 import com.idebsystems.serviciosweb.entities.Usuario;
 import com.idebsystems.serviciosweb.mappers.HistorialDocumentoMapper;
@@ -34,8 +36,18 @@ public class HistorialDocumentoServicio {
             UsuarioDAO usdao = new UsuarioDAO();
             List<Usuario> listusers = usdao.listarUsuarios();
             
+            CotizacionDAO cotSrv = new CotizacionDAO();
+            
             listaHist.forEach(hist->{
                 HistorialDocumentoDTO hisDto = HistorialDocumentoMapper.INSTANCE.entityToDto(hist);
+                
+                //esta parte es para obtener el codigo_cotizacon
+                if(hisDto.getDocumento().equalsIgnoreCase("COTIZACION")){
+                    try{
+                        Cotizacion cot = cotSrv.buscarCotizacionID(hisDto.getIdDocumento());
+                        hisDto.setCodigoCotizacion(cot.getCodigoCotizacion());
+                    }catch(Exception exc){}
+                }
                 
                 hisDto.setUsuarioCambio(listusers.stream().filter(u -> hist.getUsuarioCambio().equals(u.getId()+"")).findAny().orElse(new Usuario()).getNombre());
                 hisDto.setTotalRegistros(listaHist.size());

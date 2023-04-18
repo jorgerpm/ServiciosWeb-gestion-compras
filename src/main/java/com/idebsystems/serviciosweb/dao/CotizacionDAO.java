@@ -117,8 +117,10 @@ public class CotizacionDAO extends Persistencia {
             
             
             //cambiar el estado de la solicitud a cotizado
-            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'COTIZADO', s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoRC = :codigoRc");
+            Query query = em.createQuery("UPDATE Solicitud s SET s.estado = 'COTIZADO', s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
+                    + " WHERE s.codigoRC = :codigoRc AND s.codigoSolicitud = :codigoSolicitud ");
             query.setParameter("codigoRc", cotizacion.getCodigoRC());
+            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
             query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();

@@ -76,9 +76,10 @@ public class AutorizacionOrdenCompraDAO extends Persistencia {
             //actualizar las solciitud y cotizacion el estado
             //cambiar el estado de la solicitud a POR_AUTORIZAR
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
-                    + " WHERE s.codigoRC = :codigoRc");
+                    + " WHERE s.codigoRC = :codigoRc AND s.codigoSolicitud = :codigoSolicitud ");
             query.setParameter("estado", ordenCompra.getEstado());
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+            query.setParameter("codigoSolicitud", ordenCompra.getCodigoSolicitud());
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();
@@ -87,7 +88,7 @@ public class AutorizacionOrdenCompraDAO extends Persistencia {
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado, c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
                     + " WHERE c.codigoCotizacion = :codigoCotizacion");
             query.setParameter("estado", ordenCompra.getEstado());
-            query.setParameter("codigoCotizacion", ordenCompra.getCodigoRC().concat("-").concat(ordenCompra.getRucProveedor()));
+            query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
             query.executeUpdate();

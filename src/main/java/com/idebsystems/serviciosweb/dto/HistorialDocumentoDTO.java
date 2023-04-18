@@ -24,6 +24,7 @@ public class HistorialDocumentoDTO {
     private BigDecimal valorTotal;
     private String observacion;
     private String codigoSolicitud;
+    private String codigoCotizacion;
     //
     private Integer totalRegistros;
 
@@ -113,6 +114,14 @@ public class HistorialDocumentoDTO {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public String getCodigoCotizacion() {
+        return codigoCotizacion;
+    }
+
+    public void setCodigoCotizacion(String codigoCotizacion) {
+        this.codigoCotizacion = codigoCotizacion;
     }
 
     @Override
