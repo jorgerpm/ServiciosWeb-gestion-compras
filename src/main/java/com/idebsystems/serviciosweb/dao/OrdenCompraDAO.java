@@ -199,7 +199,7 @@ public class OrdenCompraDAO extends Persistencia {
                 em.persist(autorizacion);
             }
             
-            //cambiar el estado de la solicitud a GENERADO_OC
+            //cambiar el estado de la solicitud
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
                     + " WHERE s.codigoSolicitud = :codigoSolicitud");
             query.setParameter("estado", ordenCompra.getEstado());

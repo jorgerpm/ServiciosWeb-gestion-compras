@@ -84,11 +84,28 @@ public class UsuarioServicio {
     
     public UsuarioDTO guardarUsuario(UsuarioDTO usuarioDto) throws Exception {
         try{
+            //si clave viene nula desde pantalla es porque no le cambiaron
+            if(Objects.nonNull(usuarioDto.getId()) && usuarioDto.getId() > 0 && Objects.isNull(usuarioDto.getClave())){
+                Usuario userTemp = dao.buscarUsuarioPorId(usuarioDto.getId());
+                usuarioDto.setClave(userTemp.getClave());
+            }
+            
             Usuario usuario = UsuarioMapper.INSTANCE.dtoToEntity(usuarioDto);
             Usuario usuarioRespuesta = dao.guardarUsuario(usuario);
             usuarioDto = UsuarioMapper.INSTANCE.entityToDto(usuarioRespuesta);
+            usuarioDto.setRespuesta("OK");
             return usuarioDto;
         } catch (Exception exc) {
+            if(Objects.nonNull(exc.getMessage()) && exc.getMessage().contains("usuario_usuario_key")){
+                usuarioDto.setId(0);
+                usuarioDto.setRespuesta("YA EXISTE UN USUARIO REGISTRADO CON EL USUARIO INGRESADO. INGRESE UN USUARIO DIFERENTE.");
+                return usuarioDto;
+            }
+            if(Objects.nonNull(exc.getMessage()) && exc.getMessage().contains("usuario_correo_key")){
+                usuarioDto.setId(0);
+                usuarioDto.setRespuesta("EL CORREO INGRESADO PERTENECE A OTRO USUARIO, INGRESE UN CORREO DIFERENTE.");
+                return usuarioDto;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }

@@ -103,8 +103,8 @@ public class CorreoServicio {
             properties.put("mail.smtp.auth", "true");
             properties.put("mail.smtp.starttls.enable", "true");
             properties.put("mail.smtp.ssl.protocols", "TLSv1.2");
-            properties.put("mail.user", userName);
-            properties.put("mail.password", password);
+            properties.put("mail.smtp.user", userName);
+            properties.put("mail.smtp.password", password);
             //
             properties.setProperty("mail.debug.auth", "true");
 
@@ -115,7 +115,7 @@ public class CorreoServicio {
                     return new PasswordAuthentication(userName, password);
                 }
             };
-            Session session = Session.getInstance(properties, auth);
+            Session session = Session.getDefaultInstance(properties, auth);
 
             LOGGER.info("paramNomRemit::: " + nombreRemitente);
             
@@ -164,6 +164,11 @@ public class CorreoServicio {
             msg.setContent(multipart);
 
             Transport.send(msg);
+//Transport  t = session.getTransport("smtp");
+//t.connect(userName, password);
+//t.sendMessage(msg, msg.getAllRecipients());
+//t.close();
+
 
             return "ENVIO EXITOSO";
 

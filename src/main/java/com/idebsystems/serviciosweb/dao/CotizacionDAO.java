@@ -272,15 +272,17 @@ public class CotizacionDAO extends Persistencia {
             query.setParameter("observacion", cotizacion.getObservacion());
             query.executeUpdate();
             
-            //cambiar el estado de la solicitud a cotizado
-            query = em.createQuery("UPDATE Solicitud s SET s.estado = 'RECHAZADO', s.observacion = :observacion, "
-                    + " s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoSolicitud = :codigoSolicitud AND s.codigoRC = :codigoRc");
-            query.setParameter("codigoRc", cotizacion.getCodigoRC());
-            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
-            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
-            query.setParameter("fechaModifica", new Date());
-            query.setParameter("observacion", cotizacion.getObservacion());
-            query.executeUpdate();
+            //cambiar el estado de la solicitud a RECHAZADO
+            //AQUI QUE NO RECHACE LA SOLICTUD PARA QUE PUEDA VOLVER A PEDIR SOBRE LA MISMA SOLICITUD
+            //ya que si se rechaza tambien la solictud, ya no se puede volver a pedir sobre esta misma solicitud.
+//            query = em.createQuery("UPDATE Solicitud s SET s.estado = 'RECHAZADO', s.observacion = :observacion, "
+//                    + " s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoSolicitud = :codigoSolicitud AND s.codigoRC = :codigoRc");
+//            query.setParameter("codigoRc", cotizacion.getCodigoRC());
+//            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
+//            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
+//            query.setParameter("fechaModifica", new Date());
+//            query.setParameter("observacion", cotizacion.getObservacion());
+//            query.executeUpdate();
             
             em.flush(); //Confirmar el insert o update
 

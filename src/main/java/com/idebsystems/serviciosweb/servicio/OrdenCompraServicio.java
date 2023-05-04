@@ -61,7 +61,6 @@ public class OrdenCompraServicio {
         try{
             CotizacionDAO cotDao = new CotizacionDAO();
             
-            
             //aqui tambien se debe guardar la comparacion en la base de datos. esto en el DAO
             //buscar la solicitud
             SolicitudDAO soldao = new SolicitudDAO();
@@ -84,9 +83,9 @@ public class OrdenCompraServicio {
                 ComparativoDetalle cd = new ComparativoDetalle();
                 cd.setComparativo(comparativo);
                 cd.setCotizacion(cot);
-                if(cot.getRucProveedor().equalsIgnoreCase(ordenCompraDTO.getRucProveedor()))
+                if(cot.getRucProveedor().equalsIgnoreCase(ordenCompraDTO.getRucProveedor())){
                     cd.setSeleccionada(Boolean.TRUE);
-                else
+                }else
                     cd.setSeleccionada(Boolean.FALSE);
                 
                 listDetCompat.add(cd);
@@ -97,6 +96,13 @@ public class OrdenCompraServicio {
             //buscar la cotizacion para en base a esa generar la orden de compra
             
             Cotizacion cotizacion = cotDao.buscarCotizacionRucNumeroSol(ordenCompraDTO.getCodigoSolicitud(), ordenCompraDTO.getRucProveedor());
+            
+            //si la cotizacion seleccionada esta rechazada o anulada no debe generar la OC
+            if(cotizacion.getEstado().equalsIgnoreCase("RECHAZADO") || cotizacion.getEstado().equalsIgnoreCase("ANULADO")){
+                ordenCompraDTO.setRespuesta("No se puede generar la O.C. para una cotizaci\u00f3n en estado "+cotizacion.getEstado());
+                ordenCompraDTO.setId(0);
+                return ordenCompraDTO;
+            }
             
             //GENERAR LA ORDENCOMPRADTO
             ordenCompraDTO.setCodigoOrdenCompra(cotizacion.getCodigoCotizacion());
@@ -232,6 +238,7 @@ public class OrdenCompraServicio {
             for(AutorizacionOrdenCompra aut : autorizaciones){
                 if(Objects.nonNull(aut.getEstado()) && (aut.getEstado().equalsIgnoreCase("RECHAZADO") || aut.getEstado().equalsIgnoreCase("ANULADO"))){
                     ordenDto.setRespuesta("ESTA ORDEN DE COMPRA YA FUE RECHAZADA");
+                    ordenDto.setId(0);
                     return ordenDto;
                 }
                 if(Objects.equals(aut.getIdUsuario(), ordenDto.getIdUsuario())){
@@ -259,6 +266,7 @@ public class OrdenCompraServicio {
             OrdenCompra ordenCompra = dao.buscarOrdenCompraID(ordenDto.getId());
             if(ordenCompra.getEstado().equalsIgnoreCase("AUTORIZADO")){
                 ordenDto.setRespuesta("ESTA ORDEN DE COMPRA YA ESTÁ AUTORIZADA");
+                ordenDto.setId(0);
                 return ordenDto;
             }
             //actualizar el estado de la orden de compra
@@ -277,7 +285,9 @@ public class OrdenCompraServicio {
             ordenCompra.setFechaModifica(new Date());
             ordenCompra.setUsuarioModifica(ordenDto.getIdUsuario()+"");
             
-            
+            if(ordenCompra.getEstado().equalsIgnoreCase("RECHAZADO")){
+                ordenCompra.setObservacion(ordenDto.getObservacion());
+            }
             
             ordenCompra = dao.autorizarOrdenCompra(ordenCompra, autorizacion);
             

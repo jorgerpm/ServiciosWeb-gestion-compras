@@ -163,6 +163,13 @@ public class CotizacionServicio {
         try{
             Cotizacion cotizacion = dao.buscarCotizacionID(cotizacionDTO.getId());
             
+            //si se quiere poner el mismo estado no debe permitir
+            if(cotizacion.getEstado().equalsIgnoreCase(cotizacionDTO.getEstado())){
+                cotizacionDTO.setId(0);
+                cotizacionDTO.setRespuesta("La cotizaci\u00f3n ya se encuentra en estado "+cotizacion.getEstado()+", no se puede colocar el mismo estado.");
+                return cotizacionDTO;
+            }
+            
             cotizacion.setFechaModifica(new Date());
             cotizacion.setEstado(cotizacionDTO.getEstado());
             cotizacion.setUsuarioModifica(cotizacionDTO.getUsuarioModifica());
@@ -175,6 +182,26 @@ public class CotizacionServicio {
             return cotizacionDTO;
             
         }catch(Exception exc){
+            System.out.println("error: " + exc.getMessage());
+            if(exc.getMessage() != null && exc.getMessage().contains("insert_historico")){
+                System.out.println("ingresooo aquiiii");
+                cotizacionDTO.setId(0);
+                
+                System.out.println("exc.getMessage().indexOf(\"PSQLException:\"): "  + exc.getMessage().indexOf("PSQLException:") );
+                System.out.println("exc.getMessage().indexOf(\"Where: PL/pgSQL:\"): " + exc.getMessage().indexOf("Where: PL/pgSQL"));
+                
+                cotizacionDTO.setRespuesta(exc.getMessage().substring(
+                        exc.getMessage().indexOf("PSQLException:"),
+                        (exc.getMessage().indexOf("Where: PL/pgSQL"))
+                ).replace("PSQLException:", "").replace("\n", "").trim()
+                );
+                
+                System.out.println("hixo el dto");
+                
+                System.out.println("el msg: " + cotizacionDTO.getRespuesta());
+                
+                return cotizacionDTO;
+            }
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
         }
@@ -223,6 +250,13 @@ public class CotizacionServicio {
     
     public RespuestaDTO rechazarTodasCotizaciones(CotizacionDTO cotizacionDTO) throws Exception {
         try{
+            //si ya fueron rechazadas no volver a rechazar otra vez
+            List<Cotizacion> cotTemp = dao.getCotizacionesParaComparativo(cotizacionDTO.getCodigoSolicitud());
+            //si es vacio quiere decir que ya no estan en estado COTIZADO ninguna para que sean generada el comparativo
+            if(cotTemp.isEmpty()){
+                return new RespuestaDTO("Las cotizaciones ya fueron rechazadas.");
+            }
+            
             Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
             String respuesta = dao.rechazarTodasCotizaciones(cotizacion);
             
