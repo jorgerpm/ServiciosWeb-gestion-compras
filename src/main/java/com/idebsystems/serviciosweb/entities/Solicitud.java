@@ -70,6 +70,8 @@ public class Solicitud implements Serializable {
     private String autorizadoPorRC;
     @Column(name = "solicitado_por_rc")
     private String solicitadoPorRC;
+    @Column(name = "razon_rechazo")
+    private String razonRechazo;
 
     public long getId() {
         return id;
@@ -205,6 +207,14 @@ public class Solicitud implements Serializable {
 
     public void setSolicitadoPorRC(String solicitadoPorRC) {
         this.solicitadoPorRC = solicitadoPorRC;
+    }
+
+    public String getRazonRechazo() {
+        return razonRechazo;
+    }
+
+    public void setRazonRechazo(String razonRechazo) {
+        this.razonRechazo = razonRechazo;
     }
 
 }

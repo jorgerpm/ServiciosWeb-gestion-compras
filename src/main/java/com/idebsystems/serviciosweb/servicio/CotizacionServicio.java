@@ -173,7 +173,10 @@ public class CotizacionServicio {
             cotizacion.setFechaModifica(new Date());
             cotizacion.setEstado(cotizacionDTO.getEstado());
             cotizacion.setUsuarioModifica(cotizacionDTO.getUsuarioModifica());
-            cotizacion.setObservacion(cotizacionDTO.getObservacion());
+//            cotizacion.setObservacion(cotizacionDTO.getObservacion());
+            if(cotizacionDTO.getEstado().equalsIgnoreCase("RECHAZADO") || cotizacionDTO.getEstado().equalsIgnoreCase("ANULADO")){
+                cotizacion.setRazonRechazo(cotizacionDTO.getObservacion());
+            }
             
             cotizacion = dao.cambiarEstadoCotizacion(cotizacion);
             
@@ -258,6 +261,7 @@ public class CotizacionServicio {
             }
             
             Cotizacion cotizacion = CotizacionMapper.INSTANCE.dtoToEntity(cotizacionDTO);
+            cotizacion.setRazonRechazo(cotizacionDTO.getObservacion());
             String respuesta = dao.rechazarTodasCotizaciones(cotizacion);
             
             return new RespuestaDTO(respuesta);

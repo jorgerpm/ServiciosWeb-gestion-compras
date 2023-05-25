@@ -63,8 +63,8 @@ public class OrdenCompraDAO extends Persistencia {
             
             //colocar a todas las cotizaciones como rechazadas
             //y que la solicitud seleccionada quede como GENERADO_OC
-            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
-                    + " WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
+            query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica, "
+                    + " c.razonRechazo = 'PROVEEDOR NO SELECCIONADO EN LA GENERACION DE OC' WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
             query.setParameter("codigoRc", ordenCompra.getCodigoRC());
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
@@ -199,9 +199,17 @@ public class OrdenCompraDAO extends Persistencia {
                 em.persist(autorizacion);
             }
             
+            //si el estado es rechazado o anulado, se debe colocar la observacion del rechazo obligatoria
+            String sqlRechazoSol = "";
+            String sqlRechazoCot = "";
+            if(ordenCompra.getEstado().equalsIgnoreCase("RECHAZADO") || ordenCompra.getEstado().equalsIgnoreCase("ANULADO")){
+                sqlRechazoSol = ", s.razonRechazo = '" + ordenCompra.getRazonRechazo() + "' ";
+                sqlRechazoCot = ", c.razonRechazo = '" + ordenCompra.getRazonRechazo() + "' ";
+            }
+            
             //cambiar el estado de la solicitud
             Query query = em.createQuery("UPDATE Solicitud s SET s.estado = :estado, s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica "
-                    + " WHERE s.codigoSolicitud = :codigoSolicitud");
+                    + sqlRechazoSol + " WHERE s.codigoSolicitud = :codigoSolicitud");
             query.setParameter("estado", ordenCompra.getEstado());
             query.setParameter("codigoSolicitud", ordenCompra.getCodigoSolicitud());
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
@@ -210,7 +218,7 @@ public class OrdenCompraDAO extends Persistencia {
             
             //cambiar el estado de la cotizacion
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = :estado, c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
-                    + " WHERE c.codigoCotizacion = :codigoCotizacion");
+                    + sqlRechazoCot + " WHERE c.codigoCotizacion = :codigoCotizacion");
             query.setParameter("estado", ordenCompra.getEstado());
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());

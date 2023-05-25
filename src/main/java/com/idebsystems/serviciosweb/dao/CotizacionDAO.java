@@ -262,26 +262,26 @@ public class CotizacionDAO extends Persistencia {
 
             em.getTransaction().begin();
             
-            Query query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.observacion = :observacion, "
+            Query query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.razonRechazo = :razonRechazo, "
                     + " c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica "
                     + " WHERE c.codigoSolicitud = :codigoSolicitud AND c.codigoRC = :codigoRC");
             query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
             query.setParameter("codigoRC", cotizacion.getCodigoRC());
             query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
-            query.setParameter("observacion", cotizacion.getObservacion());
+            query.setParameter("razonRechazo", cotizacion.getRazonRechazo());
             query.executeUpdate();
             
             //cambiar el estado de la solicitud a RECHAZADO
             //AQUI QUE NO RECHACE LA SOLICTUD PARA QUE PUEDA VOLVER A PEDIR SOBRE LA MISMA SOLICITUD
             //ya que si se rechaza tambien la solictud, ya no se puede volver a pedir sobre esta misma solicitud.
-//            query = em.createQuery("UPDATE Solicitud s SET s.estado = 'RECHAZADO', s.observacion = :observacion, "
+//            query = em.createQuery("UPDATE Solicitud s SET s.estado = 'RECHAZADO', s.razonRechazo = :razonRechazo, "
 //                    + " s.usuarioModifica = :usuarioModifica, s.fechaModifica = :fechaModifica WHERE s.codigoSolicitud = :codigoSolicitud AND s.codigoRC = :codigoRc");
 //            query.setParameter("codigoRc", cotizacion.getCodigoRC());
 //            query.setParameter("codigoSolicitud", cotizacion.getCodigoSolicitud());
 //            query.setParameter("usuarioModifica", cotizacion.getUsuarioModifica());
 //            query.setParameter("fechaModifica", new Date());
-//            query.setParameter("observacion", cotizacion.getObservacion());
+//            query.setParameter("razonRechazo", cotizacion.getRazonRechazo());
 //            query.executeUpdate();
             
             em.flush(); //Confirmar el insert o update

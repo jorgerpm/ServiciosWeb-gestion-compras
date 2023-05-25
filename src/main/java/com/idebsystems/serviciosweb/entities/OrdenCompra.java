@@ -73,6 +73,8 @@ public class OrdenCompra implements Serializable {
     private String unidadNegocioRC;
     @Column(name = "detalle_final")
     private String detalleFinal;
+    @Column(name = "razon_rechazo")
+    private String razonRechazo;
 
     public long getId() {
         return id;
@@ -232,6 +234,14 @@ public class OrdenCompra implements Serializable {
 
     public void setDetalleFinal(String detalleFinal) {
         this.detalleFinal = detalleFinal;
+    }
+
+    public String getRazonRechazo() {
+        return razonRechazo;
+    }
+
+    public void setRazonRechazo(String razonRechazo) {
+        this.razonRechazo = razonRechazo;
     }
 
 }

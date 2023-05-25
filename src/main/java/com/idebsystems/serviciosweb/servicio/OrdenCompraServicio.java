@@ -286,7 +286,7 @@ public class OrdenCompraServicio {
             ordenCompra.setUsuarioModifica(ordenDto.getIdUsuario()+"");
             
             if(ordenCompra.getEstado().equalsIgnoreCase("RECHAZADO")){
-                ordenCompra.setObservacion(ordenDto.getObservacion());
+                ordenCompra.setRazonRechazo(ordenDto.getObservacion());
             }
             
             ordenCompra = dao.autorizarOrdenCompra(ordenCompra, autorizacion);

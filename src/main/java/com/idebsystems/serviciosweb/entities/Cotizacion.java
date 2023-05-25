@@ -74,6 +74,8 @@ public class Cotizacion implements Serializable {
     @Column(name = "fecha_modifica")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaModifica;
+    @Column(name = "razon_rechazo")
+    private String razonRechazo;
 
     public long getId() {
         return id;
@@ -241,6 +243,14 @@ public class Cotizacion implements Serializable {
 
     public void setCodigoSolicitud(String codigoSolicitud) {
         this.codigoSolicitud = codigoSolicitud;
+    }
+
+    public String getRazonRechazo() {
+        return razonRechazo;
+    }
+
+    public void setRazonRechazo(String razonRechazo) {
+        this.razonRechazo = razonRechazo;
     }
 
 }

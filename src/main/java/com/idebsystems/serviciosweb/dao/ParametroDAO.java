@@ -71,4 +71,22 @@ public class ParametroDAO extends Persistencia {
             closeEntityManager();
         }
     }
+    
+    
+    
+    public Parametro buscarParametroPorId(long id) throws Exception {
+        try {
+            getEntityManager();
+
+            return em.find(Parametro.class, id);
+
+       } catch (NoResultException exc) {
+            return null;
+        } catch (Exception exc) {
+            LOGGER.log(Level.SEVERE, null, exc);
+            throw new Exception(exc);
+        } finally {
+            closeEntityManager();
+        }
+    }
 }
