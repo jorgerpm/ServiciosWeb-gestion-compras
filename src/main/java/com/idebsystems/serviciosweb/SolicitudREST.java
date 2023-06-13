@@ -6,6 +6,7 @@
 package com.idebsystems.serviciosweb;
 
 import com.idebsystems.serviciosweb.dto.SolicitudDTO;
+import com.idebsystems.serviciosweb.servicio.IntegracionJDServicio;
 import com.idebsystems.serviciosweb.servicio.SolicitudServicio;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,6 +29,8 @@ public class SolicitudREST {
     private static final Logger LOGGER = Logger.getLogger(SolicitudREST.class.getName());
 
     private final SolicitudServicio servicio = new SolicitudServicio();
+    
+    private final IntegracionJDServicio jdsrv = new IntegracionJDServicio();
 
     @GET
     @Path("/listarSolicitudes")
@@ -94,6 +97,25 @@ public class SolicitudREST {
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
             throw new Exception(exc);
+        }
+    }
+    
+    
+    @POST
+    @Path("/buscarRCJD")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public SolicitudDTO buscarRCJD(SolicitudDTO solicitudDto) throws Exception {
+        try{
+            LOGGER.log(Level.INFO, "solicitud1: {0}", solicitudDto.getCodigoRC());
+            
+            return jdsrv.buscarRCJD(solicitudDto.getCodigoRC());
+            
+        }catch(Exception exc){
+            LOGGER.log(Level.SEVERE, null, exc);
+            solicitudDto.setRespuesta(exc.getMessage());
+            return solicitudDto;
+//            throw new Exception(exc);
         }
     }
 }

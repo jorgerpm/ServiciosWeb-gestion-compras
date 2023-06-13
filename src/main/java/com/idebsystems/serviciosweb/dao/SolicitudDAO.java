@@ -257,9 +257,10 @@ public class SolicitudDAO extends Persistencia {
             getEntityManager();
 
             String sql = "SELECT s FROM Solicitud s "
-                    + " left outer join Cotizacion c on c.rucProveedor = :rucProveedor and s.codigoSolicitud = c.codigoSolicitud "
+                    + " left outer join Cotizacion c on c.rucProveedor = :rucProveedor and s.codigoSolicitud = c.codigoSolicitud and c.estado not in ('ANULADO', 'RECHAZADO') "
                     + " where c.id is null "
                     + " and s.estado in ('ENVIADO','COTIZADO') ";
+//                    + " where s.estado in ('ENVIADO','COTIZADO') ";
 
             if (Objects.nonNull(codigoSolicitud) && !codigoSolicitud.isBlank()) {
                 sql = sql.concat(" and UPPER(s.codigoSolicitud) = :codigoSolicitud ");

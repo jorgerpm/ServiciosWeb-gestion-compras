@@ -64,8 +64,8 @@ public class OrdenCompraDAO extends Persistencia {
             //colocar a todas las cotizaciones como rechazadas
             //y que la solicitud seleccionada quede como GENERADO_OC
             query = em.createQuery("UPDATE Cotizacion c SET c.estado = 'RECHAZADO', c.usuarioModifica = :usuarioModifica, c.fechaModifica = :fechaModifica, "
-                    + " c.razonRechazo = 'PROVEEDOR NO SELECCIONADO EN LA GENERACION DE OC' WHERE c.codigoRC = :codigoRc AND c.codigoCotizacion <> :codigoCotizacion");
-            query.setParameter("codigoRc", ordenCompra.getCodigoRC());
+                    + " c.razonRechazo = 'PROVEEDOR NO SELECCIONADO EN LA GENERACION DE OC' WHERE c.codigoSolicitud = :codigoSolicitud AND c.codigoCotizacion <> :codigoCotizacion");
+            query.setParameter("codigoSolicitud", ordenCompra.getCodigoSolicitud());
             query.setParameter("codigoCotizacion", ordenCompra.getCodigoSolicitud().concat("-").concat(ordenCompra.getRucProveedor()));
             query.setParameter("usuarioModifica", ordenCompra.getUsuarioModifica());
             query.setParameter("fechaModifica", new Date());
