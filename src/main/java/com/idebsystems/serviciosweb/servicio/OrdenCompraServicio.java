@@ -521,7 +521,6 @@ public class OrdenCompraServicio {
             for(int i=0;i<oc.getListaDetalles().size();i++) {
                 for(OrdenCompraDetalleDTO detDto : ordenCompraDTO.getListaDetalles()) {
                     if(oc.getListaDetalles().get(i).getId() == detDto.getId()){
-                        LOGGER.log(Level.INFO, "si encontroo");
                        oc.getListaDetalles().get(i).setCodigoProducto(detDto.getCodigoProducto());
                        oc.getListaDetalles().get(i).setDetalle(detDto.getDetalle());
                     }

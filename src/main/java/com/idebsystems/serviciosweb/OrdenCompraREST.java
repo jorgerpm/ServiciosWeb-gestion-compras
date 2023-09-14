@@ -35,8 +35,8 @@ public class OrdenCompraREST {
     @Produces({MediaType.APPLICATION_JSON})
     public OrdenCompraDTO generarOrdenCompra(OrdenCompraDTO ordenCompraDTO) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
-            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
+//            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
+//            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
             //guardar en la bdd el rol
             return servicio.generarOrdenCompra(ordenCompraDTO);
         } catch (Exception exc) {
@@ -57,10 +57,10 @@ public class OrdenCompraREST {
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+//            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
             return servicio.listarOrdenesCompras(fechaInicial, fechaFinal, codigoRC, codigoSolicitud, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
@@ -81,7 +81,7 @@ public class OrdenCompraREST {
     */
     public OrdenCompraDTO autorizarOrdenCompra(OrdenCompraDTO ordenCompraDto) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "ordenCompraDto: {0}", ordenCompraDto);
+//            LOGGER.log(Level.INFO, "ordenCompraDto: {0}", ordenCompraDto);
             return servicio.autorizarOrdenCompra(ordenCompraDto);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
@@ -101,10 +101,10 @@ public class OrdenCompraREST {
             @QueryParam(value = "idUsuario") Long idUsuario,
             @QueryParam(value = "rolPrincipal") boolean rolPrincipal) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
-            LOGGER.log(Level.INFO, "rolPrincipal: {0}", rolPrincipal);
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+//            LOGGER.log(Level.INFO, "idUsuario: {0}", idUsuario);
+//            LOGGER.log(Level.INFO, "rolPrincipal: {0}", rolPrincipal);
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+//            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
             return servicio.listarOrdenesPorAutorizar(codigoRC, codigoSolicitud, idUsuario, rolPrincipal);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
@@ -119,8 +119,8 @@ public class OrdenCompraREST {
     @Produces({MediaType.APPLICATION_JSON})
     public OrdenCompraDTO actualizarOrdenCompra(OrdenCompraDTO ordenCompraDTO) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
-            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
+//            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", ordenCompraDTO);
+//            LOGGER.log(Level.INFO, "detalles: {0}", ordenCompraDTO.getListaDetalles());
             //guardar en la bdd el rol
             return servicio.actualizarOrdenCompra(ordenCompraDTO);
         } catch (Exception exc) {

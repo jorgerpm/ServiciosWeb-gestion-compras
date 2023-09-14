@@ -35,7 +35,7 @@ public class ComparativoREST {
     @Produces({MediaType.APPLICATION_JSON})
     public ComparativoDTO guardarComparativo(ComparativoDTO comparativoDTO) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", comparativoDTO);
+//            LOGGER.log(Level.INFO, "entroooooooooooo: {0}", comparativoDTO);
             //guardar en la bdd el rol
             return servicio.guardarComparativo(comparativoDTO);
         } catch (Exception exc) {
@@ -57,9 +57,9 @@ public class ComparativoREST {
             @QueryParam(value = "desde") Integer desde,
             @QueryParam(value = "hasta") Integer hasta) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
             return servicio.listarComparativos(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);

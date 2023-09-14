@@ -322,10 +322,10 @@ public class OrdenCompraDAO extends Persistencia {
     
     public String getUltimoCodigoOC(EntityManager em) throws Exception {
         try{
-            String numSql = "select MAX(replace (CODIGO_ORDEN_COMPRA, 'OC-', '')) from orden_compra";
+            String numSql = "select MAX(cast(replace(CODIGO_ORDEN_COMPRA, 'OC-', '') as bigint)) from orden_compra";
             Query queryNumSql = em.createNativeQuery(numSql);
             
-            List<String> lista = queryNumSql.getResultList();
+            List<Long> lista = queryNumSql.getResultList();
             if(lista.isEmpty()){
                 //buscar en los parametros y tomar ese numero del parametro
                 Query query = em.createQuery("FROM Parametro p where p.nombre = :nombre");
@@ -342,7 +342,7 @@ public class OrdenCompraDAO extends Persistencia {
             }
             else{
                 if(Objects.nonNull(lista.get(0))){
-                    Long next = Long.parseLong(lista.get(0)) + 1;
+                    Long next = Long.parseLong(lista.get(0).toString()) + 1;
                     return "OC-" + next;
                 }
                 else{
@@ -400,10 +400,8 @@ public class OrdenCompraDAO extends Persistencia {
             em.merge(ordenCompra); //update
             
             for(OrdenCompraDetalle detalle : ordenCompra.getListaDetalles()) {
-                LOGGER.log(Level.INFO,"lod etalles en el dao");
                 detalle.setOrdenCompra(ordenCompra);
                 em.merge(detalle);
-                LOGGER.log(Level.INFO,"si actualizo");
             }
             
             em.flush(); //Confirmar el insert o update

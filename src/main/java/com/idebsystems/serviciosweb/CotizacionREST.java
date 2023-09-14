@@ -44,11 +44,11 @@ public class CotizacionREST {
             @QueryParam(value = "idRol") Integer idRol,
             @QueryParam(value = "rucProveedor") String rucProveedor) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
-            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
-            LOGGER.log(Level.INFO, "idRol: {0}", idRol);
-            LOGGER.log(Level.INFO, "rucProveedor: {0}", rucProveedor);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaInicial);
+//            LOGGER.log(Level.INFO, "fechas: {0}", fechaFinal);
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoRC);
+//            LOGGER.log(Level.INFO, "idRol: {0}", idRol);
+//            LOGGER.log(Level.INFO, "rucProveedor: {0}", rucProveedor);
             return servicio.listarCotizaciones(fechaInicial, fechaFinal, codigoSolicitud, codigoRC, desde, hasta, idRol, rucProveedor);
         } catch (Exception exc) {
             LOGGER.log(Level.SEVERE, null, exc);
@@ -62,8 +62,8 @@ public class CotizacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public CotizacionDTO guardarCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "solicitud: {0}", cotizacionDTO);
-            LOGGER.log(Level.INFO, "detalles: {0}", cotizacionDTO.getListaDetalles());
+//            LOGGER.log(Level.INFO, "solicitud: {0}", cotizacionDTO);
+//            LOGGER.log(Level.INFO, "detalles: {0}", cotizacionDTO.getListaDetalles());
             return servicio.guardarCotizacion(cotizacionDTO);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
@@ -80,8 +80,8 @@ public class CotizacionREST {
             @QueryParam(value = "codigoSolicitud") String codigoSolicitud,
             @QueryParam(value = "ruc") String ruc) throws Exception {
         try {
-            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoSolicitud);
-            LOGGER.log(Level.INFO, "ruc: {0}", ruc);
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", codigoSolicitud);
+//            LOGGER.log(Level.INFO, "ruc: {0}", ruc);
             
             return servicio.buscarCotizacionRucNumeroSol(codigoSolicitud, ruc);
         } catch (Exception exc) {
@@ -98,7 +98,7 @@ public class CotizacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public CotizacionDTO cambiarEstadoCotizacion(CotizacionDTO cotizacionDTO) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "CotizacionDTO: {0}", cotizacionDTO);
+//            LOGGER.log(Level.INFO, "CotizacionDTO: {0}", cotizacionDTO);
             return servicio.cambiarEstadoCotizacion(cotizacionDTO);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
@@ -113,7 +113,7 @@ public class CotizacionREST {
     public List<CotizacionDTO> getCotizacionesParaComparativo(
         @QueryParam(value = "codigoSolicitud") String codigoSolicitud) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
+//            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", codigoSolicitud);
             return servicio.getCotizacionesParaComparativo(codigoSolicitud);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
@@ -128,9 +128,9 @@ public class CotizacionREST {
     @Produces({MediaType.APPLICATION_JSON})
     public RespuestaDTO rechazarTodasCotizaciones(CotizacionDTO cotizacionDto) throws Exception {
         try{
-            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", cotizacionDto.getCodigoSolicitud());
-            LOGGER.log(Level.INFO, "codigoRC: {0}", cotizacionDto.getCodigoRC());
-            LOGGER.log(Level.INFO, "usuario: {0}", cotizacionDto.getUsuarioModifica());
+//            LOGGER.log(Level.INFO, "codigoSolicitud: {0}", cotizacionDto.getCodigoSolicitud());
+//            LOGGER.log(Level.INFO, "codigoRC: {0}", cotizacionDto.getCodigoRC());
+//            LOGGER.log(Level.INFO, "usuario: {0}", cotizacionDto.getUsuarioModifica());
             return servicio.rechazarTodasCotizaciones(cotizacionDto);
         }catch(Exception exc){
             LOGGER.log(Level.SEVERE, null, exc);
